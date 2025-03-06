@@ -1,0 +1,881 @@
+{
+  "SuperAdmin": [
+    {
+      "id": "f4c3",
+      "firstName": "Akshay",
+      "lastName": "Vaghasiya",
+      "email": "akshaygvaghasiya@gmail.com",
+      "phone": "8160503291",
+      "password": "Aksh@1234",
+      "image": "Screenshot 2024-06-08 141214.png"
+    },
+    {
+      "id": "73e3",
+      "firstName": "Akshay",
+      "lastName": "Vaghasiya",
+      "email": "akshaygvaghasiya1@gmail.com",
+      "phone": "9106722109",
+      "password": "@AAesha1234",
+      "image": "Screenshot (1).png"
+    },
+    {
+      "id": "85f5",
+      "firstName": "krupali",
+      "lastName": "kumbhani",
+      "email": "kkumbhani@gmail.com",
+      "phone": "1584698521",
+      "password": "@Kk123456",
+      "image": "Cheese.png"
+    }
+  ],
+  "Waiters": [
+    {
+      "id": "ea2a",
+      "firstName": "aaasdfgsaasdfg,./",
+      "lastName": "aa",
+      "email": "aa123@gmail.com",
+      "phone": "4563217896",
+      "dateOfBirth": "2024-07-03",
+      "gender": "female",
+      "address": "343, dgdf hj",
+      "city": "Vapi",
+      "state": "Gujarat",
+      "country": "Japan",
+      "profession": "Waiter",
+      "password": "@12345Aesha"
+    },
+    {
+      "id": "932b",
+      "firstName": "vvvv",
+      "lastName": "vv",
+      "email": "vv@gmail.com",
+      "phone": "8984653221",
+      "dateOfBirth": "2024-05-07",
+      "gender": "male",
+      "address": "233,seythsbhxdrgdfhbnfg",
+      "city": "Surat",
+      "state": "Karnataka",
+      "country": "India",
+      "profession": "waiter",
+      "image": "profile.jfif",
+      "password": "1234@Avvv"
+    }
+  ],
+  "Chefs": [
+    {
+      "firstName": "kk",
+      "lastName": "kk",
+      "email": "kk@gmail.com",
+      "phone": "3256867968",
+      "dateOfBirth": "2024-07-02",
+      "gender": "female",
+      "address": "23,sedf drtgyf ftyhfg",
+      "city": "Surat",
+      "state": "Gujarat",
+      "country": "India",
+      "profession": "Chef",
+      "image": "profile.jfif",
+      "password": "12345@Akkk",
+      "id": "059a"
+    }
+  ],
+  "accountant": [
+    {
+      "id": "d739",
+      "firstName": "jemiazXCVBNM,",
+      "lastName": "miyani k",
+      "email": "jemikikani@gmail.com",
+      "phone": "8200986329",
+      "dateOfBirth": "2024-05-09",
+      "gender": "female",
+      "address": "12, fghc cgcfh",
+      "city": "Surat",
+      "state": "Haryana",
+      "country": "India",
+      "profession": "Accountant",
+      "image": "pepper.png",
+      "password": "@A1234jjj"
+    },
+    {
+      "id": "6157",
+      "firstName": "yatri",
+      "lastName": "vaibhav",
+      "email": "yatri111@gmail.com",
+      "phone": "1111567897",
+      "dateOfBirth": "2004-06-22",
+      "gender": "female",
+      "address": "303,DFYTHCFT fdgddg fgdg ghg",
+      "city": "Baroda",
+      "state": "Gujarat",
+      "country": "India",
+      "profession": "accountant",
+      "image": "Lock.png",
+      "password": "@Ayatri111"
+    }
+  ],
+  "category": [
+    {
+      "id": "eb32",
+      "catName": "Biryani",
+      "image": "Biryani.png"
+    },
+    {
+      "id": "3cac",
+      "catName": "Chinese",
+      "image": "Chinese.png"
+    },
+    {
+      "catName": "Burger",
+      "image": "burger.png",
+      "id": "4b56"
+    },
+    {
+      "id": "2964",
+      "catName": "Pizza",
+      "image": "Pizza.png"
+    },
+    {
+      "id": "fed8",
+      "catName": "North Indian",
+      "image": "North Indian.png"
+    },
+    {
+      "id": "80c7",
+      "catName": "Salad",
+      "image": "Salad.png"
+    },
+    {
+      "id": "9632",
+      "catName": "Shakes",
+      "image": "Shakes.png"
+    },
+    {
+      "id": "2bc1",
+      "catName": "Pasta",
+      "image": "Pasta.png"
+    }
+  ],
+  "Dish": [
+    {
+      "dishName": "italian pizza",
+      "dishCategory": "2964",
+      "sellingPrice": "260",
+      "costPrice": "200",
+      "status": "Available",
+      "description": "ii pp",
+      "image": "Pizza.png",
+      "id": "8aab"
+    },
+    {
+      "dishName": "Margerita",
+      "dishCategory": "2964",
+      "sellingPrice": "300",
+      "costPrice": "250",
+      "status": "Not Available",
+      "description": "marge",
+      "image": "Pizza.png",
+      "id": "0b60"
+    },
+    {
+      "id": "f456",
+      "dishName": "Red sos pasta",
+      "dishCategory": "2bc1",
+      "sellingPrice": "110",
+      "costPrice": "90",
+      "status": "Available",
+      "image": "Pasta.png",
+      "description": "Red sos pasta..."
+    },
+    {
+      "id": "edbf",
+      "dishName": "Haydrabadi Biryani",
+      "dishCategory": "eb32",
+      "sellingPrice": "210",
+      "costPrice": "150",
+      "status": "Available",
+      "image": "Biryani.png",
+      "description": "Haydrabadi Biryani"
+    },
+    {
+      "id": "2907",
+      "dishName": "Chocolate Shakes",
+      "dishCategory": "9632",
+      "sellingPrice": "110",
+      "costPrice": "80",
+      "status": "Available",
+      "image": "Shakes.png",
+      "description": "Chocolate Shakes"
+    }
+  ],
+  "variant": [
+    {
+      "dishCategory": "9632",
+      "dishName": "2907",
+      "varName": "Choco chips",
+      "Price": "82",
+      "imageFile": "choco_chips.jfif",
+      "id": "eb30"
+    },
+    {
+      "dishCategory": "9632",
+      "dishName": "2907",
+      "varName": "Brownie",
+      "Price": "75",
+      "imageFile": "brownie.jfif",
+      "id": "52d0"
+    },
+    {
+      "id": "a0f2",
+      "dishCategory": "eb32",
+      "dishName": "edbf",
+      "varName": "veges",
+      "Price": "18",
+      "imageFile": "pepper.png"
+    }
+  ],
+  "tablebook": [
+    {
+      "id": "eaa6",
+      "table": "T4",
+      "guests": 17,
+      "status": false
+    },
+    {
+      "id": "0d05",
+      "table": "T8",
+      "guests": 17,
+      "status": false
+    },
+    {
+      "id": "0407",
+      "table": "T9",
+      "guests": 17,
+      "status": false
+    },
+    {
+      "id": "7d5d",
+      "table": "T10",
+      "guests": 17,
+      "status": false
+    },
+    {
+      "id": "384a",
+      "table": "T3",
+      "guests": 1,
+      "status": true
+    },
+    {
+      "id": "1bdf",
+      "table": "T2",
+      "guests": 17,
+      "status": true
+    },
+    {
+      "id": "33df",
+      "table": "T11",
+      "guests": 17,
+      "status": true
+    },
+    {
+      "id": "b8d2",
+      "table": "T1",
+      "guests": 17,
+      "status": true
+    },
+    {
+      "id": "57a3",
+      "table": "T12",
+      "guests": 17,
+      "status": true
+    },
+    {
+      "id": "dafc",
+      "table": "T6",
+      "guests": 17,
+      "status": false
+    },
+    {
+      "id": "2ba0",
+      "table": "T5",
+      "guests": 5,
+      "status": true
+    },
+    {
+      "id": "3b5a",
+      "table": "T7",
+      "guests": 7,
+      "status": true
+    },
+    {
+      "id": "6865",
+      "table": "table-8",
+      "guests": 2,
+      "status": true
+    },
+    {
+      "id": "bb88",
+      "table": "table-1",
+      "guests": 4,
+      "status": true
+    },
+    {
+      "id": "2823",
+      "table": "table-5",
+      "guests": 4,
+      "status": true
+    },
+    {
+      "id": "e722",
+      "table": "table-9",
+      "guests": 5,
+      "status": true
+    },
+    {
+      "id": "22f4",
+      "table": "table-2",
+      "guests": 4,
+      "status": true
+    },
+    {
+      "id": "9646",
+      "table": "table-1",
+      "guests": 4,
+      "status": true
+    },
+    {
+      "id": "5n18rbi2a",
+      "table": "table-1",
+      "guests": 5,
+      "status": true
+    },
+    {
+      "id": "1epwdpbca",
+      "table": "table-10",
+      "guests": 7,
+      "status": true
+    },
+    {
+      "id": "0eto4feg0",
+      "table": "table-11",
+      "guests": 2,
+      "status": true
+    }
+  ],
+  "order": [
+    {
+      "id": "3d4d",
+      "tableId": "b8d2",
+      "status": "Served",
+      "paystatus": "Unpaid",
+      "dish": [
+        {
+          "dishId": "2907",
+          "dishName": "Chocolate Shakes",
+          "dishImg": "Shakes.png",
+          "quantity": 2
+        }
+      ],
+      "totalPrice": 250,
+      "variants": [
+        {
+          "variantId": "eb30",
+          "variantName": "Choco chips",
+          "variantPrice": 15
+        }
+      ]
+    },
+    {
+      "id": "a674",
+      "tableId": "57a3",
+      "status": "Served",
+      "paystatus": "Paid",
+      "dish": [
+        {
+          "dishId": "edbf",
+          "dishName": "Haydrabadi Biryani",
+          "dishImg": "Biryani.png",
+          "quantity": 1
+        }
+      ],
+      "totalPrice": 228,
+      "variants": [
+        {
+          "variantId": "a0f2",
+          "variantName": "veges",
+          "variantPrice": 18
+        }
+      ]
+    },
+    {
+      "id": "45a5",
+      "tableId": "dafc",
+      "status": "Served",
+      "paystatus": "Paid",
+      "dish": [
+        {
+          "dishId": "2907",
+          "dishName": "Chocolate Shakes",
+          "dishImg": "Shakes.png",
+          "quantity": 1
+        }
+      ],
+      "totalPrice": 125,
+      "variants": [
+        {
+          "variantId": "eb30",
+          "variantName": "Choco chips",
+          "variantPrice": 15
+        }
+      ]
+    },
+    {
+      "id": "40d6",
+      "tableId": "dafc",
+      "status": "Served",
+      "paystatus": "Paid",
+      "dish": [
+        {
+          "dishId": "2907",
+          "dishName": "Chocolate Shakes",
+          "dishImg": "Shakes.png",
+          "quantity": 2
+        }
+      ],
+      "totalPrice": 250,
+      "variants": [
+        {
+          "variantId": "eb30",
+          "variantName": "Choco chips",
+          "variantPrice": 15
+        }
+      ]
+    },
+    {
+      "id": "45d4",
+      "tableId": "2ba0",
+      "status": "Served",
+      "paystatus": "Unpaid",
+      "dish": [
+        {
+          "dishId": "2907",
+          "dishName": "Chocolate Shakes",
+          "dishImg": "Shakes.png",
+          "quantity": 1
+        }
+      ],
+      "totalPrice": 143,
+      "variants": [
+        {
+          "variantId": "eb30",
+          "variantName": "Choco chips",
+          "variantPrice": 15
+        },
+        {
+          "variantId": "52d0",
+          "variantName": "Brownie",
+          "variantPrice": 18
+        }
+      ]
+    },
+    {
+      "id": "0781",
+      "tableId": "3b5a",
+      "status": "Served",
+      "paystatus": "Unpaid",
+      "dish": [
+        {
+          "dishId": "2907",
+          "dishName": "Chocolate Shakes",
+          "dishImg": "Shakes.png",
+          "quantity": 7
+        }
+      ],
+      "totalPrice": 1001,
+      "variants": [
+        {
+          "variantId": "eb30",
+          "variantName": "Choco chips",
+          "variantPrice": 15
+        },
+        {
+          "variantId": "52d0",
+          "variantName": "Brownie",
+          "variantPrice": 18
+        }
+      ]
+    },
+    {
+      "id": "kgn7jwyap",
+      "tableId": "3b5a",
+      "status": "Served",
+      "paystatus": "Unpaid",
+      "dish": [
+        {
+          "dishId": "2907",
+          "dishName": "Chocolate Shakes",
+          "dishImg": "Shakes.png",
+          "quantity": 7
+        }
+      ],
+      "totalPrice": 770,
+      "variants": []
+    },
+    {
+      "id": "plm4ee177",
+      "tableId": "3b5a",
+      "status": "Served",
+      "paystatus": "Unpaid",
+      "dish": [
+        {
+          "dishId": "edbf",
+          "dishName": "Haydrabadi Biryani",
+          "dishImg": "Biryani.png",
+          "quantity": 3
+        }
+      ],
+      "totalPrice": 684,
+      "variants": [
+        {
+          "variantId": "a0f2",
+          "variantName": "veges",
+          "variantPrice": 18
+        }
+      ]
+    },
+    {
+      "id": "7bs1c8",
+      "tableId": "3b5a",
+      "status": "Served",
+      "paystatus": "Unpaid",
+      "dish": [
+        {
+          "dishId": "2907",
+          "dishName": "Chocolate Shakes",
+          "dishImg": "Shakes.png",
+          "quantity": 3
+        }
+      ],
+      "totalPrice": 429,
+      "variants": [
+        {
+          "variantId": "eb30",
+          "variantName": "Choco chips",
+          "variantPrice": 15
+        },
+        {
+          "variantId": "52d0",
+          "variantName": "Brownie",
+          "variantPrice": 18
+        }
+      ]
+    },
+    {
+      "id": "pzvt",
+      "tableId": "3b5a",
+      "status": "Served",
+      "paystatus": "Unpaid",
+      "dish": [
+        {
+          "dishId": "2907",
+          "dishName": "Chocolate Shakes",
+          "dishImg": "Shakes.png",
+          "quantity": 9
+        }
+      ],
+      "totalPrice": 1287,
+      "variants": [
+        {
+          "variantId": "eb30",
+          "variantName": "Choco chips",
+          "variantPrice": 15
+        },
+        {
+          "variantId": "52d0",
+          "variantName": "Brownie",
+          "variantPrice": 18
+        }
+      ]
+    },
+    {
+      "id": "833ZC",
+      "tableId": "3b5a",
+      "status": "Served",
+      "paystatus": "Unpaid",
+      "dish": [
+        {
+          "dishId": "edbf",
+          "dishName": "Haydrabadi Biryani",
+          "dishImg": "Biryani.png",
+          "quantity": 5
+        }
+      ],
+      "totalPrice": 1140,
+      "variants": [
+        {
+          "variantId": "a0f2",
+          "variantName": "veges",
+          "variantPrice": 18
+        }
+      ]
+    },
+    {
+      "id": "14CE",
+      "tableId": "3b5a",
+      "status": "Served",
+      "paystatus": "Unpaid",
+      "dish": [
+        {
+          "dishId": "2907",
+          "dishName": "Chocolate Shakes",
+          "dishImg": "Shakes.png",
+          "quantity": 5
+        }
+      ],
+      "totalPrice": 715,
+      "variants": [
+        {
+          "variantId": "eb30",
+          "variantName": "Choco chips",
+          "variantPrice": 15
+        },
+        {
+          "variantId": "52d0",
+          "variantName": "Brownie",
+          "variantPrice": 18
+        }
+      ]
+    },
+    {
+      "id": "19RA",
+      "tableId": "3b5a",
+      "status": "Served",
+      "paystatus": "Unpaid",
+      "dish": [
+        {
+          "dishId": "2907",
+          "dishName": "Chocolate Shakes",
+          "dishImg": "Shakes.png",
+          "quantity": 1
+        }
+      ],
+      "totalPrice": 143,
+      "variants": [
+        {
+          "variantId": "eb30",
+          "variantName": "Choco chips",
+          "variantPrice": 15
+        },
+        {
+          "variantId": "52d0",
+          "variantName": "Brownie",
+          "variantPrice": 18
+        }
+      ]
+    },
+    {
+      "id": "26E3",
+      "tableId": "3b5a",
+      "status": "Served",
+      "paystatus": "Unpaid",
+      "dish": [
+        {
+          "dishId": "2907",
+          "dishName": "Chocolate Shakes",
+          "dishImg": "Shakes.png",
+          "quantity": 5
+        }
+      ],
+      "totalPrice": 715,
+      "variants": [
+        {
+          "variantId": "eb30",
+          "variantName": "Choco chips",
+          "variantPrice": 15
+        },
+        {
+          "variantId": "52d0",
+          "variantName": "Brownie",
+          "variantPrice": 18
+        }
+      ]
+    },
+    {
+      "id": "614M",
+      "tableId": "3b5a",
+      "status": "Served",
+      "paystatus": "Unpaid",
+      "dish": [
+        {
+          "dishId": "edbf",
+          "dishName": "Haydrabadi Biryani",
+          "dishImg": "Biryani.png",
+          "quantity": 1
+        }
+      ],
+      "totalPrice": 210,
+      "variants": []
+    }
+  ],
+  "customer": [
+    {
+      "id": "df4c",
+      "fname": "vishwa",
+      "lname": "v",
+      "email": "vishwa@gmail.com",
+      "phone": "1452145175",
+      "cvdate": "2024-07-30",
+      "ammount": "124",
+      "city": "Surat",
+      "state": "Gujarat",
+      "country": "India"
+    },
+    {
+      "id": "a68c",
+      "fname": "jenish",
+      "lname": "gadhiya",
+      "email": "jenish2003@gmail.com",
+      "phone": "7584125632",
+      "cvdate": "2024-08-13",
+      "ammount": "500",
+      "city": "Surat",
+      "state": "Gujarat",
+      "country": "India"
+    },
+    {
+      "id": "4954",
+      "fname": "shruti",
+      "lname": "shihora",
+      "email": "shrutishihora@gmail.com",
+      "phone": "1524785369",
+      "cvdate": "2024-08-15",
+      "ammount": "701",
+      "city": "Vapi",
+      "state": "Gujarat",
+      "country": "India"
+    },
+    {
+      "id": "496d",
+      "fname": "aesha",
+      "lname": "jgjhu",
+      "email": "yatri@gmail.com",
+      "phone": "9328430111",
+      "cvdate": "2024-09-18",
+      "ammount": "55",
+      "city": "Baroda",
+      "state": "Haryana",
+      "country": "India"
+    },
+    {
+      "id": "1067",
+      "fname": "aesha",
+      "lname": "jgjhu",
+      "email": "aesha@gmail.com",
+      "phone": "9328430111",
+      "cvdate": "2024-09-11",
+      "ammount": "55",
+      "city": "Baroda",
+      "state": "Haryana",
+      "country": "India"
+    },
+    {
+      "id": "980d",
+      "fname": "dsa",
+      "lname": "wsda",
+      "email": "aesha@gmail.com",
+      "phone": "9328430111",
+      "cvdate": "2024-09-18",
+      "ammount": "33",
+      "city": "Baroda",
+      "state": "Gujarat",
+      "country": "China"
+    },
+    {
+      "id": "2d97",
+      "fname": "sw",
+      "lname": "qa",
+      "email": "aesha@gmail.com",
+      "phone": "9328430111",
+      "cvdate": "2024-09-25",
+      "ammount": "55",
+      "city": "Surat",
+      "state": "Gujarat",
+      "country": "India"
+    },
+    {
+      "id": "fdde",
+      "fname": "aesha",
+      "lname": "wsda",
+      "email": "aesha.kalathiyainfotech@gmail.com",
+      "phone": "9328430111",
+      "cvdate": "2024-09-18",
+      "ammount": "55",
+      "city": "Mumbai",
+      "state": "Karnataka",
+      "country": "China"
+    },
+    {
+      "id": "58d8",
+      "fname": "aaa",
+      "lname": "crdt",
+      "email": "xdrt@gmail.com",
+      "phone": "1452458625",
+      "cvdate": "2024-09-06",
+      "ammount": "1220",
+      "city": "Surat",
+      "state": "Gujarat",
+      "country": "India"
+    }
+  ],
+  "sendSms": [
+    {
+      "id": "5bf9",
+      "to": "9106722109",
+      "message": "Your OTP is 5385"
+    },
+    {
+      "id": "7be6",
+      "to": "9106722109",
+      "message": "Your OTP is 1914"
+    },
+    {
+      "id": "734c",
+      "to": "9106722109",
+      "message": "Your OTP is 1264"
+    },
+    {
+      "id": "602d",
+      "to": "9106722109",
+      "message": "Your OTP is 1740"
+    },
+    {
+      "id": "6a96",
+      "to": "9106722109",
+      "message": "Your OTP is 4036"
+    },
+    {
+      "id": "08ed",
+      "to": "9106722109",
+      "message": "Your OTP is 9571"
+    },
+    {
+      "id": "b39c",
+      "to": "9106722109",
+      "message": "Your OTP is 6771"
+    },
+    {
+      "id": "38cf",
+      "to": "9106722109",
+      "message": "Your OTP is 8380"
+    },
+    {
+      "id": "eb6c",
+      "to": "9106722109",
+      "message": "Your OTP is 5853"
+    },
+    {
+      "id": "f166",
+      "to": "9106722109",
+      "message": "Your OTP is 3927"
+    }
+  ]
+}

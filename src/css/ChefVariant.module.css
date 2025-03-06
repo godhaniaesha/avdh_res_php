@@ -1,0 +1,1262 @@
+.modal-backdrop {
+    display: none !important;
+  }
+
+  .db_custom-backdrop {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1040;
+  }
+
+  .db_content-container {
+    position: relative;
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  #exampleModal .modal-dialog {
+    max-width: 500px;
+    margin: 0rem;
+    margin-left: 47%;
+    margin-top: 1.9%;
+  }/*/////////////////////// comman css ////////////////////// */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* body{
+    cursor: pointer !important;
+} */
+
+.row {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/*/////////////////////// comman css ////////////////////// */
+/*/////////////////////// menubar css ////////////////////// */
+
+/* drawer start */
+.d_active1 {
+    background: #F6F6F6 !important;
+    color: #06210B !important;
+    cursor: pointer;
+    /* aa_d */
+    border-left: 4px solid #082B0F !important;
+    border-right:  4px solid #082B0F !important;
+}
+
+.a_drawer {
+    width: 324px;
+    background: #4B6C52;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1030;
+}
+
+.a_drawer .a_logo h2 {
+    font-size: 54px;
+    font-weight: 600;
+    line-height: 64.8px;
+    color: #FFFFFF;
+    text-align: center;
+    padding: 13px 10px 20px 50px;
+}
+
+.a_drawer .list-group a {
+    border: none;
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 26.4px;
+    text-align: start;
+    padding: 32px 0;
+    padding-left: 90px;
+    background: #4B6C52;
+    color: #FFFFFF;
+}
+
+.a_drawer .list-group-item-action:focus,
+.a_drawer .list-group-item-action:hover,
+.active {
+    background: #F6F6F6 !important;
+    color: #06210B !important;
+    cursor: pointer !important;
+   /* aa_d */
+   border-left: 4px solid #082B0F !important;
+   border-right:  4px solid #082B0F !important;
+}
+
+
+/* drawer end */
+
+
+/* navbar */
+
+.a_navbar {
+    height: 80px;
+    background: #FFFFFF;
+    box-shadow: 4px 4px 14px 0px #00000014;
+    width: 100%;
+}
+
+.a_search input {
+    border: none;
+    border-radius: 4px;
+    border: 0.9px solid #606060;
+    background: none;
+    outline: none;
+    max-width: 380px;
+    height: 34px;
+    padding: 10px 10px 10px 35px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23aaa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>') no-repeat 10px center;
+    background-size: 20px;
+    box-shadow: 4px 4px 20px 0px #E5E5E500;
+}
+
+.a_search {
+    margin-left: 300px;
+}
+
+.a_profile>.fa-bell {
+    font-size: 30px;
+    margin-right: 26px;
+    color: #B6B1B1;
+}
+
+.a_profile>.fa-bell>span {
+    background: linear-gradient(180deg, #4B6C52 0%, #729578 100%);
+    top: -2px;
+    right: -6px;
+}
+
+.a_pro>img {
+    width: 36px;
+    border-style: none;
+    height: 36px;
+    border-radius: 50%;
+}
+
+.a_pro>p {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 30px;
+    text-align: left;
+    color: #06210B;
+    margin: 0;
+    padding-left: 10px;
+}
+
+/* navbar end */
+
+#a_main-content {
+    margin-left: 362px;
+    margin-top: 111px;
+}
+
+.a_main {
+    padding: 40px 0px 0px 35px !important;
+}
+
+.a_main_chef {
+    padding: 40px 0px 0px 0px !important;
+}
+
+.a_profile .dropdown-toggle::after {
+    display: none !important;
+}
+
+.dropdown-item {
+    padding: .25rem 0.5rem !important;
+}
+
+.dropdown-item img {
+    margin-right: 3px;
+}
+
+.dropdown-menu .dropdown-item:last-child img {
+    margin-left: 3px;
+}
+
+.a_logo .list-group-item-action  .d_active1{
+    border-bottom: none !important;
+}
+
+
+
+
+
+/*/////////////////////// menu bar css ////////////////////// */
+/* start title */
+#a_main-content {
+    margin-left: 324px;
+    margin-top: 81px;
+}
+
+/* end title */
+/*/////////////////////// chef dashbord css ////////////////////// */
+.v_chef_border {
+    border: 1px solid #606060 !important;
+}
+
+.v_order_color {
+    color: #D1D1D1;
+    font-size: 29px;
+}
+
+.v_bold_order {
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.v_light_order_time {
+    color: #B5B5B5 !important;
+    font-size: 13px;
+}
+
+.v_chef_border_order {
+    border: 1px solid #606060 !important;
+    padding: 10px;
+}
+
+.v_order_img {
+    width: 85px;
+}
+
+.v_order_marstart {
+    margin-left: 15px;
+}
+
+.v_order_color2 {
+    color: #4B6C52;
+}
+
+.v_btn_size {
+    padding: 5px 36px !important;
+}
+
+.v_btn_size1 {
+    width: 300px;
+    margin-top: 20px;
+    margin-right: 20px !important;
+}
+
+.v_badge_position {
+    position: absolute;
+    content: "";
+    bottom: 50px;
+}
+
+.v_badge_position1 {
+    position: relative;
+}
+/* #addCategory .v_btn {
+    margin-top: 14%;
+}
+@media (max-width: 1024px) {
+    #addCategory .v_btn {
+        margin-top: 18%;
+    }
+} */
+
+
+@media (max-width: 375px) {
+    .v_all_margin {
+        /* margin-left: 230px; */
+        margin: auto;
+    }
+
+    .v_margin_mdscreen {
+        margin: 12px 0;
+    }
+
+    .v_noti_chefdash.dropdown-menu-right {
+        left: -110px !important;
+    }
+}
+
+@media (max-width: 320px) {
+    .v_btn_size {
+        padding: 5px 36px !important;
+    }
+
+    .v_noti_chefdash.dropdown-menu-right {
+        left: -70px !important;
+    }
+
+    .v_noti_width {
+        width: 325px !important;
+    }
+
+}
+
+/*/////////////////////// chef dashbord css ////////////////////// */
+/*/////////////////////// chef menulist css ////////////////////// */
+.m_table {
+    margin-top: 20px;
+    margin-left: 40px  !important;
+}
+
+.m_table_heading td {
+    padding: 6px 15px;
+}
+
+.m_img {
+    padding: 10px;
+}
+
+.m_img img {
+    height: 40px;
+    width: 40px;
+    padding: 3px;
+}
+
+.m_table {
+    border: 1px solid black;
+    height: 79%;
+    width: auto;
+    margin: 20px 40px 0px 0px;
+    overflow-y: scroll;
+}
+
+.m_table tr {
+    font-size: 19px;
+    text-wrap: nowrap;
+}
+
+.m_table td img {
+    width: 60px;
+    height: auto;
+    object-fit: contain;
+}
+
+.m_table_icon {
+    display: flex;
+    justify-content: center;
+}
+
+.m_trash i {
+    color: #FF5C5B;
+    padding-left: 10px;
+}
+
+.m_table_heading td {
+    font-weight: 500;
+}
+
+.v_btn_size2 {
+    width: auto;
+}
+
+.v_btn_edit {
+    border: none !important;
+    background-color: white !important;
+    margin: 0 8px;
+    outline: none !important;
+    outline: none !important;
+}
+
+.v_menu_rowmar {
+    margin: 10px 0 !important;
+}
+.a_d_list{
+    padding-left: 40px;
+    padding-top: 30px;
+}
+.v_row_adddish .form-control {
+    line-height: 1.2 !important;
+}
+
+
+
+
+
+/*/////////////////////// chef menulist css ////////////////////// */
+/*/////////////////////// Add Dish css ////////////////////// */
+
+.v_dishinput_pad.form-control {
+    margin-top: 20px;
+    width: 95% !important;
+    padding: 5px;
+    border: 1px solid #606060;
+}
+
+.v_row_adddish {
+    margin: 5px 0 !important;
+}
+
+.v_adddish_modal.modal {
+    width: 85% !important;
+}
+
+.v_adddish_modal .modal-content {
+    width: 85% !important;
+}
+
+.v_img_save {
+    width: 95px;
+}
+
+
+
+/*/////////////////////// Add Dish css ////////////////////// */
+/*/////////////////////// Menulist css ////////////////////// */
+.v_delete_modal.modal {
+    width: 85% !important;
+    /* height: 280px!important; */
+}
+
+.v_delete_modal.modal-body {
+
+    height: 280px !important;
+    width: 95% !important;
+}
+
+.v_btn_size {
+    padding: 0 20px !important;
+}
+
+.v_btn_size_width {
+    padding: 1px 30px !important;
+}
+
+.v_search1 {
+    margin: 6px 10px !important;
+    padding: 6px 10px !important;
+}
+.order_pading {
+    padding: .5rem;
+}
+
+
+
+
+/*/////////////////////// Menulist css ////////////////////// */
+/*/////////////////////// chef Profile css ////////////////////// */
+
+.b_name a:focus {
+    box-shadow: none;
+}
+
+.dropdown-menu {
+    margin: .125rem 0px 0px -85px !important;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 150px ;
+    z-index: 1050;
+    display: none;
+    width: 95% !important;
+    height: 100%;
+    overflow: hidden;
+    outline: 0;
+}
+
+.v_Edit_Profile .modal-content {
+    width: 95% !important;
+}
+
+.v_chef_change_password.modal {
+    left: 100px !important;
+}
+
+/* dd start */
+
+.dropdown-menu {
+    margin: 1.125rem 0px 0px -144px !important;
+}
+
+.b_name .dropdown-menu {
+    padding-left: 9px;
+    box-shadow: 10px 14px 18px 0px #00000014;
+    border: 0px;
+    border-radius: 0rem;
+}
+
+.b_name .dropdown-toggle::after {
+    display: none !important;
+}
+
+.b_name .btn:focus {
+    outline: 0;
+    box-shadow: 0 0 0 .2rem rgb(0 123 255 / 0%);
+}
+
+/* dd end */
+
+
+
+@media (max-width: 425px) {
+    .v_Edit_Profile.modal {
+        left: 45px !important;
+    }
+
+    .v_Edit_Profile .modal-body {
+        height: 230px !important;
+    }
+
+    .v_Edit_Profile .modal-content {
+        width: 95% !important;
+    }
+
+    .v_profile_edit_img {
+        width: 75px !important;
+    }
+
+    .v_edit_profile_text {
+        font-size: 28px !important;
+    }
+
+    .v_chef_change_password.modal {
+        left: 5px !important;
+    }
+
+    .m_new {
+        width: 340px !important;
+    }
+
+    .m_confirm {
+        width: 340px !important;
+    }
+    .v_order_img {
+        width: 49px;
+    }
+    .v_chef_border_order {
+        padding: 6px;
+    }
+}
+
+@media (max-width: 375px) {
+    .v_Edit_Profile.modal {
+        left: 35px !important;
+    }
+
+    .m_new {
+        width: 270px !important;
+    }
+
+    .m_confirm {
+        width: 270px !important;
+    }
+
+    .v_chef_change_password.modal {
+        left: 10px !important;
+    }
+}
+
+@media (max-width: 320px) {
+    .v_Edit_Profile.modal {
+        left: 30px !important;
+    }
+
+    .v_Edit_Profile .modal-body {
+        height: 200px !important;
+    }
+
+    .v_Edit_Profile .modal-content {
+        width: 95% !important;
+    }
+
+    .v_profile_edit_img {
+        width: 55px !important;
+    }
+
+    .v_edit_profile_text {
+        font-size: 25px !important;
+    }
+
+    .m_new {
+        width: 230px !important;
+    }
+
+    .m_confirm {
+        width: 230px !important;
+    }
+
+    .m_change_pass_text span {
+        font-size: 28px !important;
+    }
+}
+
+/* / CHANGE PASSWORD POPUP / */
+
+.m_change_pass {
+    justify-content: center;
+    align-items: center;
+    padding: 30px 50px;
+    width: 600px !important;
+}
+
+.m_change_pass_text span {
+    font-size: 30px;
+    font-weight: 700;
+    text-wrap: nowrap;
+}
+
+.m_new {
+    border-bottom: 1px solid #606060;
+    width: 380px;
+}
+
+.m_new input {
+    font-size: 15px;
+    padding: 15px 0px 15px 0px;
+    border: none;
+    width:100%; 
+    background-color: transparent;
+}
+
+
+.m_new input:focus {
+    outline: none;
+}
+
+.m_confirm {
+    border-bottom: 1px solid #606060;
+    width: 380px;
+}
+
+.m_confirm input {
+    font-size: 15px;
+    /* margin-top: 20px;  */
+    padding: 15px 0px 15px 0px;
+    border: none;
+}
+
+.m_confirm input:focus {
+    outline: none;
+}
+
+.m_btn_cancel_change {
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.m_btn_cancel button {
+    font-size: 15px;
+    padding: 5px 35px;
+    border-radius: 3px;
+    background-color: transparent;
+    border: 1px solid #606060;
+    color: #606060;
+}
+
+.m_btn_cancel button i {
+    margin-right: 8px;
+}
+
+.m_btn_change {
+    margin-left: 30px;
+}
+
+.m_btn_change button {
+    font-size: 15px;
+    padding: 5px 35px;
+    border-radius: 3px;
+    background-color: #4B6C52;
+    border: 1px solid #4B6C52;
+    color: #fff;
+}
+
+.m_btn_change button:focus {
+    outline: none;
+}
+
+.m_btn_change button i {
+    margin-right: 8px;
+}
+
+.m_btn_cancel button:focus {
+    outline: none;
+}
+
+.m_model_ChangePassword {
+    position: fixed;
+    top: 0;
+    left: 70px !important;
+    z-index: 1050;
+    display: none;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    outline: 0;
+}
+
+.v_chef_profile_log button {
+    width: 100%;
+    padding: 10px 12px !important;
+}
+
+@media (max-width: 1440px) {
+    #exampleModal .modal-dialog {
+        max-width: 450px !important;
+        margin: 0rem;
+        margin-left: 45%;
+        margin-top: 3.9%;
+    }
+    .a_d_list {
+        padding-left: 7px;
+        padding-top: 15px;
+    }
+    .m_table {
+        height: 73%;
+    }
+}
+@media (max-width: 1024px) {
+    .v_Edit_Profile.modal {
+        width: 85% !important;
+    }
+
+    .v_Edit_Profile .modal-content {
+        width: 85% !important;
+    }
+
+    .v_chef_change_password.modal {
+        left: 60px !important;
+    }
+    #exampleModal .modal-dialog {
+        margin-left: 35% !important;
+    }
+}
+@media (max-width: 1024px) {
+    .a_search input {
+        max-width: 380px;
+        max-height: 34px;
+    }
+
+    .a_search {
+        margin-left: 210px;
+    }
+
+    .a_drawer {
+        width: 250px;
+    }
+
+    .a_drawer .a_logo h2 {
+        font-size: 40px;
+        padding: 11px 9px 18px 45px;
+    }
+
+    .a_drawer .list-group a {
+    border: none;
+        padding: 28px 0 28px 50px;
+        font-size: 19px;
+    }
+
+   /* 1024start model */
+   #a_main-content {
+    margin-left: 250px !important;
+    margin-top: 81px;
+}
+#deleteModal .modal-dialog {
+    margin-left: 38% !important;
+}
+/* end model */
+.a_main {
+    padding: 40px 0px 0px 38px !important;
+}
+.a_d_list {
+    padding-left: 0px !important;
+}
+.v_order_color {
+    font-size: 24px;
+}
+}
+@media (max-width: 1024px) {
+    .m_table {
+        border: 1px solid black;
+        overflow-y: scroll;
+        margin: 20px 40px 0px 0px;
+        width: auto;
+    }
+
+    .v_search input {
+        width: 120px;
+    }
+}
+@media (max-width: 1024px) {
+
+    .v_delete_modal.modal {
+        width: 80% !important;
+    }
+}
+@media (max-width: 1024px) {
+    .v_chef_pro_log.modal {
+        left: 65px !important;
+    }
+}
+@media (max-width: 768px) {
+    .a_drawer {
+        width: 250px;
+        position: fixed;
+        overflow-y: auto;
+        top: 80px;
+        left: -100%;
+        transition: left 0.4s ease-in-out;
+    }
+
+    .a_navbar .navbar-toggler {
+        display: block;
+    }
+
+    .a_search {
+        margin-left: 20px !important;
+    }
+
+    .a_search input {
+        width: 150px !important;
+        max-height: 34px;
+    }
+
+    .a_drawer.open {
+        left: 0;
+    }
+
+    /* 768start model */
+    #a_main-content {
+        margin-left: 0px !important;
+        margin-top: 81px;
+        padding-left: 0;
+    }
+    #exampleModal .modal-dialog {
+        margin-left: 0%;
+    }
+}
+@media (max-width: 768px) {
+    .v_all_margin {
+        /* margin-left: 230px; */
+        margin: auto;
+    }
+
+    .v_margin_mdscreen {
+        margin: 12px 0;
+    }
+    .a_main .title_txt {
+        font-weight: 500;
+        font-size: 26px;
+    }
+}
+@media (max-width: 768px) {
+    .m_table tr {
+        font-size: 17px;
+    }
+
+    .m_table {
+        text-wrap: nowrap;
+        margin: 20px 30px 0px 0px;
+        width: auto;
+        overflow-x: scroll;
+    }
+}
+@media (max-width: 768px) {
+    .v_adddish_modal.modal {
+        width: 73% !important;
+    }
+
+    .v_adddish_modal .modal-content {
+        width: 73% !important;
+    }
+
+    .v_img_save {
+        width: 90px;
+    }
+    .a_main {
+        padding-left: 38px !important;
+    }
+    .a_d_list{
+        padding-left: 0px !important;
+    }
+}
+@media (max-width: 768px) {
+    .v_Edit_Profile.modal {
+        left: 145px !important;
+    }
+
+    .v_Edit_Profile .modal-body {
+        height: 230px !important;
+    }
+
+    .v_Edit_Profile .modal-content {
+        width: 70% !important;
+    }
+
+    .v_profile_edit_img {
+        width: 75px !important;
+    }
+
+    .v_edit_profile_text {
+        font-size: 28px !important;
+    }
+
+    .v_chef_change_password.modal {
+        left: 20px !important;
+    }
+
+    .m_change_pass {
+        padding: 20px 25px !important;
+    }
+    #exampleModal .modal-dialog {
+        margin-left: 0% !important;
+    }
+}
+@media (max-width: 768px) {
+
+    .v_delete_modal.modal {
+        width: 60% !important;
+        left: 200px !important;
+    }
+
+    .v_delete_modal .modal-body {
+
+        height: 250px !important;
+    }
+
+    .v_delete_modal .modal-content {
+        width: 85% !important;
+    }
+}
+@media (max-width: 768px) {
+    .m_change_pass_text span {
+        font-size: 28px !important;
+    }
+
+    .v_chef_pro_log.modal {
+        left: 20px !important;
+    }
+
+    .v_chef_pro_log_text {
+        margin-bottom: 20px !important;
+    }
+
+    .v_chef_pro_log .modal-body {
+        height: 280px !important;
+    }
+
+    .v_chef_profile_log button {
+        width: 40%;
+        padding: 8px 12px !important;
+        margin-top: 6px !important;
+    }
+}
+@media (max-width: 576px) {
+    .m_table {
+        text-wrap: nowrap;
+        margin: 20px 20px 20px 0px;
+        width: auto;
+        overflow-x: scroll;
+    }
+
+    .v_search input {
+        display: none;
+    }
+    #logoutModal .modal {
+        left: 0px !important;
+        width: 98% !important;
+    }
+
+}
+@media (max-width: 425px) {
+    .m_chef_list {
+        display: block;
+    }
+
+    .m_table {
+        margin: 20px;
+    }
+
+    .v_noti_chefdash2.dropdown-menu-right {
+        left: -140px !important;
+    }
+
+    .m_table tr {
+        font-size: 16px !important;
+    }
+}
+@media (max-width: 425px) {
+    .v_all_margin {
+        /* margin-left: 230px; */
+        margin: auto;
+    }
+
+    .v_margin_mdscreen {
+        margin: 12px 0;
+    }
+
+    .v_noti_chefdash.dropdown-menu-right {
+        left: -120px !important;
+    }
+}
+@media (max-width: 425px) {
+    .a_search input {
+        width: 75px !important;
+        max-height: 34px;
+    }
+
+    .a_navbar .navbar-toggler {
+        padding: 5px 8px;
+        font-size: 15px;
+    }
+
+    .a_profile>.fa-bell {
+        font-size: 20px !important;
+        margin-right: 26px;
+        color: #B6B1B1;
+    }
+
+    .a_profile>.fa-bell>span {
+        background: linear-gradient(180deg, #4B6C52 0%, #729578 100%);
+        top: 0px;
+        right: -3px;
+        padding: 5px !important;
+    }
+
+    .a_search {
+        display: none;
+    }
+
+    #a_main-content {
+        margin-left: 0;
+        width: 100%;
+        padding-left: 0px;
+        margin-left: 0px !important;
+    }
+}
+@media (max-width: 425px) {
+
+    .v_adddish_modal.modal {
+        width: 73% !important;
+        left: 15% !important;
+    }
+
+    .v_adddish_modal .modal-content {
+        width: 100% !important;
+        height: 250px !important;
+    }
+
+    .v_img_save {
+        width: 80px;
+    }
+
+    .v_save_modal {
+        font-size: 25px !important;
+    }
+
+    /* aesh */
+    
+     /* 425start model */
+     #exampleModal .modal-dialog {
+        margin-left: 5% !important;
+    }
+
+    .m_table {
+        margin-left: 22px !important;
+    }
+    .a_main {
+        padding-left: 18px !important;
+    }
+}
+@media (max-width: 425px) {
+
+    .v_delete_modal.modal {
+        width: 95% !important;
+        left: 28px !important;
+        height: 300px !important;
+        top: 200px !important;
+    }
+
+    .v_delete_modal .modal-content {
+        width: 87% !important;
+    }
+
+    .v_delete_modal.text-center {
+        margin: 0 !important;
+    }
+
+    .v_delete_modal .modal-body {
+        height: 195px !important;
+    }
+
+    .v_delete_size {
+        font-size: 30px !important;
+        margin-bottom: 10px !important;
+    }
+
+    .v_delete_size1 {
+        font-size: 18px !important;
+        margin-bottom: 25px !important;
+    }
+
+    .v_search1 {
+        margin: 0 10px 0 0 !important;
+        padding: 5px 10px !important;
+    }
+
+    .v_new_addz {
+        margin-top: 5px !important;
+    }
+}
+@media (max-width: 425px) {
+    .v_chef_pro_log_text {
+        font-size: 22px !important;
+    }
+
+    .v_chef_pro_log_text1 {
+        font-size: 28px !important;
+    }
+
+    .v_chef_profile_log button {
+        width: 35%;
+        padding: 6px 12px !important;
+        margin-top: 6px !important;
+    }
+
+    .v_chef_pro_log.modal {
+        left: 10px !important;
+    }
+}
+@media (max-width: 375px) {
+    .v_chef_pro_log_text {
+        font-size: 22px !important;
+    }
+
+    .v_chef_pro_log_text1 {
+        font-size: 30px !important;
+    }
+
+    .v_chef_profile_log button {
+        width: 35%;
+        padding: 6px 12px !important;
+        margin-top: 6px !important;
+    }
+
+    .v_chef_pro_log.modal {
+        left: 10px !important;
+    }
+}
+@media (max-width: 375px) {
+
+    .v_delete_modal.modal {
+        width: 95% !important;
+        left: 30px !important;
+        height: 300px !important;
+        top: 200px !important;
+    }
+
+    .v_delete_modal .modal-content {
+        width: 84% !important;
+    }
+
+    .v_delete_modal.text-center {
+        margin: 0 !important;
+    }
+
+    .modal-backdrop {
+        height: 100% !important;
+        width: 100% !important;
+    }
+
+    .v_delete_size {
+        font-size: 30px !important;
+    }
+
+    .v_delete_size1 {
+        font-size: 18px !important;
+    }
+
+    .v_delete_modal .modal-body {
+
+        height: 200px !important;
+    }
+}
+@media (max-width: 375px) {
+    .v_delete_size {
+        font-size: 25px !important;
+    }
+
+    .v_delete_size1 {
+        font-size: 15px !important;
+    }
+
+    .v_delete_modal .modal-body {
+        height: 180px !important;
+    }
+
+    .v_btn_size {
+        padding: 0 25px !important;
+    }
+
+    .v_btn_size_width {
+        padding: 1px 30px !important;
+    }
+    .m_table {
+        height: 66%;
+    }
+
+}
+@media (max-width: 320px) {
+
+    .v_save_modal {
+        font-size: 20px !important;
+    }
+
+    .v_adddish_modal .modal-content {
+        width: 100% !important;
+        height: 220px !important;
+    }
+    .order_pading{
+        padding-left: 0% !important;
+        padding-right: 0% !important;
+    }
+}
+@media (max-width: 320px) {
+    .a_search input {
+        max-width: 100px !important;
+        max-height: 34px;
+    }
+}
+@media (max-width: 320px) {
+    .m_change_pass_text span {
+        font-size: 23px !important;
+    }
+
+    .m_btn_cancel button {
+        padding: 5px 25px !important;
+    }
+
+    .m_btn_change button {
+        padding: 5px 25px !important;
+    }
+
+    .v_chef_pro_log_text {
+        font-size: 22px !important;
+    }
+
+    .v_chef_pro_log_text1 {
+        font-size: 30px !important;
+    }
+
+    .v_chef_profile_log button {
+        width: 35%;
+        padding: 6px 12px !important;
+        margin-top: 6px !important;
+    }
+
+    .v_chef_pro_log.modal {
+        left: 10px !important;
+    }
+
+    .v_chef_pro_log .modal-body {
+        height: 230px !important;
+    }
+}

@@ -1,0 +1,1068 @@
+body {
+    font-family: "Lato", sans-serif;
+}
+.invalid {
+    border: 1px solid red;
+}
+
+/* aesha dropdown */
+
+.dropdown-item {
+    padding: .25rem 0.5rem !important;
+   
+}
+/* drawer start */
+
+.a_drawer {
+    width: 324px;
+    background: #4B6C52;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1030;
+}
+
+.a_drawer .a_logo h2 {
+    font-size: 54px;
+    font-weight: 600;
+    line-height: 64.8px;
+    color: #FFFFFF;
+    text-align: center;
+    padding: 13px 10px 20px 50px;
+}
+
+.a_drawer .list-group a {
+    border: none;
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 26.4px;
+    text-align: start;
+    padding: 32px 0;
+    padding-left: 90px;
+    background: #4B6C52;
+    color: #FFFFFF;
+}
+
+.a_drawer .list-group-item-action:focus,
+.a_drawer .list-group-item-action:hover,
+.a_drawer .list-group-item-action:nth-child(5) {
+    background: #F6F6F6;
+    color: #06210B;
+    cursor: pointer;
+    box-shadow: none;
+    border-left: 4px solid #082B0F;
+    border-right: 4px solid #082B0F;
+}
+
+.b_name a:focus {
+    box-shadow: none;
+}
+
+.dropdown-menu {
+    margin: .125rem 0px 0px -85px !important;
+}
+
+.b_button {
+    width: 25%;
+}
+
+
+/* drawer end */
+
+/* popup */
+.m_btn_clear_save {
+    display: flex;
+    margin: 20px 0px 50px 140px;
+    justify-content: center;
+    margin-right: 140px;
+}
+
+.b_delete {
+    width: 100% !important;
+    text-align: center;
+}
+
+/* .m_btn_clear{
+    margin-left: 380px;
+} */
+.m_btn_clear button {
+    font-size: 17px;
+    padding: 5px 40px;
+    border-radius: 3px;
+    background-color: transparent;
+    border: 2px solid #606060;
+    color: #606060;
+}
+
+.modal-body {
+    text-align: center;
+    color: black;
+    font-size: large;
+    font-weight: bold;
+}
+
+.m_btn_clear button i {
+    margin-right: 8px;
+}
+
+.m_btn_save {
+    margin-left: 30px;
+}
+
+.m_btn_save button {
+    font-size: 17px;
+    padding: 5px 40px;
+    border-radius: 3px;
+    background-color: #4B6C52;
+    color: #fff;
+}
+
+.m_btn_save button i {
+    margin-right: 8px;
+}
+
+
+
+/* navbar */
+
+.a_navbar {
+    height: 80px;
+    background: #FFFFFF;
+    box-shadow: 4px 4px 14px 0px #00000014;
+    width: 100%;
+}
+
+.a_search input {
+    border: none;
+    border-radius: 4px;
+    border: 0.9px solid #606060;
+    background: none;
+    outline: none;
+    max-width: 380px;
+    height: 34px;
+    padding: 10px 10px 10px 35px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23aaa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>') no-repeat 10px center;
+    background-size: 20px;
+    box-shadow: 4px 4px 20px 0px #E5E5E500;
+}
+
+.a_search {
+    margin-left: 300px;
+}
+
+.a_profile>.fa-bell {
+    font-size: 30px;
+    margin-right: 26px;
+    color: #B6B1B1;
+}
+
+.a_profile>.fa-bell>span {
+    background: linear-gradient(180deg, #4B6C52 0%, #729578 100%);
+    top: -2px;
+    right: -6px;
+}
+
+.a_pro>img {
+    width: 36px;
+    border-style: none;
+    height: 36px;
+    border-radius: 50%;
+}
+
+.a_pro>p {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 30px;
+    text-align: left;
+    color: #06210B;
+    margin: 0;
+    padding-left: 10px;
+}
+
+/* navbar end */
+
+#a_main-content {
+    margin-left: 323px;
+    margin-top: 80px;
+}
+
+.a_main {
+    padding: 0 !important;
+}
+
+
+/* CHANGE PASSWORD POPUP */
+.m_change_pass {
+    justify-content: center;
+    align-items: center;
+    padding: 30px 50px;
+    width: 600px !important;
+}
+
+.m_change_pass_text span {
+    font-size: 30px;
+    font-weight: 700;
+    text-wrap: nowrap;
+}
+
+.m_new {
+    border-bottom: 1px solid #606060;
+    width: 380px;
+}
+
+.m_new input {
+    font-size: 15px;
+    padding: 15px 0px 15px 0px;
+    border: none;
+    width:100%; 
+    background-color: transparent;
+}
+
+
+.m_new input:focus {
+    outline: none;
+}
+
+.m_confirm {
+    border-bottom: 1px solid #606060;
+    width: 380px;
+}
+
+.m_confirm input {
+    font-size: 15px;
+    padding: 15px 0px 15px 0px;
+    border: none;
+ width:100%; 
+    background-color: transparent;
+}
+
+.m_confirm input:focus {
+    outline: none;
+}
+
+.m_btn_cancel_change {
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.m_btn_cancel button {
+    font-size: 15px;
+    padding: 5px 35px;
+    border-radius: 3px;
+    background-color: transparent;
+    border: 1px solid #606060;
+    color: #606060;
+}
+
+.m_btn_cancel button i {
+    margin-right: 8px;
+}
+
+.m_btn_change {
+    margin-left: 30px;
+}
+
+.m_btn_change button {
+    font-size: 15px;
+    padding: 5px 35px;
+    border-radius: 3px;
+    background-color: #4B6C52;
+    border: 1px solid #4B6C52;
+    color: #fff;
+}
+
+.m_btn_change button:focus {
+    outline: none;
+}
+
+.m_btn_change button i {
+    margin-right: 8px;
+}
+
+.m_btn_cancel button:focus {
+    outline: none;
+}
+
+.m_model_ChangePassword {
+    position: fixed;
+    top: 0;
+    left: 130px !important;
+    z-index: 1052;
+    display: none;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    outline: 0;
+}
+
+/* LOGOUT POPUP */
+.m_model_con {
+    width: 75% !important;
+}
+
+.m_log {
+    text-align: center;
+    align-items: center;
+}
+
+.m_logout {
+    margin: 30px 0px 20px 0px;
+}
+
+.m_logout span {
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.m_text {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.m_btn_cancel_yes {
+    margin: 50px 0px 30px 0px;
+    display: flex;
+    justify-content: center;
+}
+
+.m_btn_cancel_logout button {
+    font-size: 15px;
+    padding: 5px 35px;
+    border-radius: 3px;
+    background-color: transparent;
+    border: 1px solid #606060;
+    color: #606060;
+}
+
+.m_btn_yes {
+    margin-left: 30px;
+}
+
+.m_btn_yes button {
+    font-size: 15px;
+    padding: 5px 35px;
+    border-radius: 3px;
+    background-color: #4B6C52;
+    border: 1px solid #4B6C52;
+    color: #fff;
+}
+
+.m_btn_cancel_logout button:focus {
+    outline: none;
+}
+
+.m_btn_yes button:focus {
+    outline: none;
+}
+
+.m_model_logout {
+    position: fixed;
+    top: 0;
+    left: 230px !important;
+    z-index: 1052;
+    display: none;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    outline: 0;
+}
+
+/* DELETE POPUP */
+.m_model_delete{
+    position: fixed;
+    top: 0;
+    left: 130px !important;
+    z-index: 1050;
+    display: none;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    outline: 0;
+}
+
+/* dd start */
+
+.dropdown-menu {
+    margin: 1.125rem 0px 0px -144px !important;
+}
+
+.b_name .dropdown-menu {
+    padding-left: 9px;
+    box-shadow: 10px 14px 18px 0px #00000014;
+    border: 0px;
+    border-radius: 0rem;
+}
+
+.b_name .dropdown-toggle::after {
+    display: none !important;
+}
+
+.b_name .btn:focus {
+    outline: 0;
+    box-shadow: 0 0 0 .2rem rgb(0 123 255 / 0%);
+}
+.m_table {
+    height: 79vh;
+}
+/* dd end */
+@media (max-width: 2560px) { 
+    .m_table {
+        height: 79vh;
+    }
+    .canvas_height #myLineChart {
+        height: 465px !important;
+    }
+}
+@media (max-width: 1440px) {
+    .m_btn_clear_save {
+        margin-bottom: 10px;
+    }
+    .m_model_ChangePassword {
+        position: fixed;
+        top: 0;
+        left: 160px !important;
+        z-index: 1052;
+        display: none;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        outline: 0;
+    }
+
+    .m_model_logout {
+        position: fixed;
+        top: 0;
+        left: 225px !important;
+        z-index: 1052;
+        display: none;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        outline: 0;
+    }
+    .m_model_delete{
+        position: fixed;
+        top: 0;
+        left: 180px !important;
+        z-index: 1050;
+        display: none;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        outline: 0;
+    }
+}
+@media (max-width: 1024px) { 
+    .m_table {
+        height: 70vh;
+    }
+}
+
+
+
+@media (max-width: 320px) {
+    .a_search input {
+        max-width: 100px !important;
+        max-height: 34px;
+    }
+}
+
+@media (max-width: 425px) {
+    .a_search input {
+        width: 75px !important;
+        max-height: 34px;
+    }
+
+    .a_navbar .navbar-toggler {
+        padding: 5px 8px;
+        font-size: 15px;
+    }
+
+    .a_profile>.fa-bell {
+        font-size: 20px !important;
+        margin-right: 26px;
+        color: #B6B1B1;
+    }
+
+    .a_profile>.fa-bell>span {
+        background: linear-gradient(180deg, #4B6C52 0%, #729578 100%);
+        top: 0px;
+        right: -3px;
+        padding: 5px !important;
+    }
+
+    .a_search {
+        display: none;
+    }
+
+
+}
+
+
+@media (max-width: 1024px) {
+    .a_search input {
+        max-width: 380px;
+        max-height: 34px;
+    }
+
+    .a_search {
+        margin-left: 210px;
+    }
+
+    .a_drawer {
+        width: 250px;
+    }
+
+    .a_drawer .a_logo h2 {
+        font-size: 40px;
+        padding: 11px 9px 18px 45px;
+    }
+
+    .a_drawer .list-group a {
+    border: none;
+        padding: 28px 0 28px 50px;
+        font-size: 19px;
+    }
+
+    /* #a_main-content {
+        margin-left: 300px;
+        margin-top: 120px;
+    } */
+/* 1024start model */
+    #a_main-content {
+        margin-left: 250px !important;
+        margin-top: 81px;
+    }
+    #deleteModal .modal-dialog {
+        margin-left: 38% !important;
+    }
+/* end model */
+    .m_model_ChangePassword {
+        position: fixed;
+        top: 0;
+        left: 125px !important;
+        z-index: 1052;
+        display: none;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        outline: 0;
+    }
+
+    .m_model_logout {
+        position: fixed;
+        top: 0;
+        left: 200px !important;
+        z-index: 1052;
+        display: none;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        outline: 0;
+    }
+    .m_model_delete{
+        position: fixed;
+        top: 0;
+        left: 130px !important;
+        z-index: 1050;
+        display: none;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        outline: 0;
+    }
+
+}
+
+@media (max-width: 768px) {
+    .a_drawer {
+        width: 100%;
+        position: fixed;
+        overflow-y: auto;
+        top: 80px;
+        left: -100%;
+        transition: left 0.4s ease-in-out;
+    }
+
+    .a_navbar .navbar-toggler {
+        display: block;
+    }
+
+    .a_search {
+        margin-left: 20px !important;
+    }
+
+    .a_search input {
+        width: 150px !important;
+        max-height: 34px;
+    }
+
+    .a_drawer.open {
+        left: 0;
+    }
+
+
+    .m_model_ChangePassword {
+        position: fixed;
+        top: 0;
+        margin-left: -120px !important;
+        z-index: 1052;
+        display: none;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        outline: 0;
+    }
+
+    .m_model_logout {
+        position: fixed;
+        top: 0;
+        margin-left: -135px !important;
+        z-index: 1052;
+        display: none;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        outline: 0;
+    }
+    #deleteModal{
+        position: fixed;
+        top: 0;
+        margin-left: -125px !important;
+        z-index: 1050;
+        display: none;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        outline: 0;
+    }
+    /* 768start model */
+    #a_main-content {
+        margin-left: 0px !important;
+        margin-top: 81px;
+    }
+}
+
+
+/* CHEF LIST */
+
+.m_search input {
+    border: none;
+    border-radius: 4px;
+    border: 0.9px solid #606060;
+    background: none;
+    outline: none;
+    max-width: 380px;
+    height: 34px;
+    padding: 10px 10px 10px 35px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23aaa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>') no-repeat 10px center;
+    background-size: 20px;
+    box-shadow: 4px 4px 20px 0px #E5E5E500;
+}
+.m_trash button:focus{
+    outline: none;
+}
+.m_pencile button:focus{
+    outline: none;
+}
+.m_chef_list {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 30px;
+    padding-left: 50px;
+}
+
+.m_chef span {
+    font-size: 30px;
+    font-weight: 600;
+    text-wrap: nowrap;
+}
+
+.m_search {
+    margin-right: 50px;
+    text-wrap: nowrap;
+}
+
+.m_search button {
+  margin-left:2%;
+    background-color: #4B6C52;
+    color: #fff;
+    padding: 5px 20px;
+    border-radius: 4px;
+    border: none;
+}
+
+
+/* CHEF TABLE */
+.m_table {
+    margin-top: 20px;
+    margin-right: 50px;
+    margin-left: 50px;
+}
+.m_table {
+    border: 1px solid black;
+    /* height: 495px; */
+    overflow-y: scroll;
+}
+
+.m_table_heading td {
+    padding: 8px;
+}
+
+.m_img {
+    padding: 10px;
+}
+
+.m_img img {
+    height: 40px;
+    width: 40px;
+    padding: 3px;
+}
+
+
+.m_table_icon {
+    display: flex;
+    justify-content: center;
+}
+
+.m_trash i {
+    color: #FF5C5B;
+}
+
+.m_pencile button {
+    background-color: #fff;
+    border: none;
+margin-right:9px;
+}
+
+.m_trash button {
+    background-color: #fff;
+    border: none;
+}
+
+
+
+@media (max-width: 425px) {
+    .m_table tr td{
+        padding: 5px;
+    }
+    .m_search input{
+ 
+        width: 180px !important;
+    }
+    .m_chef_list {
+        display: block;
+    }
+
+    .m_table {
+        text-wrap: nowrap;
+        margin-right: 30px;
+        overflow-x: scroll;
+    }
+
+
+    /*CHANGE PASSWORD POPUP */
+    .m_model_ChangePassword {
+        position: fixed;
+        top: 0;
+        left: 150px !important;
+        z-index: 1052;
+        display: none;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        outline: 0;
+    }
+
+    .m_change_pass {
+        justify-content: center;
+        align-items: center;
+        padding: 30px 50px;
+        width: 350px !important;
+    }
+
+    .m_change_pass_text span {
+        font-size: 20px;
+        font-weight: 700;
+        text-wrap: nowrap;
+    }
+
+    .m_new {
+        border-bottom: 1px solid #606060;
+        width: 280px;
+    }
+
+    .m_new input {
+        font-size: 12px;
+    }
+
+    .m_new input:focus {
+        outline: none;
+    }
+
+    .m_confirm {
+        border-bottom: 1px solid #606060;
+        width: 280px;
+    }
+
+    .m_confirm input {
+        font-size: 12px;
+        background-color: transparent;
+        width: 100%;
+    }
+
+    .m_confirm input:focus {
+        outline: none;
+    }
+
+    .m_btn_cancel_change {
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .m_btn_cancel_change {
+        display: flex;
+        margin-top: 30px;
+        justify-content: center;
+    }
+
+    /* LOGOUT POPUP */
+    .m_btn_yes {
+        margin-left: 15px;
+    }
+    .m_logout {
+        margin: 15px 0px 10px 0px;
+    }
+    .m_btn_cancel_yes {
+        margin: 25px 0px 20px 0px;
+    }
+    .m_model_con {
+        width:90% !important;
+    }
+    .m_model_logout {
+        position: fixed;
+        top: 0;
+        margin-left: -178px !important;
+        z-index: 1052;
+        display: none;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        outline: 0;
+    }
+
+    /* DELETE POPUP */
+    .m_delete_pop{
+        height: 250px !important;
+        padding: 0px !important;
+    }
+    .m_delete_width
+    {
+        width: 300px !important;
+    }
+    .m_delete{
+        font-size: 30px !important;
+        margin-bottom: 10px !important;
+    }
+    .m_sure_delete{
+        font-size: 20px !important;
+        margin-bottom: 30px !important;
+    }
+    .b_button {
+        width: 38%;
+    }
+    #deleteModal{
+        position: fixed;
+        top: 0;
+        margin-left: -70px !important;
+        z-index: 1050;
+        display: none;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        outline: 0;
+    }
+    /* 425start model */
+    #deleteModal .modal-dialog {
+        margin-left: 34% !important;
+    }
+    .m_table {
+        margin-top: 20px;
+        margin-left: 30px;
+    }
+    .m_chef_list {
+        padding-left: 30px;
+    }
+}
+
+@media (max-width: 375px) {
+    .m_btn_clear_save {
+        margin-top: 30px;
+        margin-bottom: 10px;
+    }
+    .m_table{
+        margin-right: 30px;
+    }
+    .m_table_heading{
+        overflow: hidden;
+    }
+    .m_search input{
+ 
+        width: 120px !important;
+    }
+    /* CHANGE PASSWORD POPUP */
+    #changepassModal {
+        position: fixed;
+        top: 0;
+        margin-left: -145px !important;
+        z-index: 1052;
+        display: none;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        outline: 0;
+    }
+    /* LOGOUT POPUP */
+    .m_btn_yes {
+        margin-left: 15px;
+    }
+    .m_logout {
+        margin: 15px 0px 10px 0px;
+    }
+    .m_btn_cancel_yes {
+        margin: 25px 0px 20px 0px;
+    }
+    .m_model_con {
+        width:90% !important;
+    }
+    .m_model_logout {
+        position: fixed;
+        top: 0;
+        left: 195px !important;
+        z-index: 1052;
+        display: none;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        outline: 0;
+    }
+    .m_btn_cancel_yes {
+        margin: 30px 0px 30px 0px;
+    }
+    .m_btn_cancel_logout button {
+        padding: 5px 20px;
+    }
+    .m_btn_yes button {
+        padding: 5px 20px;
+    }
+    /* DELETE POPUP */
+    /* 375start model */
+    #deleteModal{
+        position: fixed;
+        top: 0;
+        margin-left: -65px !important;
+        z-index: 1050;
+        display: none;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        outline: 0;
+    }
+}
+
+@media (max-width: 320px) {
+    .m_table{
+        margin-right: 30px;
+    }
+    .m_table_heading{
+        overflow: hidden;
+    }
+    .m_search input{
+ 
+        width: 130px !important;
+    }
+    /* CHANGE PASSWORD POPUP */
+    .m_new {
+        width: 200px;
+    }
+    .m_confirm{
+        width: 200px;
+    }
+    .m_btn_cancel button {
+        padding: 5px 20px;
+    }
+    .m_btn_change button{
+        padding: 5px 20px;
+    }
+    .m_change_pass {
+        width: 290px !important;
+    }
+    /* LOGOUT POPUP */
+    .m_btn_yes {
+        margin-left: 15px;
+    }
+    .m_logout {
+        margin: 15px 0px 10px 0px;
+    }
+    .m_btn_cancel_yes {
+        margin: 25px 0px 20px 0px;
+    }
+    .m_model_con {
+        width:90% !important;
+    }
+    #logoutModal {
+        position: fixed;
+        top: 0;
+        margin-left: -180px !important;
+        z-index: 1050;
+        display: none;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        outline: 0;
+    }
+    /* DELETE POPUP */
+
+    /* 320start model */
+    #deleteModal{
+        position: fixed;
+        top: 0;
+        margin-left: -53px !important;
+        z-index: 1050;
+        display: none;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        outline: 0;
+    }
+}
+
+
+
+
+/* CHANGES */
+@media (max-width: 1035px) {
+    .m_table tr td{
+        text-wrap: nowrap;
+    }
+}
+@media (max-width: 961px) {
+    .m_table tr td{
+        text-wrap: nowrap;
+    }
+}
+@media (max-width: 800px) {
+    .m_search input{
+ 
+        width: 200px;
+        margin-right: 20px;
+    }
+}
+@media (max-width: 504px) {
+    .m_chef_list {
+        display: block;
+    }
+}
