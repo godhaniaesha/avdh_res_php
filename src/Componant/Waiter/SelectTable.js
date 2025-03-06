@@ -17,25 +17,30 @@ function SelectTable(props) {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [changepasswordmodal, setChangepasswordmodal] = useState(false);
-
+    let token
     useEffect(() => {
+    token = localStorage.getItem("authToken");
         fetchTablesFromApi();
     }, []);
 
     const fetchTablesFromApi = async () => {
-        try {
-            const response = await fetch('http://localhost:8000/api/allTables');
+        // try {
+            const response = await axios.post("http://localhost/avadh_api/super_admin/tables/view_tables.php", {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              });
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch tables');
-            }
+            // if (!response.ok) {
+            //     throw new Error('Failed to fetch tables');
+            // }
+            console.log('tables', response.data.tables );
+            // const data = await response.json();
+            // console.log("Fetched data:", data);
 
-            const data = await response.json();
-            console.log("Fetched data:", data);
-
-            if (data && Array.isArray(data.tables)) {
-                const tableElements = data.tables.map(table => ({
-                    id: table._id,
+            // if (data && Array.isArray(data.tables)) {
+                const tableElements = response.data.tables.map(table => ({
+                    id: table.id,
                     number: table.tableName,
                     selected: false,
                     count: table.tableGuest,
@@ -44,25 +49,26 @@ function SelectTable(props) {
                 }));
 
                 setTables(tableElements);
-            } else {
-                console.error("Error: API response is not in the expected format", data);
-                alert('Unexpected data format received from the API.');
-            }
-        } catch (error) {
-            console.error('Error fetching tables:', error);
-            alert('Failed to load table data. Please try again later.');
-        }
+            // } else {
+            //     console.error("Error: API response is not in the expected format", data);
+            //     alert('Unexpected data format received from the API.');
+            // }
+        // } catch (error) {
+        //     console.error('Error fetching tables:', error);
+        //     alert('Failed to load table data. Please try again later.');
+        // }
     };
 
     const handleTableClick = (tableId) => {
+        // alert('');
         const newTable = tables.find(table => table.id === tableId);
-        if (newTable.status) {
+        if (newTable.status === false) {
             return; // Do nothing if the table status is true (disabled)
         }
         if (chosenTable === newTable.number) {
             return; // If the table is already selected, do nothing
         }
-
+        console.log('SSS',newTable);
         const previousChosenTable = tables.find(table => table.selected);
         if (previousChosenTable) {
             previousChosenTable.selected = false;
@@ -82,22 +88,25 @@ function SelectTable(props) {
         }
 
         const selectedTable = tables.find(table => table.number === chosenTable);
-        const data = {
-            id: selectedTable.id,
-            tableName: selectedTable.number,
-            tableGuest: selectedTable.count,
-            status: true,
-        };
-
+        console.log(selectedTable);
+        var name = selectedTable.number.split(" ");
+        console.log(name[1]);
+        const formData = new FormData();
+        formData.append("table_id", selectedTable.id);
+        formData.append("tableName", parseInt(name[1]));
+        formData.append("tableGuest", selectedTable.count);
+        formData.append("status", true);
+        // console.log('datattta',data);
         try {
-            await axios.put(`http://localhost:8000/api/updateTable/${selectedTable.id}`, data, {
+            await axios.post(`http://localhost/avadh_api/super_admin/tables/update_tables.php`, formData, {
                 headers: {
-                    'Content-Type': 'application/json',
-                },
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data",
+                  },
             });
 
-            localStorage.setItem('bookTable', JSON.stringify(data));
-            localStorage.setItem("tableId", data.id);
+            // localStorage.setItem('bookTable', JSON.stringify(data));
+            // localStorage.setItem("tableId", data.id);
             navigate('/waiter_menu');
         } catch (error) {
             console.error('Error:', error);
@@ -187,7 +196,7 @@ function SelectTable(props) {
                 console.error("Error changing password:", error);
             });
     };
-
+    let count =0;
     return (
         <section id={styles.a_selectTable}>
             <WaiterNavbar toggleDrawer={toggleDrawer} showSearch={false} toggleNotifications={toggleNotifications} />
@@ -207,16 +216,17 @@ function SelectTable(props) {
                                 onClick={() => handleTableClick(table.id)}
                                 style={{
                                     fontSize: '20px',
-                                    backgroundColor: table.status ? '#4B6C52' : '', // Change background color if status is true
-                                    pointerEvents: table.status ? 'none' : 'auto' // Disable click if status is true
+                                    backgroundColor: table.status == 'true' ? '#4B6C52' : '', // Change background color if status is true
+                                    pointerEvents: table.status == 'true' ? 'none' : 'auto' // Disable click if status is true
                                 }}
                             >
                                 {/* Table number display */}
-                                <p className={`${styles.a_tNo} position-absolute top-50%`}>{table.number}</p>
+                                <p className={`${styles.a_tNo} position-absolute top-50% text-transfrom`}>{table.tableName}</p>
                                 <img src={require('../../Image/table-big.png')} alt="Table" />
 
                                 {/* Guest Count Control */}
-                                <div className={styles.a_counter}>
+                    
+                                <div className={`${styles.a_counter}`} >
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
@@ -231,7 +241,7 @@ function SelectTable(props) {
                                             e.stopPropagation();
                                             handleGuestCountChange(table.id, true);
                                         }}
-                                        disabled={table.guestCount >= table.count}
+                                        disabled={table.tableGuest>= table.count}
                                     >
                                         +
                                     </button>
@@ -242,6 +252,7 @@ function SelectTable(props) {
 
                     {/* Continue Button Section */}
                     <div className={styles.a_continue}>
+                        {console.log('tabllllll',chosenTable)}
                         <div className={`${styles.a_tbl_gst} d-flex align-items-center justify-content-between`}>
                             <h5>
                                 <i className="fa-solid fa-bell-concierge mr-2 p-2"></i>TABLE :

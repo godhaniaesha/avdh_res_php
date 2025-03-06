@@ -1,9 +1,50 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../../css/WaiterDashboaed.module.css";
+import axios from "axios";
 
 const WaiterNavbar = ({ toggleDrawer, toggleNotifications, waiterName, showSearch, setSearchQuery }) => {
-  const loggedInUserName = localStorage.getItem("firstName");
+  const [loggedInUserName,setloggedInUserName] = useState('');
   console.log("loggedInUserId", loggedInUserName);
+  var token ;
+  useEffect(() => {
+    // const loggedInUser = localStorage.getItem("userId");
+    token = localStorage.getItem("authToken");
+    // axios.post('')
+    // const response = axios.post("http://localhost/avadh_api/chef/category/view_category.php", {
+    //   headers: {
+    //     Authorization: `Bearer ${token}`,
+    //   },
+    // });
+    // console.log('profile',response);
+          // setWaiterName(matchingWaiter.firstName);
+ 
+      getUser();
+    // console.log(token1);
+    // setToken(token1);
+  }, []);
+const getUser = async ()=>{
+  const token = localStorage.getItem('authToken');
+  console.log("Token:", token);
+  
+  // const response = await axios.post("http://localhost/avadh_api/waiter/profile/change_profile.php",{},{
+  //   // headers: {
+  //   //   Authorization: `Bearer ${token}`,
+  //   //   "Content-Type": "application/json",
+  //   // },
+  // });
+  const response = await axios.post(
+    "http://localhost/avadh_api/waiter/profile/change_profile.php",
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data", // Important for file uploads
+      },
+    }
+  );
+  console.log("profile", response.data.user.firstName);
+  setloggedInUserName(response.data.user.firstName)
+}
 
   return (
     <>

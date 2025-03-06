@@ -30,8 +30,11 @@ function WaiterMenu() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [changepasswordmodal, setChangepasswordmodal] = useState(false);
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
+  let token;
 
   useEffect(() => {
+    token = localStorage.getItem("authToken");
+
     fetchCategories();
     fetchDishes();
 
@@ -46,6 +49,7 @@ function WaiterMenu() {
   }, []);
 
   useEffect(() => {
+    const $ = window.$;
     if (categories.length > 0) {
       $(".a_categorySlider").owlCarousel({
         loop: false,
@@ -85,15 +89,20 @@ function WaiterMenu() {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/allCategory");
-      if (!response.ok) throw new Error("Failed to fetch categories");
-      const data = await response.json();
-      if (Array.isArray(data.category)) {
-        setCategories(data.category);
-      } else {
-        console.error("Fetched data is not an array:", data.category);
-        setCategories([]);
-      }
+      const response = await axios.post("http://localhost/avadh_api/chef/category/view_category.php", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      // if (!response.ok) throw new Error("Failed to fetch categories");
+      // const data = await response.json();
+      // if (Array.isArray(data.category)) {
+        setCategories(response.data.categories);
+      // } else {
+      //   console.error("Fetched data is not an array:", data.category);
+      //   setCategories([]);
+      // }
+      fetchDishes()
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
@@ -101,32 +110,48 @@ function WaiterMenu() {
 
   const fetchDishes = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/allDish");
-      if (!response.ok) throw new Error("Failed to fetch dishes");
-      const data = await response.json();
-      console.log("Fetched dishes data:", data);
-      if (Array.isArray(data.dish)) {
-        setDishes(data.dish);
-      } else {
-        console.error("Fetched dishes data is not an array:", data.dish);
-        setDishes([]);
-      }
+      const response = await axios.post("http://localhost/avadh_api/chef/dish/view_dish.php", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      // if (!response.ok) throw new Error("Failed to fetch dishes");
+      // const data = await response.json();
+      // console.log("Fetched dishes data:", data);
+      // if (Array.isArray(data.dish)) {
+        // console.log("Dishes fetched",response.data.data)
+
+      
+
+        setDishes(response?.data?.data);
+      // } else {
+        // console.error("Fetched dishes data is not an array:", data.dish);
+        // setDishes([]);
+      // }
     } catch (error) {
       console.error("Error fetching dishes:", error);
     }
   };
 
+
   const fetchDishesByCategory = async (categoryId) => {
+    token = localStorage.getItem("authToken");
     try {
-      const response = await fetch(`http://localhost:8000/api/getDishByCategory/${categoryId}`);
-      if (!response.ok) throw new Error("Failed to fetch dishes by category");
-      const data = await response.json();
-      if (Array.isArray(data.dish)) {
-        setDishes(data.dish);
-      } else {
-        console.error("Fetched dishes data is not an array:", data.dish);
-        setDishes([]);
-      }
+      const formData = new FormData();
+      formData.append("cat_id", categoryId);
+      const response = await axios.post(
+        `http://localhost/avadh_api/waiter/cat_dish_fetch/cat_dish.php`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+  
+      console.log("Dishes fetched", response);
+        setDishes(response?.data?.data);
     } catch (error) {
       console.error("Error fetching dishes by category:", error);
     }
@@ -394,12 +419,12 @@ function WaiterMenu() {
     // Redirect to login page
     navigate("/login", { replace: true });
 
-    window.history.pushState(null, '', window.location.href);
+    // window.history.pushState(null, '', window.location.href);
   };
 
   const debounce = (func, delay) => {
     let timeoutId;
-    console.log(func)
+    // console.log(func)
     return (...args) => {
       if (timeoutId) {
         clearTimeout(timeoutId);
@@ -521,13 +546,16 @@ function WaiterMenu() {
               <h3 className={styles.a_title}>Category</h3>
             </div>
             <div className={`owl-carousel owl-theme d-block a_categorySlider ${styles.a_categorySlider1}`}>
-              {uniqueCategories.map((category) => (
-                <div className={`item ${styles.item}`} key={category._id} onClick={() => handleCategoryClick(category._id)}>
-                  <div className={styles.a_slide}>
+              {categories.map((category) => (
+                <div className={`item ${styles.item}`} key={category.id} onClick={() => handleCategoryClick(category.id)}>
+                  <div className={` ${styles.a_slide}`}  style={selectedCategoryId == category.id? {backgroundColor:'#4B6C52', color:'white'}: {}}>
                     <div className={styles.a_img}>
-                      <img src={`http://localhost:8000/${category.categoryImage}`} alt={category.categoryName} />
+                    <img
+                        src={category?.categoryImage ? `http://localhost/avadh_api/images/${category.categoryImage}` : ''}
+                        alt={category.categoryName}
+                      />
                     </div>
-                    <p className={styles.catName}>{category.categoryName}</p>
+                    <p className={styles.catName} style={selectedCategoryId == category.id? { color:'white'}: {}}>{category.categoryName}</p>
                   </div>
                 </div>
               ))}
@@ -539,13 +567,13 @@ function WaiterMenu() {
               <h3 className={styles.a_title}>All Dishes</h3>
             </div>
             <div className={`${styles.a_listsubCategory} row row-cols`} id="cat">
-              {filteredDishes.map((dish) => (
+              {dishes.map((dish) => (
                 <div className={styles.a_card_category} key={dish.id}>
                   <div className={`${styles.a_img} d-flex justify-content-center`}>
-                    <img
-                      src={`http://localhost:8000/${dish.dishImage}`}
-                      alt={dish.dishName}
-                    />
+                  <img
+                        src={dish?.dishImage ? `http://localhost/avadh_api/images/${dish?.dishImage}` : ''}
+                        alt={dish?.dishName}
+                      />
                   </div>
                   <div className={`${styles.a_rating} d-flex g-2`}>
                     {[...Array(5)].map((_, index) => (
@@ -558,7 +586,7 @@ function WaiterMenu() {
                     <button
                       type="button"
                       className="btn"
-                      onClick={() => toggleAddVariant(dish._id)}
+                      onClick={() => toggleAddVariant(dish.id)}
                     >
                       Add
                     </button>
