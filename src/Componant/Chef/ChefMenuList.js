@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+
 import styles from "../../css/ChefMenuList.module.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

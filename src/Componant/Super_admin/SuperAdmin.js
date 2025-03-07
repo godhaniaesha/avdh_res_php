@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+
 import { Link, useNavigate } from "react-router-dom";
 import Chart from "chart.js/auto";
 import styles from '../../css/SuperAdmin.module.css'; // Ensure you have a corresponding CSS file
@@ -8,7 +10,6 @@ import ChangePasswordModal from './ChangePasswordModal'; // Import the modal com
 import Button from 'react-bootstrap/Button';
 import style from "../../css/BillPayment.module.css";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 
 const SuperAdmin = (props) => {

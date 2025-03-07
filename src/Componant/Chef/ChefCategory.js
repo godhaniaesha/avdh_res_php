@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+
 import ChefNavbar from './ChefNavbar';
 import ChefSidePanel from './ChefSidePanel';
 import 'bootstrap/dist/css/bootstrap.min.css';

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+
 import SuperNavbar from './SuperNavbar';
 import SuperSidePanel from './SuperSidePanel';
 import styles from "../../css/AddTable.module.css"; // Corrected import for CSS

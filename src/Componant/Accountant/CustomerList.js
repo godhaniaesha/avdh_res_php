@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
+import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+
 import styles from "../../css/CustomerList.module.css"; // Import CSS styles
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
-import "bootstrap/dist/js/bootstrap.bundle.min.js"; // Import Bootstrap JS for modals
 import Navbar from "./Navbar"; // Import Navbar component
 import SidePanel from "./SidePanel"; // Import SidePanel component
 import styl from "../../css/BillPayment.module.css";

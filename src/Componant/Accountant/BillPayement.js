@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from '../../css/BillPayment.module.css'; // Import the CSS module
 import axios from 'axios'; // Import axios

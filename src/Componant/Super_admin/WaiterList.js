@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+
 import { Link, useNavigate } from "react-router-dom";
 import SuperNavbar from "./SuperNavbar";
 import SuperSidePanel from "./SuperSidePanel";

@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEraser, faFloppyDisk } from "@fortawesome/free-solid-svg-icons";

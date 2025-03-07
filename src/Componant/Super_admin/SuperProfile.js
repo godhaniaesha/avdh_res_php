@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+
 import SuperSidePanel from './SuperSidePanel';
 import SuperNavbar from './SuperNavbar';
 import styles from '../../css/SuperProfile.module.css';

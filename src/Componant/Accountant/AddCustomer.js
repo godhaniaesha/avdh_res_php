@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+
 import styles from "../../css/AddCustomer.module.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Navbar from "./Navbar";

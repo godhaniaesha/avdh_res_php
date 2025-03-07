@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+
 import SuperNavbar from './SuperNavbar';
 import SuperSidePanel from './SuperSidePanel';
 import styles from '../../css/AddWaiter.module.css';

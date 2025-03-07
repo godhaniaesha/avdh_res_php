@@ -1,4 +1,6 @@
 import React, { useEffect, useState,useRef } from "react";
+import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import WaiterNavbar from "./WaiterNavbar";
 import WaiterSidePanel from "./WaiterSidePanel";

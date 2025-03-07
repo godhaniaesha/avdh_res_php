@@ -1,6 +1,5 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import styles from "../../css/SuperAdmin.module.css";
 
 

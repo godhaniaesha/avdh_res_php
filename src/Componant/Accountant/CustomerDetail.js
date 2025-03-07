@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+
 import { Nav } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from '../../css/CustomerDetail.module.css';

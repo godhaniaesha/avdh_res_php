@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css"; // Ensure Bootstrap CSS is imported
+import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
 // import '../../Css/account_profile.css'; // Import your CSS file
 // import '../../JS/account_profile'
 import styl from "../../css/BillPayment.module.css"; 

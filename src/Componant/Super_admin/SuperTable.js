@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+
 import styles from '../../css/SelecttableAdmin.module.css';
 import SuperNavbar from "./SuperNavbar";
 import SuperSidePanel from "./SuperSidePanel";
