@@ -191,7 +191,7 @@ function AddTable(props) {
         <>
             <section id={styles.a_selectTable} showSearch={false}>
                 <SuperNavbar toggleDrawer={toggleDrawer} />
-                <SuperSidePanel isOpen={isSidebarOpen} isChef={true} />
+                <SuperSidePanel isOpen={isSidebarOpen} isTable={true} />
 
                 <div id={styles['a_main-content']}>
                     <div className={`container-fluid ${styles.a_main}`}>

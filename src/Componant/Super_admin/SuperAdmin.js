@@ -11,7 +11,6 @@ import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 
-
 const SuperAdmin = (props) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
@@ -23,9 +22,9 @@ const SuperAdmin = (props) => {
 
   // Define data first
   const data = [
-    { name: "Chefs", value: 10, color: "#64B5F6" }, // Blue
-    { name: "Waiter", value: 20, color: "#A5D6A7" }, // Green
-    { name: "Accountant", value: 30, color: "#F48FB1" }, // Pink
+    { name: "Chefs", value: 10, color: "#62b2fc" }, // Blue
+    { name: "Waiter", value: 20, color: "#9bdfc4" }, // Green
+    { name: "Accountant", value: 30, color: "#f99bab" }, // Pink
   ];
 
   // Then calculate total using data
@@ -119,111 +118,6 @@ const SuperAdmin = (props) => {
     window.history.pushState(null, '', window.location.href);
   };
 
-
-  // const handlePasswordChange = () => {
-  //   // Check if new password and confirm password match
-  //   if (newPassword !== confirmPassword) {
-  //     alert("Passwords do not match.");
-  //     return;
-  //   }
-
-  //   // Make sure password is not empty
-  //   if (!newPassword || !confirmPassword) {
-  //     alert("Please enter a new password.");
-  //     return;
-  //   }
-
-  //   const userId = localStorage.getItem("userId");
-
-  //   if (!userId) {
-  //     console.error("User ID is not available.");
-  //     return;
-  //   }
-
-  //   const passwordData = {
-  //     newPassword: newPassword, // Send new password
-  //     confirmPassword: confirmPassword // Send confirm password
-  //   };
-
-  //   // Send the PUT request to update the password
-  //   fetch(`http://localhost:8000/api/updateuser/${userId}`, {
-  //     method: "PUT",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(passwordData), // Send password data
-  //   })
-  //     .then(response => {
-  //       if (!response.ok) throw new Error("Network response was not ok");
-  //       return response.json();
-  //     })
-  //     .then(data => {
-  //       alert("Password changed successfully!");
-  //       const changePasswordModal = document.getElementById('changepassModal');
-  //       const modal = new window.bootstrap.Modal(changePasswordModal);
-  //       modal.hide();
-  //     })
-  //     .catch(error => {
-  //       alert("Failed to change password. Please try again.");
-  //       console.error("Error changing password:", error);
-  //     });
-  // };
-
-  // const handlePasswordChange = () => {
-  //   // Validate password match
-  //   if (newPassword !== confirmPassword) {
-  //     alert("Passwords do not match.");
-  //     return;
-  //   }
-
-  //   // Validate password not empty
-  //   if (!newPassword || !confirmPassword) {
-  //     alert("Please enter a new password.");
-  //     return;
-  //   }
-
-  //   // Get user ID from local storage
-  //   const userId = localStorage.getItem("userId");
-  //   if (!userId) {
-  //     console.error("User ID is not available.");
-  //     return;
-  //   }
-
-  //   // Prepare password data for API
-  //   const passwordData = {
-  //     newPassword: newPassword,
-  //     confirmPassword: confirmPassword
-  //   };
-
-  //   // Send PUT request to update password
-  //   fetch(`http://localhost:8000/api/updateuser/${userId}`, {
-  //     method: "PUT",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(passwordData),
-  //   })
-  //     .then(response => {
-  //       if (!response.ok) throw new Error("Network response was not ok");
-  //       return response.json();
-  //     })
-  //     .then(data => {
-  //       // Success handling
-  //       alert("Password changed successfully!");
-
-  //       // Reset password fields
-  //       setNewPassword('');
-  //       setConfirmPassword('');
-
-  //       // Close the modal by calling onHide prop
-  //       props.onHide();
-  //     })
-  //     .catch(error => {
-  //       // Error handling
-  //       alert("Failed to change password. Please try again.");
-  //       console.error("Error changing password:", error);
-  //     });
-  // };
 
   // Function to open the Change Password Modal
   const openChangePasswordModal = () => {
@@ -378,7 +272,7 @@ const SuperAdmin = (props) => {
               <div className="row justify-content-center">
                 <div className="col-md-12 p-0" id="chartContainer">
                   <div className="canvas_height" style={{ height: "50vh", maxHeight: "50vh", width: "100%" }}>
-                    <canvas id="myLineChart" ></canvas>""
+                    <canvas id="myLineChart" ></canvas>
                   </div>
                 </div>
               </div>
@@ -449,97 +343,11 @@ const SuperAdmin = (props) => {
         ))}
       </div>
     </div>
-            {/* <div style={{ display: "flex", alignItems: "center" }}>
-              <PieChart width={300} height={300}>
-                <Pie
-                  data={data}
-                  cx={150}
-                  cy={150}
-                  innerRadius={70}
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {data.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-              <div style={{ marginLeft: "20px" }}>
-                {data.map((entry, index) => (
-                  <div key={index} style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}>
-                    <div
-                      style={{
-                        width: "10px",
-                        height: "10px",
-                        backgroundColor: entry.color,
-                        borderRadius: "50%",
-                        marginRight: "5px",
-                      }}
-                    ></div>
-                    <span>{entry.name}</span>
-                    <span style={{ marginLeft: "10px", fontWeight: "bold" }}>{entry.value}</span>
-                  </div>
-                ))}
-                <h2 style={{ marginTop: "10px" }}>{total}</h2> 
-              </div>
-            </div> */}
-            {/* <div>
-              <div className={styles['b_Dine-in']}>
-                <div className={styles.b_dine_in1}>
-                  <img
-                    className={styles.b_img}
-                    src={require("../../Image/Icon_Order.png")}
-                  />
-                  <span>Dine-in</span>
-                </div>
-                <div className={styles['b_skill-bar']}>
-                  <div className={styles['b_skill-level']} style={{ width: "85%" }}></div>
-                </div>
-                <span className={styles['skill-value']}>85%</span>
-              </div>
-            </div>
-            <div>
-              <div className={styles['b_Dine-in']}>
-                <div className={styles.b_dine_in1}>
-                  <img
-                    className={styles.b_img}
-                    src={require("../../Image/Icon_Order (1).png")}
-                  />
-                  <span>Takeaway</span>
-                </div>
-                <div className={styles['b_skill-bar']}>
-                  <div className={styles['b_skill-level']} style={{ width: "40%" }}></div>
-                </div>
-                <span className={styles['skill-value']}>40%</span>
-              </div>
-            </div>
-            <div>
-              <div className={styles['b_Dine-in']}>
-                <div className={styles.b_dine_in1}>
-                  <img
-                    className={styles.b_img}
-                    src={require("../../Image/Icon_Order (2).png")}
-                  />
-                  <span className={styles['O_mr']}>Online</span>
-                </div>
-                <div className={styles['b_skill-bar']}>
-                  <div className={styles['b_skill-level']} style={{ width: "30%" }}></div>
-                </div>
-                <span className={styles['skill-value']}>30%</span>
-              </div>
-            </div> */}
+           
           </div>
-          {/* b_order_form orderfrom_425 this class code added here */}
       
         </div>
 
-        {/* Button to open Change Password Modal */}
-        {/* <Button variant="primary" onClick={openChangePasswordModal}>
-          Change Password
-        </Button> */}
-        {/* Change Password Modal */}
         <div
           className={`modal fade ${style.m_model_ChangePassword}`}
           id="changepassModal"  // Ensure this ID matches

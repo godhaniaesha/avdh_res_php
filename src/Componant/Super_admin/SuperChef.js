@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 import SuperNavbar from "./SuperNavbar";
-import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
+// import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+
 import SuperSidePanel from "./SuperSidePanel";
 import styles from "../../css/SuperChef.module.css";
 import style from "../../css/BillPayment.module.css";
+import axios from "axios";
 
 import { Link, useNavigate } from "react-router-dom";
 
@@ -36,23 +40,28 @@ const SuperChef = () => {
   useEffect(() => {
     const fetchChefs = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/allUsers"); // Fetch all users
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json(); // Parse the JSON response
-        if (Array.isArray(data.users)) {
-          const chefsData = data.users.filter(chef => chef.role === "Chef");
-          setChefs(chefsData); // Set the filtered chefs data
-        } else {
-          console.error("Fetched users data is not an array:", data.users);
-        }
+        const token = localStorage.getItem("authToken"); 
+        const response = await axios.post(
+          "http://localhost/avadh_api/super_admin/chef/view_chef.php",
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        console.log("API Response:", response.data); 
+
+        
+          setChefs(response.data.chefs); // Store the filtered chefs
+       
       } catch (error) {
-        console.error("Error fetching chefs:", error); // Handle any errors
+        console.error("Error fetching chefs:", error);
       }
     };
 
-    fetchChefs(); // Call the function to fetch chefs
+    fetchChefs();
   }, []);
 
   // Function to toggle the side drawer
@@ -147,7 +156,7 @@ const SuperChef = () => {
             if (modal) {
                 modal.hide();
             } else {
-                const newModal = new bootstrap.Modal(changePasswordModal);
+                const newModal = new window.bootstrap.Modal(changePasswordModal);
                 newModal.hide();
             }
             setNewPassword("");
@@ -222,15 +231,10 @@ const SuperChef = () => {
                   .map((chef) => (
                     <tr key={chef._id} align="center">
                       <td>
-                        <img
-                          src={`http://localhost:8000/${chef.image}`}
-                          style={{ width: "50px" }}
-                          alt="chef"
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = 'path/to/default/image.jpg'; // Fallback image
-                          }}
-                        />
+                      <img style={{ "width" : "50px"}}
+                        src={chef?.chefImage ? `http://localhost/avadh_api/images/${chef.chefImage}` : ''}
+                        alt={chef.chefImage}
+                      />
                       </td>
                       <td>
                         {chef.firstName} {chef.lastName}

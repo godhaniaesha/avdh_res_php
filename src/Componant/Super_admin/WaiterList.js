@@ -4,6 +4,9 @@ import SuperNavbar from "./SuperNavbar";
 import SuperSidePanel from "./SuperSidePanel";
 import styles from "../../css/WaiterList.module.css";
 import style from "../../css/BillPayment.module.css";
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import axios from "axios";
 
 
 function WaiterList(props) {
@@ -12,38 +15,37 @@ function WaiterList(props) {
   const [waiterIdToDelete, setWaiterIdToDelete] = useState(null); // ID of the waiter to delete
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [changepasswordmodal, setChangepasswordmodal] = useState(false)
-    const [searchQuery, setSearchQuery] = useState(""); // State to hold the search query
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [changepasswordmodal, setChangepasswordmodal] = useState(false)
+  const [searchQuery, setSearchQuery] = useState(""); // State to hold the search query
 
   useEffect(() => {
-    const fetchWaiters = async () => {
+    const fetchWaiter = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/allUsers"); // Fetch all users
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json(); // Parse the JSON response
+        const token = localStorage.getItem("authToken");
+        const response = await axios.post(
+          "http://localhost/avadh_api/super_admin/waiter/view_waiter.php",
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-        // Log the fetched data to understand its structure
-        console.log("Fetched data:", data);
+        console.log("API Response:", response.data.data);
 
-        // Check if 'users' exists and is an array
-        if (Array.isArray(data.users)) {
-          // Filter data to only include users with the role of "Waiter"
-          const waitersData = data.users.filter(waiter => waiter.role === "Waiter");
-          setWaiters(waitersData); // Set the filtered waiters data
-        } else {
-          console.error("Fetched users data is not an array:", data.users);
-        }
+
+        setWaiters(response.data.data); // Store the filtered waiters
+
       } catch (error) {
-        console.error("Error fetching waiters:", error); // Handle any errors
+        console.error("Error fetching waiters:", error);
       }
     };
 
-    fetchWaiters(); // Call the function to fetch waiters
+    fetchWaiter();
   }, []);
 
   // Function to delete a waiter by ID
@@ -85,11 +87,11 @@ function WaiterList(props) {
   const handleLogout = () => {
     // Check if Bootstrap's Modal is available
     if (window.bootstrap && window.bootstrap.Modal) {
-        const logoutModal = document.getElementById('logoutModal');
-        const modal = new window.bootstrap.Modal(logoutModal);
-        modal.hide(); // Close the modal
+      const logoutModal = document.getElementById('logoutModal');
+      const modal = new window.bootstrap.Modal(logoutModal);
+      modal.hide(); // Close the modal
     } else {
-        console.error("Bootstrap Modal is not available");
+      console.error("Bootstrap Modal is not available");
     }
 
     // Remove the authToken from localStorage
@@ -100,70 +102,70 @@ function WaiterList(props) {
     navigate("/login", { replace: true });
 
     window.history.pushState(null, '', window.location.href);
-};
-const handlePasswordChange = () => {
-  // Check if new password and confirm password match
-  if (newPassword !== confirmPassword) {
+  };
+  const handlePasswordChange = () => {
+    // Check if new password and confirm password match
+    if (newPassword !== confirmPassword) {
       alert("Passwords do not match.");
       return;
-  }
+    }
 
-  // Make sure password is not empty
-  if (!newPassword || !confirmPassword) {
+    // Make sure password is not empty
+    if (!newPassword || !confirmPassword) {
       alert("Please enter a new password.");
       return;
-  }
+    }
 
-  const userId = localStorage.getItem("userId");
+    const userId = localStorage.getItem("userId");
 
-  if (!userId) {
+    if (!userId) {
       console.error("User ID is not available.");
       return;
-  }
+    }
 
-  const passwordData = {
+    const passwordData = {
       newPassword: newPassword, // Send new password
       confirmPassword: confirmPassword // Send confirm password
-  };
+    };
 
-  console.log(passwordData);
+    console.log(passwordData);
 
 
-  // Send the PUT request to update the password
-  fetch(`http://localhost:8000/api/updateuser/${userId}`, {
+    // Send the PUT request to update the password
+    fetch(`http://localhost:8000/api/updateuser/${userId}`, {
       method: "PUT",
       headers: {
-          "Content-Type": "application/json",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(passwordData),
-  })
+    })
       .then(response => {
-          if (!response.ok) throw new Error("Network response was not ok");
-          console.log(response);
-          const changePasswordModal = document.getElementById('changepassModal');
-          console.log(changePasswordModal);
+        if (!response.ok) throw new Error("Network response was not ok");
+        console.log(response);
+        const changePasswordModal = document.getElementById('changepassModal');
+        console.log(changePasswordModal);
 
-          const modal = new window.bootstrap.Modal(changePasswordModal);
-          console.log(modal);
+        const modal = new window.bootstrap.Modal(changePasswordModal);
+        console.log(modal);
 
-          if (modal) {
-              modal.hide();
-          } else {
-              const newModal = new bootstrap.Modal(changePasswordModal);
-              newModal.hide();
-          }
-          setNewPassword("");
-          setConfirmPassword("");
-          return response.json();
+        if (modal) {
+          modal.hide();
+        } else {
+          const newModal = new bootstrap.Modal(changePasswordModal);
+          newModal.hide();
+        }
+        setNewPassword("");
+        setConfirmPassword("");
+        return response.json();
 
       })
       .catch(error => {
-          console.error("Error changing password:", error);
+        console.error("Error changing password:", error);
       });
-};
+  };
   return (
     <div>
-      <SuperNavbar toggleDrawer={toggleDrawer} showSearch={false}/>
+      <SuperNavbar toggleDrawer={toggleDrawer} showSearch={false} />
       <SuperSidePanel isOpen={isSidebarOpen} isWaiter={true} />
 
       <div id={styles["a_main-content"]}>
@@ -215,17 +217,15 @@ const handlePasswordChange = () => {
               <tbody>
                 {waiters.length > 0 ? (
                   waiters
-                    .filter(waiter => 
+                    .filter(waiter =>
                       `${waiter.firstName} ${waiter.lastName}`.toLowerCase().includes(searchQuery.toLowerCase()) // Filter based on search query
                     )
                     .map((waiter) => (
                       <tr key={waiter._id} align="center">
                         <td >
-                          <img
-                            src={`http://localhost:8000/${waiter.image}`}
-                            style={{ width: "50px" }}
-                            alt="waiter"
-                            onError={(e) => { e.target.onerror = null; e.target.src = 'path/to/default/image.jpg'; }} // Fallback on error
+                          <img style={{ "width": "50px" }}
+                            src={waiter?.image ? `http://localhost/avadh_api/images/${waiter.image}` : ''}
+                            alt={waiter.image}
                           />
                         </td>
                         <td className="text-center pb-2 pt-2">
@@ -329,39 +329,39 @@ const handlePasswordChange = () => {
               </div>
             </div>
           )}
- {/* Change Password Modal */}
-<div
-          className={`modal fade ${style.m_model_ChangePassword}`}
-          id="changepassModal"  // Ensure this ID matches
-          tabIndex="-1"
-          aria-labelledby="changepassModalLabel"
-          aria-hidden="true"
-        >
-          <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
-            <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
-              <div className={`modal-body ${style.m_change_pass_text}`}>
-                <span>Change Password</span>
-              </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
-              </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-              </div>
-              <div className={style.m_confirm}>
-                <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-              </div>
-              <div className={style.m_btn_cancel_change}>
-                <div className={style.m_btn_cancel}>
-                  <button data-bs-dismiss="modal">Cancel</button>
+          {/* Change Password Modal */}
+          <div
+            className={`modal fade ${style.m_model_ChangePassword}`}
+            id="changepassModal"  // Ensure this ID matches
+            tabIndex="-1"
+            aria-labelledby="changepassModalLabel"
+            aria-hidden="true"
+          >
+            <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
+              <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
+                <div className={`modal-body ${style.m_change_pass_text}`}>
+                  <span>Change Password</span>
                 </div>
-                <div className={style.m_btn_change}>
-                  <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
+                <div className={style.m_new}>
+                  <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
+                </div>
+                <div className={style.m_new}>
+                  <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+                </div>
+                <div className={style.m_confirm}>
+                  <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                </div>
+                <div className={style.m_btn_cancel_change}>
+                  <div className={style.m_btn_cancel}>
+                    <button data-bs-dismiss="modal">Cancel</button>
+                  </div>
+                  <div className={style.m_btn_change}>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
 
           {/* Logout Modal */}

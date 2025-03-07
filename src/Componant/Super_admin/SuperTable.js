@@ -23,29 +23,37 @@ export default function SuperTable() {
     };
 
     const fetchTables = async () => {
-        const token = localStorage.getItem('authToken'); // Get the token from local storage
         try {
-            const response = await axios.get("http://localhost:8000/api/allTables", {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Accept': 'application/json',
+            const token = localStorage.getItem("authToken");
+            const response = await axios.post(
+                "http://localhost/avadh_api/super_admin/tables/view_tables.php",
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
                 }
-            });
-            if (response.data && Array.isArray(response.data.tables)) {
-                setTables(response.data.tables); // Set the fetched tables in state
+            );
+
+            console.log("API Response:", response.data);
+
+            // Check if response.data.tables exists and is an array
+            if (response.data && response.data.tables && Array.isArray(response.data.tables)) {
+                setTables(response.data.tables);
             } else {
-                console.error("Unexpected response format:", response.data);
-                setTables([]); // Reset to an empty array if the format is unexpected
+                setTables([]); // Set empty array if data is not in expected format
             }
+
         } catch (error) {
-            console.error("Error fetching tables:", error.response ? error.response.data : error.message);
-            setTables([]); // Reset to an empty array on error
+            console.error("Error fetching tables:", error);
+            setTables([]); // Set empty array on error
         }
     };
 
-    useEffect(() => {
-        fetchTables(); // Fetch tables when the component mounts
-    }, []);
+    useEffect(() => {      
+    
+        fetchTables();
+      }, []);
 
     const handleDeleteClick = (id) => {
         setTableIdToDelete(id); // Set the ID of the table to delete
@@ -196,28 +204,43 @@ export default function SuperTable() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {tables.map((table) => (
-                                    <tr key={table._id} align="center">
-                                        <td>{table.tableName}</td>
-                                        <td>{table.tableGuest}</td>
-                                        <td>
-                                            <div className={styles.m_table_icon}>
-                                                <div className={styles.m_pencile}>
-                                                    <Link to={"/edittable"} onClick={() => handleEditClick(table)} className={styles['edit-button']}>
-                                                        <button aria-label="Edit Table">
-                                                            <i className="fa-solid fa-pencil"></i>
+                                {Array.isArray(tables) && tables.length > 0 ? (
+                                    tables.map((table) => (
+                                        <tr key={table.id} align="center">
+                                            <td>{table.tableName}</td>
+                                            <td>{table.tableGuest}</td>
+                                            <td>
+                                                <div className={styles.m_table_icon}>
+                                                    <div className={styles.m_pencile}>
+                                                        <Link 
+                                                            to={"/edittable"} 
+                                                            onClick={() => handleEditClick(table)} 
+                                                            className={styles['edit-button']}
+                                                        >
+                                                            <button aria-label="Edit Table">
+                                                                <i className="fa-solid fa-pencil"></i>
+                                                            </button>
+                                                        </Link>
+                                                    </div>
+                                                    <div className={styles.m_trash}>
+                                                        <button 
+                                                            onClick={() => handleDeleteClick(table.id)} 
+                                                            aria-label="Delete Table"
+                                                        >
+                                                            <i className="fa-regular fa-trash-can"></i>
                                                         </button>
-                                                    </Link>
+                                                    </div>
                                                 </div>
-                                                <div className={styles.m_trash}>
-                                                    <button onClick={() => handleDeleteClick(table._id)} aria-label="Delete Table">
-                                                        <i className="fa-regular fa-trash-can"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="3" align="center">
+                                            No tables available
                                         </td>
                                     </tr>
-                                ))}
+                                )}
                             </tbody>
                         </table>
                     </div>

@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom'; // Add this import
 import { MdDeck } from "react-icons/md";
 
 
-const SuperSidePanel = ({ issuper, isChef, isWaiter, isAccountant, isProfile , isTAble ,isOpen}) => {
+const SuperSidePanel = ({ issuper, isChef, isWaiter, isAccountant, isProfile , isTable ,isOpen}) => {
     return (
         <div  className={`${styles.a_drawer} ${isOpen ? styles.open : ''}`}  id="a_drawer">
             <div className="list-group list-group-flush">
@@ -36,7 +36,7 @@ const SuperSidePanel = ({ issuper, isChef, isWaiter, isAccountant, isProfile , i
                 <i className="fa-solid fa-receipt me-2"></i>
                         Accountant
                 </Link>
-                <Link to="/supertable" className={`list-group-item list-group-item-action ${styles.db_list_group} ${isTAble ? styles.db_activenav : ''}`}>
+                <Link to="/supertable" className={`list-group-item list-group-item-action ${styles.db_list_group} ${isTable ? styles.db_activenav : ''}`}>
                 <MdDeck className="me-2" />
                         Tables
                 </Link>

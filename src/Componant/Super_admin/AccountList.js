@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import SuperNavbar from "./SuperNavbar";
-import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import SuperSidePanel from "./SuperSidePanel";
 import styles from "../../css/AccountList.module.css"; // Adjust the path as necessary
 import style from "../../css/BillPayment.module.css";
+import axios from "axios";
 
 import { Link, useNavigate } from "react-router-dom";
 
@@ -16,9 +17,9 @@ const AccountList = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [changepasswordmodal, setChangepasswordmodal] = useState(false)
-  const [searchQuery, setSearchQuery] = useState(""); // State to hold the search query
+  const [searchQuery, setSearchQuery] = useState(""); 
   const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
 
   // Function to handle delete button click
   const handleDeleteClick = (accountantId) => {
@@ -35,31 +36,30 @@ const AccountList = () => {
 
   // Effect to fetch accountants data from API
   useEffect(() => {
-    const fetchAccountants = async () => {
+    const fetchAccountant = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/allUsers"); // Fetch all users
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json(); // Parse the JSON response
+        const token = localStorage.getItem("authToken");
+        const response = await axios.post(
+          "http://localhost/avadh_api/super_admin/accountant/view_accountant.php",
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-        // Log the fetched data to understand its structure
-        console.log("Fetched data:", data);
+        console.log("API Response:", response.data.data);
 
-        // Check if 'users' exists and is an array
-        if (Array.isArray(data.users)) {
-          // Filter data to only include users with the role of "Accountant"
-          const accountantsData = data.users.filter(accountant => accountant.role === "Accountan"); // Ensure the role matches
-          setAccountants(accountantsData); // Set the filtered accountants data
-        } else {
-          console.error("Fetched users data is not an array:", data.users);
-        }
+
+        setAccountants(response.data.data); // Store the filtered waiters
+
       } catch (error) {
-        console.error("Error fetching accountants:", error); // Handle any errors
+        console.error("Error fetching waiters:", error);
       }
     };
 
-    fetchAccountants(); // Call the function to fetch accountants
+    fetchAccountant();
   }, []);
 
   // Function to delete accountant by ID
@@ -96,7 +96,7 @@ const AccountList = () => {
     if (window.bootstrap && window.bootstrap.Modal) {
       const logoutModal = document.getElementById('logoutModal');
       const modal = new window.bootstrap.Modal(logoutModal);
-      modal.hide(); 
+      modal.hide();
     } else {
       console.error("Bootstrap Modal is not available");
     }
@@ -161,7 +161,7 @@ const AccountList = () => {
           const newModal = new bootstrap.Modal(changePasswordModal);
           newModal.hide();
         }
-        setNewPassword("");
+        setNewPassword(""); 
         setConfirmPassword("");
         return response.json();
 
@@ -172,7 +172,7 @@ const AccountList = () => {
   };
   return (
     <section>
-      <SuperNavbar toggleDrawer={toggleDrawer} showSearch={false}/>
+      <SuperNavbar toggleDrawer={toggleDrawer} showSearch={false} />
       <SuperSidePanel isOpen={isSidebarOpen} isAccountant={true} />
 
       <div id={styles["a_main-content"]}>
@@ -223,17 +223,15 @@ const AccountList = () => {
               </thead>
               <tbody>
                 {accountants
-                  .filter(accountant => 
+                  .filter(accountant =>
                     `${accountant.firstName} ${accountant.lastName}`.toLowerCase().includes(searchQuery.toLowerCase()) // Filter based on search query
                   )
                   .map((accountant) => (
                     <tr key={accountant._id} align="center">
                       <td>
-                        <img
-                          src={`http://localhost:8000/${accountant.image}`} // Adjust the image source as necessary
-                          style={{ width: "50px" }}
-                          alt="accountant"
-                          onError={(e) => { e.target.onerror = null; e.target.src = 'path/to/default/image.jpg'; }} // Fallback on error
+                        <img style={{ "width": "50px" }}
+                          src={accountant?.image ? `http://localhost/avadh_api/images/${accountant.image}` : ''}
+                          alt={accountant.image}
                         />
                       </td>
                       <td>
@@ -262,7 +260,7 @@ const AccountList = () => {
                         </div>
                       </td>
                     </tr>
-                ))}
+                  ))}
               </tbody>
             </table>
           </div>
@@ -368,37 +366,37 @@ const AccountList = () => {
 
       {/* Change Password Modal */}
       <div
-          className={`modal fade ${style.m_model_ChangePassword}`}
-          id="changepassModal"  // Ensure this ID matches
-          tabIndex="-1"
-          aria-labelledby="changepassModalLabel"
-          aria-hidden="true"
-        >
-          <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
-            <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
-              <div className={`modal-body ${style.m_change_pass_text}`}>
-                <span>Change Password</span>
+        className={`modal fade ${style.m_model_ChangePassword}`}
+        id="changepassModal"  // Ensure this ID matches
+        tabIndex="-1"
+        aria-labelledby="changepassModalLabel"
+        aria-hidden="true"
+      >
+        <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
+          <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
+            <div className={`modal-body ${style.m_change_pass_text}`}>
+              <span>Change Password</span>
+            </div>
+            <div className={style.m_new}>
+              <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
+            </div>
+            <div className={style.m_new}>
+              <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+            </div>
+            <div className={style.m_confirm}>
+              <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+            </div>
+            <div className={style.m_btn_cancel_change}>
+              <div className={style.m_btn_cancel}>
+                <button data-bs-dismiss="modal">Cancel</button>
               </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
-              </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-              </div>
-              <div className={style.m_confirm}>
-                <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-              </div>
-              <div className={style.m_btn_cancel_change}>
-                <div className={style.m_btn_cancel}>
-                  <button data-bs-dismiss="modal">Cancel</button>
-                </div>
-                <div className={style.m_btn_change}>
-                  <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
-                </div>
+              <div className={style.m_btn_change}>
+                <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
 
       <div
