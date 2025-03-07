@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+import bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import $ from "jquery";
@@ -8,6 +8,7 @@ import WaiterSidePanel from "./WaiterSidePanel";
 import styles from "../../css/WaiterProfile.module.css";
 import { useNavigate } from "react-router-dom";
 import styl from "../../css/BillPayment.module.css";
+import axios from "axios";
 
 
 const WaiterProfile = () => {
@@ -26,65 +27,115 @@ const WaiterProfile = () => {
   const [imageName, setImageName] = useState(""); // New state for image name
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
   const [changepasswordmodal, setChangepasswordmodal] = useState(false);
+  var token;
   useEffect(() => {
     const storedWaiterData = localStorage.getItem("waiterData");
-    if (storedWaiterData) {
-      setWaiterData(JSON.parse(storedWaiterData)); // Set state with data from local storage
-    } else {
-      const id = localStorage.getItem("loginWaiterId"); // Get waiter ID from local storage
-      fetch("http://localhost:209/Waiters")
-        .then((response) => response.json())
-        .then((data) => {
-          const matchingWaiter = data.find(waiter => waiter.id === id); // Find waiter by ID
-          if (matchingWaiter) {
-            setWaiterData(matchingWaiter); // Populate form with waiter data
-            setWaiterName(matchingWaiter.firstName); // Set waiter name
-            setImageName(matchingWaiter.image); // Set the image name from API
-          }
-        })
-        .catch((error) => console.error("Error:", error));
-    }
+    token = localStorage.getItem('authToken');
+    // if (storedWaiterData) {
+    //   setWaiterData(JSON.parse(storedWaiterData)); // Set state with data from local storage
+    // } else {
+    //   const id = localStorage.getItem("loginWaiterId"); // Get waiter ID from local storage
+    //   const response =  axios.post(
+    //     "http://localhost/avadh_api/waiter/profile/change_profile.php",
+    //     {},
+    //     {
+    //       headers: {
+    //         Authorization: `Bearer ${token}`,
+    //         "Content-Type": "multipart/form-data", // Important for file uploads
+    //       },
+    //     }
+    //   );
+    //   // console.log("profile", response?.data?.user?.firstName);
+    //   // fetch("http://localhost/avadh_api/waiter/profile/change_password.php")
+    //     // .then((response) => response.json())
+    //     // .then((data) => {
+    //       console.log('responsive', response)
+    //       const matchingWaiter = response?.find(waiter => waiter.id === id); // Find waiter by ID
+    //       // if (matchingWaiter) {
+    //         setWaiterData(matchingWaiter); // Populate form with waiter data
+    //         setWaiterName(matchingWaiter.firstName); // Set waiter name
+    //         setImageName(matchingWaiter.image); // Set the image name from API
+    //       // }
+    //     // })
+    // .catch((error) => console.error("Error:", error));
+    getUserData()
+    // }
   }, []);
-
-  const handleProfileSave = (e) => {
+  const getUserData = async () => {
+    const response = await axios.post(
+      "http://localhost/avadh_api/waiter/profile/change_profile.php",
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data", // Important for file uploads
+        },
+      }
+    );
+    console.log("profile", response.data.user);
+    setWaiterData(response.data.user); // Populate form with waiter data
+    setWaiterName(response.data.user.firstName); // Set waiter name
+    setImageName(response.data.user.image);
+  }
+  const handleProfileSave =async (e) => {
     e.preventDefault();
-    const updatedData = {
-      ...waiterData,
-      firstName: document.getElementById("First_Name").value,
-      lastName: document.getElementById("Last_name").value,
-      email: document.getElementById("Email").value,
-      phone: document.getElementById("Phone").value,
-      role: document.getElementById("profession").value,
-      image: imageName || waiterData.image, // Retain existing image if no new image is selected
-    };
+    const formData = new FormData();
+    formData.append("firstName", document.getElementById("First_Name").value);
+    formData.append("lastName", document.getElementById("Last_name").value);
+    formData.append("email", document.getElementById("Email").value);
+    formData.append("phone", document.getElementById("Phone").value);
+    formData.append("image", imageName || waiterData.image); // Retain existing image if no new image is selected
 
     const imageInput = document.getElementById("image");
     if (imageInput.files.length > 0) {
-      updatedData.image = imageInput.files[0].name; // Update image if a new file is selected
+      formData.set("image", imageInput.files[0]); // Replace image if new image selected
     }
 
+    // Append other waiterData properties if needed
+    Object.keys(waiterData).forEach((key) => {
+      if (!formData.has(key) && key !== "image") {
+        formData.append(key, waiterData[key]);
+      }
+    });
+
     // Store waiter data in local storage
-    localStorage.setItem("waiterData", JSON.stringify(updatedData)); // Store updated waiter data
+    localStorage.setItem("waiterData", JSON.stringify(formData)); // Store updated waiter data
 
-    const userId = localStorage.getItem("userId"); // Get user ID from local storage
-
-    fetch(`http://localhost:8000/api/updateuser/${userId}`, { // Use the specified API endpoint
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updatedData),
-    })
-      .then((response) => {
-        if (!response.ok) throw new Error("Network response was not ok");
-        alert("Data updated successfully!");
-      })
-      .catch((error) => {
-        console.error("Error updating data:", error);
-        alert("Failed to update data. Please try again.");
+    // const userId = localStorage.getItem("userId"); // Get user ID from local storage
+    token = localStorage.getItem('authToken');
+    try {
+      await axios.post(`http://localhost/avadh_api/waiter/profile/change_profile.php`, formData, {
+          headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
       });
+
+      // localStorage.setItem('bookTable', JSON.stringify(data));
+      // localStorage.setItem("tableId", data.id);
+      // navigate('/waiter_menu');
+      getUserData()
+  } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred. Please try again.');
+  }
+    // fetch(`http://localhost:8000/api/updateuser/${userId}`, { // Use the specified API endpoint
+    //   method: "PUT",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(updatedData),
+    // })
+    //   .then((response) => {
+    //     if (!response.ok) throw new Error("Network response was not ok");
+    //     alert("Data updated successfully!");
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error updating data:", error);
+    //     alert("Failed to update data. Please try again.");
+    //   });
   };
 
   const handlePasswordChange = () => {
@@ -254,8 +305,9 @@ const WaiterProfile = () => {
                   className={`form-control ${styles.m_add_file}`}
                   name="profession"
                   id="profession"
-                  value={waiterData.profession}
+                  value={waiterData.role}
                   onChange={(e) => setWaiterData({ ...waiterData, profession: e.target.value })}
+                  disabled
                 >
                   <option value="" disabled>Profession</option>
                   <option value="Accountant">Accountant</option>
@@ -291,37 +343,37 @@ const WaiterProfile = () => {
         </form>
         {/* Change Password Modal */}
         <div
-            className={`modal fade ${styl.m_model_ChangePassword}`}
-            id="changepassModal"
-            tabIndex="-1"
-            aria-labelledby="changepassModalLabel"
-            aria-hidden="true"
-          >
-            <div className={`modal-dialog modal-dialog-centered ${styl.m_model}`}>
-              <div className={`modal-content ${styl.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
-                <div className={`modal-body ${styl.m_change_pass_text}`}>
-                  <span>Change Password</span>
+          className={`modal fade ${styl.m_model_ChangePassword}`}
+          id="changepassModal"
+          tabIndex="-1"
+          aria-labelledby="changepassModalLabel"
+          aria-hidden="true"
+        >
+          <div className={`modal-dialog modal-dialog-centered ${styl.m_model}`}>
+            <div className={`modal-content ${styl.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
+              <div className={`modal-body ${styl.m_change_pass_text}`}>
+                <span>Change Password</span>
+              </div>
+              <div className={styl.m_old}>
+                <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
+              </div>
+              <div className={styl.m_new}>
+                <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+              </div>
+              <div className={styl.m_confirm}>
+                <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+              </div>
+              <div className={styl.m_btn_cancel_change}>
+                <div className={styl.m_btn_cancel}>
+                  <button data-bs-dismiss="modal">Cancel</button>
                 </div>
-                <div className={styl.m_old}>
-                  <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
-                </div>
-                <div className={styl.m_new}>
-                  <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-                </div>
-                <div className={styl.m_confirm}>
-                  <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-                </div>
-                <div className={styl.m_btn_cancel_change}>
-                  <div className={styl.m_btn_cancel}>
-                    <button data-bs-dismiss="modal">Cancel</button>
-                  </div>
-                  <div className={styl.m_btn_change}>
-                    <button type="button" onClick={handlePasswordChange}>Change</button>
-                  </div>
+                <div className={styl.m_btn_change}>
+                  <button type="button" onClick={handlePasswordChange}>Change</button>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
         {/* Logout Modal */}
         <div

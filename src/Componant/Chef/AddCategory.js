@@ -9,6 +9,7 @@ import ChefSidePanel from './ChefSidePanel';
 import styles from "../../css/AddCategory.module.css";
 import style from "../../css/BillPayment.module.css"; // Import the CSS module
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function AddCategory(props) {
     const [catName, setCatName] = useState(''); // State to hold category name input
@@ -36,16 +37,33 @@ function AddCategory(props) {
             formData.append('categoryImage', image);     // Append image file
 
             // Send POST request to the server without manually setting `Content-Type`
-            const response = await fetch("http://localhost:8000/api/createCategory", {
-                method: "POST",
-                body: formData, // FormData automatically handles multipart data
-            });
+            // const response = await fetch("http://localhost:8000/api/createCategory", {
+            //     method: "POST",
+            //     body: formData, // FormData automatically handles multipart data
+            // });
 
-            // Check if the request was successful
-            if (!response.ok) {
-                const errorResponse = await response.text(); // Get the error response from the server
-                throw new Error(`Failed to add category: ${response.status} - ${errorResponse}`);
+            var token = localStorage.getItem("authToken");
+            try {
+              const response = await axios.post(
+                `http://localhost/avadh_api/chef/category/add_category.php`,
+                formData,
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data",
+                  },
+                }
+              );
+        
+              console.log("catgeory added successfully !!", response);
+            } catch (error) {
+              console.error("Error fetching dishes by category:", error);
             }
+            // Check if the request was successful
+            // if (!response.ok) {
+            //     const errorResponse = await response.text(); // Get the error response from the server
+            //     throw new Error(`Failed to add category: ${response.status} - ${errorResponse}`);
+            // }
 
             // Show success modal if the category is added successfully
             console.log("Category added successfully!");
