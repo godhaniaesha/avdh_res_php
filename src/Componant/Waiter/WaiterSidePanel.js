@@ -26,7 +26,7 @@ const WaiterSidePanel = ({
         </div>
 
         <Link
-          to="/Waiter_Dashboard"
+          to={"/Waiter_Dashboard"}
           onClick={() => handleLinkClick('/Waiter_Dashboard')}
           className={`list-group-item list-group-item-action ${styles.db_list_group} ${navClass}`}
         >
@@ -35,7 +35,7 @@ const WaiterSidePanel = ({
         </Link>
 
         <Link
-          to="/Waiter_menu"
+          to={"/Waiter_menu"}
           onClick={() => handleLinkClick('/Waiter_menu')}
           className={`list-group-item list-group-item-action ${styles.db_list_group} ${navmenuClass}`}
         >
@@ -44,7 +44,7 @@ const WaiterSidePanel = ({
         </Link>
 
         <Link
-          to="/Waiter_order"
+          to={"/Waiter_order"}
           onClick={() => handleLinkClick('/Waiter_order')}
           className={`list-group-item list-group-item-action ${styles.db_list_group} ${navorderClass}`}
         >
@@ -53,7 +53,7 @@ const WaiterSidePanel = ({
         </Link>
 
         <Link
-          to="/waiter_profile"
+          to={"/waiter_profile"}
           onClick={() => handleLinkClick('/waiter_profile')}
           className={`list-group-item list-group-item-action ${styles.db_list_group} ${navprofileClass}`}
         >

@@ -55,7 +55,11 @@ function AddCategory(props) {
                 }
               );
         
-              console.log("catgeory added successfully !!", response);
+              console.log("Category added successfully!");
+              document.getElementById('imgModal').classList.add('show');
+              document.body.classList.add('modal-open');
+            // window.location.href = "/chef_category"; // Redirect to category list page
+
             } catch (error) {
               console.error("Error fetching dishes by category:", error);
             }
@@ -66,9 +70,7 @@ function AddCategory(props) {
             // }
 
             // Show success modal if the category is added successfully
-            console.log("Category added successfully!");
-            document.getElementById('imgModal').classList.add('show');
-            document.body.classList.add('modal-open');
+
 
             // Clear the form after submission
             clearForm();
