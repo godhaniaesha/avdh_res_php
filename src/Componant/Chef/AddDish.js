@@ -30,17 +30,21 @@ function AddDish(props) {
   // Fetch categories from the API using axios
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/allCategory"); // Using axios to get categories
+      const response = await axios.post("http://localhost/avadh_api/chef/category/view_category.php"); // Using axios to get categories
       // Check if the response contains the expected data
-      if (Array.isArray(response.data.category)) {
-        setCategories(response.data.category); // Set categories state
-      } else {
-        console.error("Fetched data is not an array:", response.data);
-        alert("Failed to fetch categories. Please try again.");
-      }
+      console.log("Fetched data is not an array:", response.data.categories);
+      setCategories(response.data.categories)
+
+      // if (Array.isArray(response.data.categcategoriesory)) {
+      //   setCategories(response.data.categories); // Set categories state
+      //   console.log(categories)
+      // } else {
+      //   console.log("Fetched data is not an array:", response.data.categories);
+      //   // alert("Failed to fetch categories. Please try again.");
+      // }
     } catch (error) {
       console.error("Error fetching categories:", error);
-      alert("Failed to fetch categories. Please try again.");
+      // alert("Failed to fetch categories. Please try again.");
     }
   };
 
@@ -57,12 +61,13 @@ function AddDish(props) {
       // Prepare form data using FormData to handle the file upload
       const formData = new FormData();
       formData.append("dishName", dishName); // Append dish name
-      formData.append("dishCategory", dishCategory); // Append dish category ID
+      formData.append("dishCategory", dishCategory); 
+      console.log(dishCategory)// Append dish category ID
       formData.append("sellingPrice", sellingPrice); // Append selling price
       formData.append("costPrice", costPrice); // Append cost price
       formData.append("status", status); // Append dish status
       formData.append("description", description); // Append description
-      formData.append("dishImage", dishImage); // Append the image file
+      formData.append("image", dishImage); // Append the image file
 
       // Retrieve the token from localStorage
       const token = localStorage.getItem("authToken");
@@ -70,9 +75,10 @@ function AddDish(props) {
       if (!token) throw new Error("No authentication token found"); // Throw error if token is missing
 
       // Send the POST request with the Authorization header
-      const response = await axios.post("http://localhost:8000/api/createDish", formData, {
+      const response = await axios.post("http://localhost/avadh_api/chef/dish/add_dish.php", formData, {
         headers: {
           Authorization: `Bearer ${token}`, // Add Bearer token for authorization
+          "Content-Type": "multipart/form-data",
         },
       });
 
@@ -82,7 +88,7 @@ function AddDish(props) {
       alert("Dish added successfully!");
     } catch (error) {
       console.error("Error adding dish:", error.message);
-      alert(error.message); // Display the error to the user
+      // alert(error.message); // Display the error to the user
     }
   };
 
@@ -93,7 +99,7 @@ function AddDish(props) {
     setSellingPrice("");
     setCostPrice("");
     setStatus("");
-    setImage(null);
+    setImage("");
     setDescription("");
   };
 
@@ -220,7 +226,7 @@ function AddDish(props) {
                     Select Dish Category
                   </option>
                   {categories.map((category) => (
-                    <option key={category._id} value={category._id}>
+                    <option key={category._id} value={category.id}>
                       {category.categoryName}
                     </option>
                   ))}
