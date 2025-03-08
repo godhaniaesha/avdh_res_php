@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+import bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 import WaiterNavbar from "./WaiterNavbar";
 import WaiterSidePanel from "./WaiterSidePanel";
@@ -14,19 +14,21 @@ import styl from "../../css/BillPayment.module.css"; // Import styles for the mo
 function WaiterMenu() {
   const [categories, setCategories] = useState([]);
   const [dishes, setDishes] = useState([]);
+  // const [variants, setVariants] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const [orderItems, setOrderItems] = useState([]);
   const [isOrderListOpen, setIsOrderListOpen] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [variants, setVariants] = useState([]);
+  const [variantsData, setVariantsData] = useState([]);
   const [selectedDishName, setSelectedDishName] = useState("");
   const [selectedDishId, setSelectedDishId] = useState(null);
   const [selectedVariants, setSelectedVariants] = useState([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
   const [tableName, setTableName] = useState('');
   const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -39,7 +41,7 @@ function WaiterMenu() {
 
     fetchCategories();
     fetchDishes();
-
+    fetchvariants();
     console.log("setOrderItems", orderItems);
   }, []);
 
@@ -99,7 +101,7 @@ function WaiterMenu() {
       // if (!response.ok) throw new Error("Failed to fetch categories");
       // const data = await response.json();
       // if (Array.isArray(data.category)) {
-        setCategories(response.data.categories);
+      setCategories(response.data.categories);
       // } else {
       //   console.error("Fetched data is not an array:", data.category);
       //   setCategories([]);
@@ -121,20 +123,43 @@ function WaiterMenu() {
       // const data = await response.json();
       // console.log("Fetched dishes data:", data);
       // if (Array.isArray(data.dish)) {
-        // console.log("Dishes fetched",response.data.data)
+      // console.log("Dishes fetched",response.data.data)
 
-      
 
-        setDishes(response?.data?.data);
+
+      setDishes(response?.data?.data);
       // } else {
-        // console.error("Fetched dishes data is not an array:", data.dish);
-        // setDishes([]);
+      // console.error("Fetched dishes data is not an array:", data.dish);
+      // setDishes([]);
       // }
     } catch (error) {
       console.error("Error fetching dishes:", error);
     }
   };
 
+  const fetchvariants = async (categoryId) => {
+    token = localStorage.getItem("authToken");
+    try {
+      const formData = new FormData();
+      // formData.append("cat_id", categoryId);
+      const response = await axios.post(
+        `http://localhost/avadh_api/chef/variant/view_variant.php`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log("VARIANTS fetched", response.data.variants);
+      setVariants(response.data.variants);
+      // setDishes(response?.data?.data);
+    } catch (error) {
+      console.error("Error fetching dishes by category:", error);
+    }
+  };
 
   const fetchDishesByCategory = async (categoryId) => {
     token = localStorage.getItem("authToken");
@@ -151,9 +176,9 @@ function WaiterMenu() {
           },
         }
       );
-  
+
       console.log("Dishes fetched", response);
-        setDishes(response?.data?.data);
+      setDishes(response?.data?.data);
     } catch (error) {
       console.error("Error fetching dishes by category:", error);
     }
@@ -210,35 +235,36 @@ function WaiterMenu() {
 
   const toggleAddVariant = async (dishId) => {
     console.log("dishId", dishId);
-
-    const selectedDish = dishes.find(dish => dish._id === dishId);
+    const selectedDish = dishes.find(dish => dish.id === dishId);
     console.log("selectedDish", selectedDish);
-
     if (selectedDish) {
       setSelectedDishName(selectedDish.dishName);
       console.log("selectedDishName", selectedDishName);
+      var variantfilter = variants.filter(variant => variant.dish.id === parseInt(dishId));
+      console.log("variantfilter", variantfilter);
+      setVariantsData(variantfilter);
     }
 
     setSelectedDishId(dishId);
     setIsPopupOpen(prev => !prev);
     setSelectedVariants([]);
 
-    if (!isPopupOpen) {
-      try {
-        const response = await axios.get(`http://localhost:8000/api/getProductByVariant/${dishId}`);
-        const data = response.data;
+    // if (!isPopupOpen) {
+    //   try {
+    //     const response = await axios.get(`http://localhost:8000/api/getProductByVariant/${dishId}`);
+    //     const data = response.data;
 
-        if (Array.isArray(data.Variant)) {
-          setVariants(data.Variant);
-          console.log("variants", data.Variant);
-        } else {
-          console.error("Fetched variants data is not an array:", data.Variant);
-          setVariants([]);
-        }
-      } catch (error) {
-        console.error("Error fetching variants:", error);
-      }
-    }
+    //     if (Array.isArray(data.Variant)) {
+    //       setVariants(data.Variant);
+    //       console.log("variants", data.Variant);
+    //     } else {
+    //       console.error("Fetched variants data is not an array:", data.Variant);
+    //       setVariants([]);
+    //     }
+    //   } catch (error) {
+    //     console.error("Error fetching variants:", error);
+    //   }
+    // }
   };
 
   const handleVariantSelection = (variantId) => {
@@ -252,13 +278,13 @@ function WaiterMenu() {
   };
 
   const addItemToOrder = () => {
-    const selectedDish = dishes.find(dish => dish._id === selectedDishId);
-
+    console.log("Adding", selectedVariants);
+    const selectedDish = dishes.find(dish => dish.id === selectedDishId);
     if (!selectedDish) {
       console.error("Selected dish not found for id:", selectedDishId);
       return;
     }
-    const selectedVariantDetails = variants.filter(variant => selectedVariants.includes(variant._id));
+    const selectedVariantDetails = variants.filter(variant => selectedVariants.includes(variant.id));
     handleAddToOrder(selectedDish, selectedVariantDetails);
     toggleOrderList();
   };
@@ -353,48 +379,59 @@ function WaiterMenu() {
   const handleOrderSend = async () => {
     // Get the email value from the input field
     const email = document.getElementById("email").value;
-    try {
-      // Retrieve the table ID from local storage
-      const tableId = localStorage.getItem("tableId");
-      // Calculate the total price of the order
-      const totalPrice = calculateTotalOrderPrice();
+    const firstName = document.getElementById("firstname").value;
+    const lastName = document.getElementById("lastname").value;
+    const contactno = document.getElementById("contactno").value;
+    console.log("Email", email, firstName, lastName, contactno);
 
-      // Prepare the order data in the required format
-      const orderData = {
-        email: email, // Include the email in the order data
-        tableNo: tableId, // Include the table ID
-        orderDish: orderItems.map(item => ({
-          dish: item._id, // Get the dish ID
-          variant: item.variants.map(variant => variant._id), // Get the variant IDs
-          qty: item.quantity // Get the quantity
-        })),
-        totalAmount: totalPrice, // Total price of the order
-        orderStatus: "Pending", // Set the order status
-        paymentStatus: "Unpaid" // Set the payment status
-      };
+    if (firstName && lastName && contactno && contactno) {
+      try {
+        // Retrieve the table ID from local storage
+        const tableId = localStorage.getItem("tableId");
+        // Calculate the total price of the order
+        const totalPrice = calculateTotalOrderPrice();
 
-      console.log("Order Data to be Sent:", orderData); // Debugging: Check the structure of your orderData
+        // Prepare the order data in the required format
+        const orderData = {
+          email: email, // Include the email in the order data
+          firstName: firstName,
+          tableNo: tableId, // Include the table ID
+          orderDish: orderItems.map(item => ({
+            dish: item._id, // Get the dish ID
+            variant: item.variants.map(variant => variant._id), // Get the variant IDs
+            qty: item.quantity // Get the quantity
+          })),
+          totalAmount: totalPrice, // Total price of the order
+          orderStatus: "Pending", // Set the order status
+          paymentStatus: "Unpaid" // Set the payment status
+        };
 
-      // Make the POST request to create the order
-      const response = await axios.post("http://localhost:8000/api/createOrder", orderData, {
-        headers: {
-          "Content-Type": "application/json", // Set the content type to JSON
-        },
-      });
+        console.log("Order Data to be Sent:", orderData); // Debugging: Check the structure of your orderData
 
-      // Check the response status
-      if (response.status === 201) {
-        console.log("Order sent successfully!", response.data); // Log success
-        navigate('/Waiter_order'); // Redirect to the order page
-      } else {
-        console.error("Failed to send order, received status:", response.status);
-        console.error("Response data:", response.data);
+        // Make the POST request to create the order
+        // const response = await axios.post("http://localhost:8000/api/createOrder", orderData, {
+        //   headers: {
+        //     "Content-Type": "application/json", // Set the content type to JSON
+        //   },
+        // });
+
+        // Check the response status
+        // if (response.status === 201) {
+        //   console.log("Order sent successfully!", response.data); // Log success
+        //   navigate('/Waiter_order'); // Redirect to the order page
+        // } else {
+        //   console.error("Failed to send order, received status:", response.status);
+        //   console.error("Response data:", response.data);
+        // }
+      } catch (error) {
+        console.error("Error while sending order:", error);
+        if (error.response) {
+          console.error("Backend Error Data:", error.response.data); // Log any backend error data
+        }
       }
-    } catch (error) {
-      console.error("Error while sending order:", error);
-      if (error.response) {
-        console.error("Backend Error Data:", error.response.data); // Log any backend error data
-      }
+    }
+    else {
+      alert("Please enter your customer detail");
     }
   };
   const calculateTotalOrderPrice = () => {
@@ -550,14 +587,14 @@ function WaiterMenu() {
             <div className={`owl-carousel owl-theme d-block a_categorySlider ${styles.a_categorySlider1}`}>
               {categories.map((category) => (
                 <div className={`item ${styles.item}`} key={category.id} onClick={() => handleCategoryClick(category.id)}>
-                  <div className={` ${styles.a_slide}`}  style={selectedCategoryId == category.id? {backgroundColor:'#4B6C52', color:'white'}: {}}>
+                  <div className={` ${styles.a_slide}`} style={selectedCategoryId == category.id ? { backgroundColor: '#4B6C52', color: 'white' } : {}}>
                     <div className={styles.a_img}>
-                    <img
+                      <img
                         src={category?.categoryImage ? `http://localhost/avadh_api/images/${category.categoryImage}` : ''}
                         alt={category.categoryName}
                       />
                     </div>
-                    <p className={styles.catName} style={selectedCategoryId == category.id? { color:'white'}: {}}>{category.categoryName}</p>
+                    <p className={styles.catName} style={selectedCategoryId == category.id ? { color: 'white' } : {}}>{category.categoryName}</p>
                   </div>
                 </div>
               ))}
@@ -572,10 +609,10 @@ function WaiterMenu() {
               {dishes.map((dish) => (
                 <div className={styles.a_card_category} key={dish.id}>
                   <div className={`${styles.a_img} d-flex justify-content-center`}>
-                  <img
-                        src={dish?.dishImage ? `http://localhost/avadh_api/images/${dish?.dishImage}` : ''}
-                        alt={dish?.dishName}
-                      />
+                    <img
+                      src={dish?.dishImage ? `http://localhost/avadh_api/images/${dish?.dishImage}` : ''}
+                      alt={dish?.dishName}
+                    />
                   </div>
                   <div className={`${styles.a_rating} d-flex g-2`}>
                     {[...Array(5)].map((_, index) => (
@@ -615,20 +652,20 @@ function WaiterMenu() {
               <div className="row mb-3">
                 <div className="col-md-6 col-12 mb-md-0 mb-3">
                   <label className={`${styles['x_lab']}`} >First Name</label><br />
-                  <input type="text" className={`${styles['x_fcon']}  w-100`} />
+                  <input type="text" className={`${styles['x_fcon']}  w-100`} id="firstname" />
                 </div>
                 <div className="col-md-6 col-12  mb-md-0">
                   <label className={`${styles['x_lab']}`} >Last Name</label><br />
-                  <input type="text" className={`${styles['x_fcon']} w-100 `} />
+                  <input type="text" className={`${styles['x_fcon']} w-100 `} id="lastname" />
                 </div>
               </div>
               <div className="mb-3">
                 <label className={`${styles['x_lab']}`} >Email ID</label><br />
-                <input type="email" className={`${styles['x_fcon']}  w-100 `}/>
+                <input type="email" className={`${styles['x_fcon']}  w-100 `} id="email" />
               </div>
               <div className="mb-3">
                 <label className={`${styles['x_lab']}`} >Contact No.</label><br />
-                <input type="tel" className={`${styles['x_fcon']}  w-100 `}/>
+                <input type="tel" className={`${styles['x_fcon']}  w-100 `} id="contactno" />
               </div>
             </form>
           </div>
@@ -636,7 +673,7 @@ function WaiterMenu() {
             {orderItems.map((item, index) => (
               <div className={`${styles.a_order} d-flex`} key={index}>
                 <div className={styles.a_orderImg}>
-                  <img src={`http://localhost:8000/${item.dishImage}`} alt={item.dishName} />
+                  <img src={`http://localhost/avadh_api/images/${item.dishImage}`} alt={item.dishName} />
                 </div>
                 <div className={styles.a_orderdata}>
                   <div className="text-dark">
@@ -686,7 +723,7 @@ function WaiterMenu() {
             <div className={styles.a_orderSend}>
               <button type="submit" id="btn_order" className={styles['a_add-item-btn']} onClick={handleOrderSend}>
                 <span className="text-white">
-                  <Link to="/Waiter_order" className="text-white text-decoration-none">Order Send</Link>
+                  <Link to="#" className="text-white text-decoration-none">Order Send</Link>
                 </span>
               </button>
             </div>
@@ -715,12 +752,12 @@ function WaiterMenu() {
               <div id={styles.a_cust}>
                 <div className="d-flex  flex-column w-100 mt-2 overflow-auto">
                   {/* Mapping through variants to display each option */}
-                  {variants.map(variant => (
+                  {variantsData.map(variant => (
                     <div className="d-flex  justify-content-between align-items-center mt-2 " key={variant._id}>
                       <div className="d-flex align-items-center">
                         {/* Display variant image and name */}
                         <img
-                          src={`http://localhost:8000/${variant.variantImage}`}
+                          src={`http://localhost/avadh_api/images/${variant.variantImage}`}
                           alt={variant.variantName}
                           className={styles['a_option-img']}
                         />
@@ -734,7 +771,7 @@ function WaiterMenu() {
                           type="checkbox"
                           id={`a_${variant._id}`} // Unique ID for each checkbox
                           className={styles['a_option-checkbox']}
-                          onChange={() => handleVariantSelection(variant._id)}
+                          onChange={() => handleVariantSelection(variant.id)}
                         />
                         <div className={styles.circle}></div>
                       </div>
@@ -754,37 +791,37 @@ function WaiterMenu() {
       )}
 
       <div
-            className={`modal fade ${styl.m_model_ChangePassword}`}
-            id="changepassModal"
-            tabIndex="-1"
-            aria-labelledby="changepassModalLabel"
-            aria-hidden="true"
-          >
-            <div className={`modal-dialog modal-dialog-centered ${styl.m_model}`}>
-              <div className={`modal-content ${styl.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
-                <div className={`modal-body ${styl.m_change_pass_text}`}>
-                  <span>Change Password</span>
-                </div>
-                <div className={styl.m_old}>
-                  <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
-                </div>
-                <div className={styl.m_new}>
-                  <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-                </div>
-                <div className={styl.m_confirm}>
-                  <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-                </div>
-                <div className={styl.m_btn_cancel_change}>
-                  <div className={styl.m_btn_cancel}>
-                    <button data-bs-dismiss="modal">Cancel</button>
-                  </div>
-                  <div className={styl.m_btn_change}>
-                    <button type="button" onClick={handlePasswordChange}>Change</button>
-                  </div>
-                </div>
+        className={`modal fade ${styl.m_model_ChangePassword}`}
+        id="changepassModal"
+        tabIndex="-1"
+        aria-labelledby="changepassModalLabel"
+        aria-hidden="true"
+      >
+        <div className={`modal-dialog modal-dialog-centered ${styl.m_model}`}>
+          <div className={`modal-content ${styl.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
+            <div className={`modal-body ${styl.m_change_pass_text}`}>
+              <span>Change Password</span>
+            </div>
+            <div className={styl.m_old}>
+              <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
+            </div>
+            <div className={styl.m_new}>
+              <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+            </div>
+            <div className={styl.m_confirm}>
+              <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+            </div>
+            <div className={styl.m_btn_cancel_change}>
+              <div className={styl.m_btn_cancel}>
+                <button data-bs-dismiss="modal">Cancel</button>
+              </div>
+              <div className={styl.m_btn_change}>
+                <button type="button" onClick={handlePasswordChange}>Change</button>
               </div>
             </div>
           </div>
+        </div>
+      </div>
 
       {/* Logout Modal */}
       <div

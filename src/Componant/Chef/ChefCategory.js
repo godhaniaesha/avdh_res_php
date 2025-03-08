@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+import bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 import ChefNavbar from './ChefNavbar';
 import ChefSidePanel from './ChefSidePanel';
@@ -9,6 +9,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from '../../css/ChefCategory.module.css';
 import style from "../../css/BillPayment.module.css";
+import axios from 'axios';
 
 function ChefCategory(props) {
     const [categories, setCategories] = useState([]);  // State to store fetched categories
@@ -16,7 +17,7 @@ function ChefCategory(props) {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState("");
+    const [oldPassword, setOldPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [changepasswordmodal, setChangepasswordmodal] = useState(false);
@@ -30,14 +31,32 @@ function ChefCategory(props) {
 
     // Function to fetch categories from the API
     const fetchCategories = async () => {
+        var token = localStorage.getItem("authToken");
         try {
-            const response = await fetch("http://localhost:8000/api/allCategory");  // Corrected the URL
-            if (!response.ok) throw new Error("Failed to fetch categories");
-            const data = await response.json();
-            setCategories(data.category);  // Assuming 'category' is the array in the response
+            const response = await axios.post(
+                `http://localhost/avadh_api/chef/category/view_category.php`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
+
+            console.log("Dishes fetched", response.data.categories);
+            setCategories(response?.data?.categories); 
         } catch (error) {
-            console.error("Error fetching categories:", error);
+            console.error("Error fetching dishes by category:", error);
         }
+        // try {
+        //     const response = await fetch("http://localhost:8000/api/allCategory");  // Corrected the URL
+        //     if (!response.ok) throw new Error("Failed to fetch categories");
+        //     const data = await response.json();
+        //     // Assuming 'category' is the array in the response
+        // } catch (error) {
+        //     console.error("Error fetching categories:", error);
+        // }
     };
 
     const toggleDrawer = () => {
@@ -176,14 +195,14 @@ function ChefCategory(props) {
 
     // Function to filter categories based on search term
     const getFilteredCategories = () => {
-        return getSortedCategories().filter(cat => 
+        return getSortedCategories().filter(cat =>
             cat.categoryName.toLowerCase().includes(searchTerm.toLowerCase())
         );
     };
 
     return (
         <section id={styles.a_selectTable}>
-            <ChefNavbar toggleDrawer={toggleDrawer} toggleNotifications={toggleNotifications} showSearch={false}/>
+            <ChefNavbar toggleDrawer={toggleDrawer} toggleNotifications={toggleNotifications} showSearch={false} />
             <ChefSidePanel isOpen={isSidebarOpen} isChefDashboard={false} isChefMenu={false} isChefCategory={true} isChefVariant={false} isChefProfile={false} />
             <div id={styles['a_main-content']}>
                 <div className={styles['db_content-container']}>
@@ -192,11 +211,11 @@ function ChefCategory(props) {
                             <div style={{ fontSize: '30px', fontWeight: '600' }}>Category List</div>
                             <div className={`d-flex justify-content-between align-items-center ${styles.v_new_addz}`}>
                                 <div className={`${styles.a_search} ${styles.v_search} m-0`}>
-                                    <input 
-                                        type="search" 
-                                        placeholder="Search..." 
-                                        className={styles['search-input']} 
-                                        value={searchTerm} 
+                                    <input
+                                        type="search"
+                                        placeholder="Search..."
+                                        className={styles['search-input']}
+                                        value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)} // Update search term on input change
                                     />
                                 </div>
@@ -231,7 +250,7 @@ function ChefCategory(props) {
                                             <tr key={cat._id} align="center">
                                                 <td className="text-center">
                                                     <img
-                                                        src={`http://localhost:8000/${cat.categoryImage}`}
+                                                        src={`http://localhost/avadh_api/images/${cat.categoryImage}`}
                                                         className={styles.v_menu_rowmar}
                                                         alt="Category"
                                                     />
@@ -293,37 +312,37 @@ function ChefCategory(props) {
 
             {/* Change Password Modal */}
             <div
-          className={`modal fade ${style.m_model_ChangePassword}`}
-          id="changepassModal"  // Ensure this ID matches
-          tabIndex="-1"
-          aria-labelledby="changepassModalLabel"
-          aria-hidden="true"
-        >
-          <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
-            <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
-              <div className={`modal-body ${style.m_change_pass_text}`}>
-                <span>Change Password</span>
-              </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
-              </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-              </div>
-              <div className={style.m_confirm}>
-                <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-              </div>
-              <div className={style.m_btn_cancel_change}>
-                <div className={style.m_btn_cancel}>
-                  <button data-bs-dismiss="modal">Cancel</button>
+                className={`modal fade ${style.m_model_ChangePassword}`}
+                id="changepassModal"  // Ensure this ID matches
+                tabIndex="-1"
+                aria-labelledby="changepassModalLabel"
+                aria-hidden="true"
+            >
+                <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
+                    <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
+                        <div className={`modal-body ${style.m_change_pass_text}`}>
+                            <span>Change Password</span>
+                        </div>
+                        <div className={style.m_new}>
+                            <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
+                        </div>
+                        <div className={style.m_new}>
+                            <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+                        </div>
+                        <div className={style.m_confirm}>
+                            <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                        </div>
+                        <div className={style.m_btn_cancel_change}>
+                            <div className={style.m_btn_cancel}>
+                                <button data-bs-dismiss="modal">Cancel</button>
+                            </div>
+                            <div className={style.m_btn_change}>
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div className={style.m_btn_change}>
-                  <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
-                </div>
-              </div>
             </div>
-          </div>
-        </div>
             <div
                 className={`modal fade ${style.m_model_logout}`}
                 id="logoutModal"
