@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Modal } from 'bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+// import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
-
 import SuperNavbar from './SuperNavbar';
 import SuperSidePanel from './SuperSidePanel';
 import styles from "../../css/AddTable.module.css"; // Corrected import for CSS
@@ -21,22 +23,47 @@ function AddTable(props) {
  const [oldPassword, setOldPassword] = useState("");
     // Function to fetch existing tables from the server
     const fetchTables = async () => {
-        const token = localStorage.getItem('authToken');
         try {
-            const response = await axios.get("http://localhost:8000/api/getTables", {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Accept': 'application/json',
+            const token = localStorage.getItem('authToken');
+            const response = await axios.post(
+                "http://localhost/avadh_api/super_admin/tables/view_tables.php",
+                {},
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
                 }
-            });
-            setTables(response.data); // Set the existing tables in state
+            );
+
+            if (response.data && response.data.tables) {
+                setTables(response.data.tables);
+            }
         } catch (error) {
-            console.error("Error fetching tables:", error.response ? error.response.data : error.message);
+            console.error("Error fetching tables:", error);
+            setTables([]);
         }
     };
 
     useEffect(() => {
         fetchTables(); // Fetch tables when component mounts
+    }, []);
+
+    useEffect(() => {
+        // Import Bootstrap's JavaScript
+        require('bootstrap/dist/js/bootstrap.bundle.min.js');
+        
+        // Clean up function
+        return () => {
+            const modalElement = document.getElementById('imgModal');
+            if (modalElement) {
+                const modal = Modal.getInstance(modalElement);
+                if (modal) {
+                    modal.dispose();
+                }
+            }
+        };
     }, []);
 
      const toggleDrawer = () => {
@@ -61,54 +88,58 @@ function AddTable(props) {
     };
 
     const profilesave = async (event) => {
-        event.preventDefault(); // Prevent default form submission
-
-        const token = localStorage.getItem('authToken');
-        console.log("Token:", token);
-
-        const requests = [];
-
-        // Get the starting number for new tables
-        const startingTableNumber = getNextTableNumber(); // Get the next available table number
-
-        // Check for existing table names
-        for (let i = 0; i < tableQuantity; i++) {
-            const tableNumber = startingTableNumber + i; // Calculate current table number
-            const tableName = `table ${tableNumber}`; // Create table name based on calculated number
-
-            // Check if the table name already exists
-            if (tables.some(table => table.tableName === tableName)) {
-                setErrorMessage(`Table ${tableName} already exists. Please choose a different quantity.`);
-                return; // Exit the function if a duplicate is found
-            }
-
-            const tableData = {
-                tableName: tableName, // Create table name based on calculated number
-                tableGuest: tableGuest, // Assign number of guests
-            };
-
-            requests.push(
-                axios.post("http://localhost:8000/api/cerateTable", tableData, { // Ensure the correct endpoint is used
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                })
-            );
-        }
+        event.preventDefault();
 
         try {
-            await Promise.all(requests); // Wait for all requests to complete
-            console.log("Tables added successfully");
-            document.getElementById("imgModal").style.display = "block"; // Show success modal
-            clearForm(); // Clear form after successful submission
-            fetchTables(); // Refresh the table list after adding
+            const token = localStorage.getItem('authToken');
+            
+            if (!tableGuest) {
+                alert("Please enter guest capacity");
+                return;
+            }
+
+            const response = await axios.post(
+                `http://localhost/avadh_api/super_admin/tables/add_tables.php`,
+                {
+                    tableName: tableQuantity.toString(),
+                    tableGuest: tableGuest
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                }
+            );
+
+            console.log("response", response);
+
+            if (response.status == 200) {
+                // Clear form
+                clearForm();
+                
+                // Show success modal
+                const modalElement = document.getElementById('imgModal');
+                if (modalElement) {
+                    const successModal = new Modal(modalElement);
+                    successModal.show();
+                    
+                    // Automatically close modal and redirect after 2 seconds
+                    setTimeout(() => {
+                        successModal.hide();
+                        navigate('/supertable');
+                    }, 20000);
+                }
+            } else {
+                alert(response.data.message || 'Failed to add table');
+            }
+
         } catch (error) {
-            console.error("Error adding tables:", error.response ? error.response.data : error.message);
-            alert("Failed to add tables. Please check the console for more details.");
+            console.error("Error adding table:", error);
+            alert("Failed to add table. Please try again.");
         }
     };
+
     const handlePasswordChange = () => {
         // Check if new password and confirm password match
         if (newPassword !== confirmPassword) {
@@ -206,39 +237,28 @@ function AddTable(props) {
                             <div className={`col-xs-12 col-md-6 ${styles.m_add_input_pad}`}>
                                 <div className={`input-group ${styles.m_add_input_mar}`}>
                                     <input
-                                        type="number"
+                                        type="text"
                                         className="form-control"
                                         id="tablequantity"
-                                        placeholder="Table Quantity"
-                                        aria-label="Table Quantity"
-                                        min="1"
+                                        placeholder="Table Name"
                                         value={tableQuantity}
-                                        onChange={(e) => {
-                                            const value = Math.max(1, parseInt(e.target.value) || 1);
-                                            setTableQuantity(value); // Update table quantity
-                                        }}
+                                        onChange={(e) => setTableQuantity(e.target.value)}
                                     />
                                 </div>
                             </div>
                             <div className={`col-xs-12 col-md-6 ${styles.m_add_input_pad}`}>
                                 <div className={`input-group ${styles.m_add_input_mar}`}>
                                     <input
-                                        type="text"
+                                        type="number"
                                         className="form-control"
                                         id="tableGuest"
-                                        placeholder="Guest"
-                                        aria-label="Guest"
-                                        pattern="^(1[0-9]|20|[1-9])$"
-                                        maxLength="2"
+                                        placeholder="Guest Capacity"
+                                        min="1"
+                                        max="20"
                                         value={tableGuest}
                                         onChange={(e) => {
-                                            const value = e.target.value.replace(/[^0-9]/g, '');
-                                            const numberValue = Number(value);
-                                            if (numberValue < 1) {
-                                                setTableGuest('');
-                                            } else if (numberValue > 20) {
-                                                setTableGuest('20');
-                                            } else {
+                                            const value = parseInt(e.target.value);
+                                            if (value >= 1 && value <= 20) {
                                                 setTableGuest(value);
                                             }
                                         }}
@@ -261,19 +281,78 @@ function AddTable(props) {
                         </div>
                     </form>
 
-                    {/* Modal for success message */}
-                    <div className="m_add_successfully modal fade" id="imgModal" tabIndex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                        <div className="m_model modal-dialog modal-dialog-centered">
-                            <div className="modal-content m_save" style={{ border: 'none', backgroundColor: '#f6f6f6' }}>
-                                <div className="modal-body m_save_text">
-                                    <span>Tables Added Successfully!</span>
-                                </div>
-                                <div className="m_save_img">
-                                    <img src="image/right.png" alt="" />
+                    {/* Success Modal */}
+                    {/* <div 
+                        className="modal fade" 
+                        id="imgModal" 
+                        tabIndex="-1" 
+                        aria-labelledby="successModalLabel" 
+                        aria-hidden="true"
+                        data-bs-backdrop="static" // Prevents closing when clicking outside
+                    >
+                        <div className="modal-dialog modal-dialog-centered">
+                            <div className="modal-content" style={{ backgroundColor: '#f6f6f6', border: 'none' }}>
+                                <div className="modal-body text-center">
+                                    <h5 className="modal-title mb-3">Success!</h5>
+                                    <p>Table added successfully!</p>
+                                    <div className="mt-4">
+                                        <button 
+                                            type="button" 
+                                            className="btn btn-secondary" 
+                                            onClick={() => {
+                                                const modalElement = document.getElementById('imgModal');
+                                                const modal = Modal.getInstance(modalElement);
+                                                if (modal) {
+                                                    modal.hide();
+                                                }
+                                                navigate('/supertable');
+                                            }}
+                                        >
+                                            Close
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
+                    {/* Success Modal */}
+<div 
+    className="modal fade" 
+    id="imgModal" 
+    tabIndex="-1" 
+    aria-labelledby="successModalLabel" 
+    aria-hidden="true"
+>
+    <div className="modal-dialog modal-dialog-centered">
+        <div className="modal-content" style={{ border: 'none', backgroundColor: '#f6f6f6', padding: '20px' }}>
+            <div className="modal-body text-center">
+                <h4 style={{ 
+                    fontSize: '24px', 
+                    fontWeight: '500', 
+                    marginBottom: '20px' 
+                }}>
+                    Add Successfully!
+                </h4>
+                <div style={{ 
+                    width: '60px', 
+                    height: '60px', 
+                    borderRadius: '50%', 
+                    backgroundColor: '#4B6C52', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    margin: '0 auto'
+                }}>
+                    <i className="fas fa-check" style={{ 
+                        color: 'white', 
+                        fontSize: '30px' 
+                    }}></i>
+                    {/* <img src="../../Image/right.png" alt="" /> */}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
                 </div>
                   {/* Change Password Modal */}
            <div

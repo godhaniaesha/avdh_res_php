@@ -48,7 +48,7 @@ function AddAccountant() {
         console.log("Token:", token); // Check if the token is retrieved correctly
 
         // Send data to the backend API
-        axios.post("http://localhost:8000/api/createAccountant", formData, {
+        axios.post("http://localhost/avadh_api/super_admin/accountant/add_accountant.php", formData, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Accept': 'application/json',

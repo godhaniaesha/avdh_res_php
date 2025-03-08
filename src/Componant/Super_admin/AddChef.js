@@ -48,7 +48,7 @@ function AddChef(props) {
         console.log("Token:", token); // Check if the token is retrieved correctly
 
         // Send data to the backend API
-        axios.post("http://localhost:8000/api/createChef", formData, {
+        axios.post("http://localhost/avadh_api/super_admin/chef/add_chef.php", formData, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Accept': 'application/json',

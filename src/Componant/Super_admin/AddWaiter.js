@@ -47,7 +47,7 @@ function AddWaiter(props) {
         console.log("Token:", token); // Check if the token is retrieved correctly
 
         // Send data to the backend API
-        axios.post("http://localhost:8000/api/cerateWaiter", formData, {
+        axios.post("http://localhost/avadh_api/super_admin/waiter/add_waiter.php", formData, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Accept': 'application/json',

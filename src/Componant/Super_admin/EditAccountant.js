@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+import bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 import SuperNavbar from './SuperNavbar';
 import SuperSidePanel from './SuperSidePanel';
 import styles from "../../css/EditChef.module.css";
 import style from "../../css/BillPayment.module.css";
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function EditAccountant() {
     const [formData, setFormData] = useState({
@@ -29,7 +30,7 @@ function EditAccountant() {
     const [changepasswordmodal, setChangepasswordmodal] = useState(false)
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState("");
+    const [oldPassword, setOldPassword] = useState("");
     useEffect(() => {
         const accountantData = localStorage.getItem('accountantData');
         if (accountantData) {
@@ -63,14 +64,23 @@ function EditAccountant() {
                 image: formData.image.name // Use the image name for submission
             };
 
+            const token = localStorage.getItem('authToken');
+            console.log("Token:", token);
+
             // Ensure the URL is correct
-            const response = await fetch(`http://localhost:8000/api/updateuser/${accountantId}`, {
+            const response = await fetch(`http://localhost/avadh_api/super_admin/accountant/update_accountant.php/${accountantId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(dataToSend)
             });
+            // const response = await axios.post("http://localhost/avadh_api/super_admin/accountant/update_accountant.php", formData, {
+            //     headers: {
+            //         'Authorization': `Bearer ${token}`,
+            //         'Accept': 'application/json',
+            //     }
+            // })
 
             if (!response.ok) {
                 throw new Error('Failed to update Accountant details');
@@ -148,7 +158,7 @@ function EditAccountant() {
     };
     return (
         <section id="a_selectTable">
-            <SuperNavbar toggleDrawer={toggleDrawer} showSearch={false}/>
+            <SuperNavbar toggleDrawer={toggleDrawer} showSearch={false} />
             <SuperSidePanel isOpen={isSidebarOpen} isAccountant={true} />
             <div id={styles['a_main-content']}>
                 <div className={`container-fluid ${styles.a_main}`}>
@@ -250,39 +260,39 @@ function EditAccountant() {
                     </div>
                 </form>
             </div>
-           {/* Change Password Modal */}
-          <div
-          className={`modal fade ${style.m_model_ChangePassword}`}
-          id="changepassModal"  // Ensure this ID matches
-          tabIndex="-1"
-          aria-labelledby="changepassModalLabel"
-          aria-hidden="true"
-        >
-          <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
-            <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
-              <div className={`modal-body ${style.m_change_pass_text}`}>
-                <span>Change Password</span>
-              </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
-              </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-              </div>
-              <div className={style.m_confirm}>
-                <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-              </div>
-              <div className={style.m_btn_cancel_change}>
-                <div className={style.m_btn_cancel}>
-                  <button data-bs-dismiss="modal">Cancel</button>
+            {/* Change Password Modal */}
+            <div
+                className={`modal fade ${style.m_model_ChangePassword}`}
+                id="changepassModal"  // Ensure this ID matches
+                tabIndex="-1"
+                aria-labelledby="changepassModalLabel"
+                aria-hidden="true"
+            >
+                <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
+                    <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
+                        <div className={`modal-body ${style.m_change_pass_text}`}>
+                            <span>Change Password</span>
+                        </div>
+                        <div className={style.m_new}>
+                            <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
+                        </div>
+                        <div className={style.m_new}>
+                            <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+                        </div>
+                        <div className={style.m_confirm}>
+                            <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                        </div>
+                        <div className={style.m_btn_cancel_change}>
+                            <div className={style.m_btn_cancel}>
+                                <button data-bs-dismiss="modal">Cancel</button>
+                            </div>
+                            <div className={style.m_btn_change}>
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div className={style.m_btn_change}>
-                  <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
-                </div>
-              </div>
             </div>
-          </div>
-        </div>
 
         </section>
     );
