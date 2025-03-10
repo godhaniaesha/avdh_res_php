@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+import bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 import styles from "../../css/ChefMenuList.module.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -22,30 +22,29 @@ function ChefMenuList() {
   const [sortOrder, setSortOrder] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState("");
-  useEffect(() => {
-    fetchCategories();
-    fetchDishes();
-  }, []);
+  const [oldPassword, setOldPassword] = useState("");
+
 
 
   const fetchCategories = () => {
-    axios.get("http://localhost:8000/api/allCategory")
+    axios.post("http://localhost/avadh_api/chef/category/view_category.php")
       .then((response) => {
         if (response.status !== 200) {
           throw new Error("Network response was not ok");
         }
-        setCategories(response.data.category);
+        setCategories(response.data.categories);
+        // console.log(response.data.categories)
       })
       .catch((error) => console.error("Error fetching categories:", error));
   };
 
 
   const fetchDishes = () => {
-    axios.get("http://localhost:8000/api/allDish")
+    axios.post("http://localhost/avadh_api/chef/dish/view_dish.php")
       .then((response) => {
-        if (response.status === 200 && Array.isArray(response.data.dish)) {
-          setDishes(response.data.dish);
+        if (response.status === 200) {
+          console.log(response.data.data)
+          setDishes(response.data.data)
         } else {
           console.error("Expected an array of dishes but received:", response.data);
         }
@@ -68,15 +67,22 @@ function ChefMenuList() {
 
   const handleDeleteClick = (dishId) => {
     setDishIdToDelete(dishId);
-    localStorage.setItem("dishIdToDelete", dishId);
+    // localStorage.setItem("dishIdToDelete", dishId);
   };
 
 
   const handleDeleteConfirm = () => {
-    const dishId = localStorage.getItem("dishIdToDelete");
-    if (dishId) {
+    // const dishId = localStorage.getItem("dishIdToDelete");
+    const token = localStorage.getItem("authToken");
+    const formData = new FormData();
+    formData.append("dish_id", dishIdToDelete);
+    if (dishIdToDelete) {
       axios
-        .delete(`http://localhost:8000/api/deleteDish/${dishId}`)
+        .post(`http://localhost/avadh_api/chef/dish/delete_dish.php`,formData, {
+          headers: {
+            Authorization: `Bearer ${token}`, // Add Bearer token for authorization
+          },
+        })
         .then((response) => {
           if (response.status === 200) {
 
@@ -87,10 +93,13 @@ function ChefMenuList() {
     }
   };
 
-
+  useEffect(() => {
+    fetchCategories();
+    fetchDishes();
+  }, []);
 
   const handleEditClick = (dish) => {
-    localStorage.setItem("dishId", dish._id);
+    localStorage.setItem("dishId", dish.id);
     localStorage.setItem("dishData", JSON.stringify(dish));
     window.location.href = "/editDish";
   };
@@ -177,7 +186,7 @@ function ChefMenuList() {
   };
 
   const getSortedDishes = () => {
-    const filteredDishes = dishes.filter(dish => 
+    const filteredDishes = dishes.filter(dish =>
       dish.dishName.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
@@ -219,10 +228,10 @@ function ChefMenuList() {
               </div>
               <div className={`d-flex justify-content-between align-items-center ${styles.v_new_addz}`}>
                 <div className={`${styles.a_search} ${styles.v_search} m-0`}>
-                  <input 
-                    type="search" 
-                    placeholder="Search..." 
-                    className="search-input" 
+                  <input
+                    type="search"
+                    placeholder="Search..."
+                    className="search-input"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
@@ -236,7 +245,7 @@ function ChefMenuList() {
                     <option value="F">Category Z-A</option>
                     <option value="C">Price</option>
                     <option value="D">Status</option>
-              
+
                   </select>
                 </div>
                 <div>
@@ -258,7 +267,7 @@ function ChefMenuList() {
             <table border="0" width="100%" data-bs-spy="scroll">
               <thead>
                 <tr align="center" bgcolor="#F3F3F3" className={styles.m_table_heading} >
-                  <td  className='fw-normal'>Image</td>
+                  <td className='fw-normal'>Image</td>
                   <td className='fw-normal'>Name</td>
                   <td className='fw-normal'>Category</td>
                   <td className='fw-normal'>Price</td>
@@ -268,10 +277,10 @@ function ChefMenuList() {
               </thead>
               <tbody>
                 {getSortedDishes().map((dish) => (
-                  <tr key={dish._id} align="center">
+                  <tr key={dish.id} align="center">
                     <td className="text-center">
                       <img
-                        src={`http://localhost:8000/${dish.dishImage}`}
+                        src={`http://localhost/avadh_api/images/${dish.dishImage}`}
                         className={styles.v_menu_rowmar}
                         alt="Dish"
                       />
@@ -279,12 +288,11 @@ function ChefMenuList() {
                     <td className="text-center">{dish.dishName}</td>
                     <td className="text-center">
                       {
-                        categories.find(category => category._id === dish.dishCategory)?.categoryName ||
-                        "Unknown Category"
+                        categories.find(category => String(category.id) === String(dish.dishCategory))?.categoryName
                       }
                     </td>
                     <td className="text-center">₹ {dish.sellingPrice}</td>
-                    <td className={dish.status === "available" ? "text-success" : "text-danger"}>
+                    <td className={dish.status === "Available" ? "text-success" : "text-danger"}>
                       {dish.status}
                     </td>
                     <td>
@@ -304,7 +312,7 @@ function ChefMenuList() {
                             className={`${styles['delete-button']} ${styles.v_btn_edit}`}
                             data-bs-toggle="modal"
                             data-bs-target="#exampleModal"
-                            onClick={() => handleDeleteClick(dish._id)}
+                            onClick={() => handleDeleteClick(dish.id)}
                           >
                             <i className="fa-regular fa-trash-can"></i>
                           </button>
@@ -359,37 +367,37 @@ function ChefMenuList() {
 
       {/* Change Password Modal */}
       <div
-          className={`modal fade ${style.m_model_ChangePassword}`}
-          id="changepassModal"  // Ensure this ID matches
-          tabIndex="-1"
-          aria-labelledby="changepassModalLabel"
-          aria-hidden="true"
-        >
-          <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
-            <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
-              <div className={`modal-body ${style.m_change_pass_text}`}>
-                <span>Change Password</span>
+        className={`modal fade ${style.m_model_ChangePassword}`}
+        id="changepassModal"  // Ensure this ID matches
+        tabIndex="-1"
+        aria-labelledby="changepassModalLabel"
+        aria-hidden="true"
+      >
+        <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
+          <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
+            <div className={`modal-body ${style.m_change_pass_text}`}>
+              <span>Change Password</span>
+            </div>
+            <div className={style.m_new}>
+              <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
+            </div>
+            <div className={style.m_new}>
+              <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+            </div>
+            <div className={style.m_confirm}>
+              <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+            </div>
+            <div className={style.m_btn_cancel_change}>
+              <div className={style.m_btn_cancel}>
+                <button data-bs-dismiss="modal">Cancel</button>
               </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
-              </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-              </div>
-              <div className={style.m_confirm}>
-                <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-              </div>
-              <div className={style.m_btn_cancel_change}>
-                <div className={style.m_btn_cancel}>
-                  <button data-bs-dismiss="modal">Cancel</button>
-                </div>
-                <div className={style.m_btn_change}>
-                  <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
-                </div>
+              <div className={style.m_btn_change}>
+                <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
               </div>
             </div>
           </div>
         </div>
+      </div>
       {/* Logout Modal */}
       <div
         className={`modal fade ${style.m_model_logout}`}

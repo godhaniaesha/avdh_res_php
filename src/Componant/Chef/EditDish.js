@@ -13,6 +13,8 @@ import axios from "axios"; // Import axios for making HTTP requests
 import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 
 function EditDish() {
+
+
   const [imageFile, setImageFile] = useState(null);
   const [dishData, setDishData] = useState({
     dishId: "",
@@ -32,19 +34,22 @@ function EditDish() {
  const [oldPassword, setOldPassword] = useState("");
 
   // Fetching dish data from localStorage on component mount
+  const dishId = localStorage.getItem("dishId"); // Get the dish ID from local storage
   useEffect(() => {
-    const dishId = localStorage.getItem("dishId"); // Get the dish ID from local storage
     console.log(dishId, "dishId");
+
+    const formData = new FormData();
+    formData.append("dish_id", dishId);
 
     if (dishId) {
       // Fetch the dish data using the dish ID
-      axios.get(`http://localhost:8000/api/getDish/${dishId}`) // Adjust the endpoint as necessary
+      axios.post(`http://localhost/avadh_api/chef/dish/view_dish.php`,formData) // Adjust the endpoint as necessary
         .then((response) => {
           console.log(response, "response");
           if (response.status === 200) {
-            const parsedDishData = response.data.dish; // Assuming the response contains the dish data
+            const parsedDishData = response.data.data; // Assuming the response contains the dish data
             setDishData({
-              dishId: parsedDishData._id,
+              dishId: parsedDishData.id,
               dishName: parsedDishData.dishName,
               dishCategory: parsedDishData.dishCategory,
               sellingPrice: parsedDishData.sellingPrice,
@@ -72,7 +77,7 @@ function EditDish() {
       [name]: files ? files[0] : value,
     }));
     if (files) {
-      setImageFile(files[0]);
+      setImageFile(files[0].name);
     }
   };
 
@@ -88,6 +93,7 @@ function EditDish() {
 
     // Create a FormData object to send the form data
     const formData = new FormData();
+    formData.append("dishId", dishId);
     formData.append("dishName", dishData.dishName);
     formData.append("dishCategory", dishData.dishCategory);
     formData.append("sellingPrice", dishData.sellingPrice);
@@ -97,7 +103,8 @@ function EditDish() {
 
     // Append image file if it exists
     if (imageFile && imageFile instanceof File) {
-      formData.append("image", imageFile);
+      formData.append("image", imageFile[0].name);
+      console.log(imageFile);
     }
 
     try {
@@ -105,7 +112,7 @@ function EditDish() {
       const token = localStorage.getItem('authToken'); // Ensure this is the correct key
 
       // Update the API endpoint to use updateVariant
-      const response = await axios.put(`http://localhost:8000/api/updateDish/${dishId}`, formData, {
+      const response = await axios.post(`http://localhost/avadh_api/chef/dish/update_dish.php`, formData, {
         headers: {
           "Content-Type": "multipart/form-data", // Set the content type for form data
           'Authorization': `Bearer ${token}`
@@ -114,6 +121,7 @@ function EditDish() {
 
       if (response.status !== 200) throw new Error("Failed to update dish details");
       console.log("Dish details updated successfully!");
+      navigate('/chef_menu')
       // Optionally redirect after success
       // window.location.href = "/chef_menu";
     } catch (error) {
@@ -304,6 +312,7 @@ const handleLogout = () => {
                     />
                     <label htmlFor="image"
                       className={`form-control ${styless.m_add_file} ${styless.v_dishinput_pad} d-flex flex-wrap justify-content-between align-items-center`}>
+                        {console.log(imageFile)}
                       <span>{imageFile ? imageFile : "No file chosen"}</span>
 
                       <span className={`btn btn-primary ${styless.d_choose_file}`}>CHOOSE</span>
