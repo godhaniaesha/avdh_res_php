@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+import bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 import styles from '../../css/EditWaiter.module.css';
 import SuperSidePanel from './SuperSidePanel';
 import SuperNavbar from './SuperNavbar';
 import { useNavigate } from 'react-router-dom';
 import style from "../../css/BillPayment.module.css";
+import axios from 'axios';
 
 function EditWaiter() {
     const [imageName, setImageName] = useState("");
@@ -28,7 +29,7 @@ function EditWaiter() {
     });
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState("");
+    const [oldPassword, setOldPassword] = useState("");
 
     useEffect(() => {
         // Get the waiter data from local storage
@@ -37,36 +38,60 @@ function EditWaiter() {
             setWaiterData(JSON.parse(storedWaiterData)); // Set waiter data from localStorage
         }
     }, []);
-
     const updateWaiterDetails = async (event) => {
         event.preventDefault();
-        const formData = new FormData(); // Use FormData to handle file uploads
-        formData.append('image', waiterData.image); // Append the image file
-        formData.append('firstName', waiterData.firstName);
-        formData.append('lastName', waiterData.lastName);
-        formData.append('email', waiterData.email);
-        formData.append('phone', waiterData.phone);
-        formData.append('dateOfBirth', waiterData.dateOfBirth);
-        formData.append('gender', waiterData.gender);
-        formData.append('address', waiterData.address);
-        formData.append('city', waiterData.city);
-        formData.append('state', waiterData.state);
-        formData.append('country', waiterData.country);
-        
-        try {
-            const response = await fetch(`http://localhost:8000/api/updateUser/${waiterData._id}`, {
-                method: 'PUT',
-                body: formData, // Send FormData
-            });
 
-            if (!response.ok) {
-                throw new Error('Failed to update waiter details');
+        try {
+            const accountantId = waiterData.id; // Use waiterData instead of formData
+            console.log("Accountant ID:", accountantId);
+
+            if (!accountantId) throw new Error("Accountant ID not found");
+
+            const token = localStorage.getItem("authToken");
+            console.log("Stored Token:", token);
+
+            if (!token) throw new Error("Authentication token is missing");
+
+            const formDataToSend = new FormData(); // Renamed variable to avoid conflict
+
+            formDataToSend.append('userId', accountantId); // Add userId
+            formDataToSend.append('firstName', waiterData.firstName);
+            formDataToSend.append('lastName', waiterData.lastName);
+            formDataToSend.append('email', waiterData.email);
+            formDataToSend.append('phone', waiterData.phone);
+            formDataToSend.append('dateOfBirth', waiterData.dateOfBirth);
+            formDataToSend.append('gender', waiterData.gender);
+            formDataToSend.append('address', waiterData.address);
+            formDataToSend.append('city', waiterData.city);
+            formDataToSend.append('state', waiterData.state);
+            formDataToSend.append('country', waiterData.country);
+            if (waiterData.image) {
+                formDataToSend.append("image", waiterData.image);
+            }
+
+            console.log("Sending FormData:", [...formDataToSend.entries()]);
+
+            const response = await axios.post(
+                "http://localhost/avadh_api/super_admin/waiter/update_waiter.php",
+                formDataToSend,
+                {
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Accept": "application/json",
+                    },
+                }
+            );
+
+            console.log("API Response:", response.data);
+
+            if (response.data.success) {
+                console.log("Accountant details updated successfully!");
+                navigate("/superWaiter");
             } else {
-                console.log('Waiter details updated successfully!');
-                window.location.href = '/superWaiter'; // Redirect after successful update
+                throw new Error(response.data.message || "Failed to update accountant details");
             }
         } catch (error) {
-            console.error('Error updating waiter details:', error.message);
+            console.error("Error updating Accountant details:", error.message);
         }
     };
 
@@ -170,7 +195,7 @@ function EditWaiter() {
     };
     return (
         <div>
-            <SuperNavbar toggleDrawer={toggleDrawer} showSearch={false}/>
+            <SuperNavbar toggleDrawer={toggleDrawer} showSearch={false} />
             <SuperSidePanel isOpen={isSidebarOpen} isWaiter={true} />
 
             <div id={styles['a_main-content']}>
@@ -275,39 +300,39 @@ function EditWaiter() {
                     </div>
                 </form>
 
-               {/* Change Password Modal */}
-           <div
-          className={`modal fade ${style.m_model_ChangePassword}`}
-          id="changepassModal"  // Ensure this ID matches
-          tabIndex="-1"
-          aria-labelledby="changepassModalLabel"
-          aria-hidden="true"
-        >
-          <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
-            <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
-              <div className={`modal-body ${style.m_change_pass_text}`}>
-                <span>Change Password</span>
-              </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
-              </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-              </div>
-              <div className={style.m_confirm}>
-                <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-              </div>
-              <div className={style.m_btn_cancel_change}>
-                <div className={style.m_btn_cancel}>
-                  <button data-bs-dismiss="modal">Cancel</button>
+                {/* Change Password Modal */}
+                <div
+                    className={`modal fade ${style.m_model_ChangePassword}`}
+                    id="changepassModal"  // Ensure this ID matches
+                    tabIndex="-1"
+                    aria-labelledby="changepassModalLabel"
+                    aria-hidden="true"
+                >
+                    <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
+                        <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
+                            <div className={`modal-body ${style.m_change_pass_text}`}>
+                                <span>Change Password</span>
+                            </div>
+                            <div className={style.m_new}>
+                                <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
+                            </div>
+                            <div className={style.m_new}>
+                                <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+                            </div>
+                            <div className={style.m_confirm}>
+                                <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                            </div>
+                            <div className={style.m_btn_cancel_change}>
+                                <div className={style.m_btn_cancel}>
+                                    <button data-bs-dismiss="modal">Cancel</button>
+                                </div>
+                                <div className={style.m_btn_change}>
+                                    <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div className={style.m_btn_change}>
-                  <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
 
                 {/* Logout Modal */}

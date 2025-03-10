@@ -31,10 +31,77 @@ function EditAccountant() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const navigate = useNavigate();
     const [oldPassword, setOldPassword] = useState("");
+    // useEffect(() => {
+    //     const accountantData = localStorage.getItem('accountantData');
+    //     if (accountantData) {
+    //         setFormData(JSON.parse(accountantData)); // Set form data from localStorage
+    //     }
+    // }, []);
+
+    // const handleChange = (e) => {
+    //     const { name, value } = e.target;
+    //     setFormData((prevData) => ({
+    //         ...prevData,
+    //         [name]: value,
+    //     }));
+    // };
+
+    // const handleFileChange = (e) => {
+    //     setFormData({ ...formData, image: e.target.files[0] });
+    //     setImageName(e.target.files[0].name); // Set the image name for display
+    // };
+
+    // const handleSubmit = async (event) => {
+    //     event.preventDefault();
+    //     try {
+    //         const accountantId = formData._id; // Use the ID from formData
+            
+    //         if (!accountantId) {
+    //             throw new Error('Accountant ID not found');
+    //         }
+
+    //         const dataToSend = {
+    //             ...formData,
+    //             image: formData.image.name // Use the image name for submission
+    //         };
+
+    //         const token = localStorage.getItem('authToken');
+    //         console.log("Token:", token);
+
+    //         // Ensure the URL is correct
+    //         // const response = await fetch(`http://localhost/avadh_api/super_admin/accountant/update_accountant.php/${accountantId}`, {
+    //         //     method: 'PUT',
+    //         //     headers: {
+    //         //         'Content-Type': 'application/json'
+    //         //     },
+    //         //     body: JSON.stringify(dataToSend)
+    //         // });
+    //         const response = await axios.post("http://localhost/avadh_api/super_admin/accountant/update_accountant.php", formData, {
+    //             headers: {
+    //                 'Authorization': `Bearer ${token}`,
+    //                 'Accept': 'application/json',
+    //             }
+    //         })
+
+    //         if (!response.ok) {
+    //             throw new Error('Failed to update Accountant details');
+    //         } else {
+    //             console.log('Accountant details updated successfully!');
+    //             window.location.href = "/superaccountlist"; // Redirect after successful update
+    //         }
+    //     } catch (error) {
+    //         console.error('Error updating Accountant details:', error.message);
+    //     }
+    // };
+
+ 
+
+
     useEffect(() => {
-        const accountantData = localStorage.getItem('accountantData');
+        const accountantData = localStorage.getItem("accountantData");
         if (accountantData) {
-            setFormData(JSON.parse(accountantData)); // Set form data from localStorage
+            const parsedData = JSON.parse(accountantData);
+            setFormData(parsedData);
         }
     }, []);
 
@@ -47,52 +114,60 @@ function EditAccountant() {
     };
 
     const handleFileChange = (e) => {
-        setFormData({ ...formData, image: e.target.files[0] });
-        setImageName(e.target.files[0].name); // Set the image name for display
+        if (e.target.files.length > 0) {
+            setFormData({ ...formData, image: e.target.files[0] });
+            setImageName(e.target.files[0].name);
+        }
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const accountantId = formData._id; // Use the ID from formData
-            if (!accountantId) {
-                throw new Error('Accountant ID not found');
+            const accountantId = formData.id;
+            console.log("Accountant ID:", accountantId);
+            
+            if (!accountantId) throw new Error("Accountant ID not found");
+    
+            const token = localStorage.getItem("authToken");
+            console.log("Stored Token:", token);
+            
+            if (!token) throw new Error("Authentication token is missing");
+    
+            const formDataToSend = new FormData();
+            formDataToSend.append("userId", formData.id);
+            formDataToSend.append("firstName", formData.firstName);
+            formDataToSend.append("lastName", formData.lastName);
+            if (formData.image) {
+                formDataToSend.append("image", formData.image);
             }
-
-            const dataToSend = {
-                ...formData,
-                image: formData.image.name // Use the image name for submission
-            };
-
-            const token = localStorage.getItem('authToken');
-            console.log("Token:", token);
-
-            // Ensure the URL is correct
-            const response = await fetch(`http://localhost/avadh_api/super_admin/accountant/update_accountant.php/${accountantId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(dataToSend)
-            });
-            // const response = await axios.post("http://localhost/avadh_api/super_admin/accountant/update_accountant.php", formData, {
-            //     headers: {
-            //         'Authorization': `Bearer ${token}`,
-            //         'Accept': 'application/json',
-            //     }
-            // })
-
-            if (!response.ok) {
-                throw new Error('Failed to update Accountant details');
+    
+            console.log("Sending FormData:", [...formDataToSend.entries()]); 
+    
+            const response = await axios.post(
+                "http://localhost/avadh_api/super_admin/accountant/update_accountant.php",
+                formDataToSend,
+                {
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Accept": "application/json",
+                    },
+                }
+            );
+    
+            console.log("API Response:", response.data);
+    
+            if (response.data.success) {
+                console.log("Accountant details updated successfully!");
+                navigate("/superaccountlist");
             } else {
-                console.log('Accountant details updated successfully!');
-                window.location.href = "/superaccountlist"; // Redirect after successful update
+                throw new Error(response.data.message || "Failed to update accountant details");
             }
         } catch (error) {
-            console.error('Error updating Accountant details:', error.message);
+            console.error("Error updating Accountant details:", error.message);
         }
     };
-
+    
+    
     const toggleDrawer = () => {
         setIsSidebarOpen(prev => !prev);
     };

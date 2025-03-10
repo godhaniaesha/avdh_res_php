@@ -86,7 +86,8 @@ const AccountList = () => {
 
   // Function to handle edit button click
   const handleEditClick = (accountant) => {
-    localStorage.setItem("accountantData", JSON.stringify(accountant)); // Store entire accountant object in localStorage
+    localStorage.setItem("accountantData", JSON.stringify(accountant));
+    localStorage.setItem("accountantId", JSON.stringify(accountant.id)); // Store entire accountant object in localStorage
   };
 
   const toggleDrawer = () => {
