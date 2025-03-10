@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+import bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 import styles from "../../css/ChefMenuList.module.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -12,232 +12,252 @@ import style from "../../css/BillPayment.module.css";
 import axios from "axios";
 
 export default function History() {
-    const [dishes, setDishes] = useState([]);
-    const [categories, setCategories] = useState([]);
-    const [dishIdToDelete, setDishIdToDelete] = useState(null);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [newPassword, setNewPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [changepasswordmodal, setChangepasswordmodal] = useState(false);
-    const [sortOrder, setSortOrder] = useState("");
-    const [searchQuery, setSearchQuery] = useState("");
-    const navigate = useNavigate();
-   const [oldPassword, setOldPassword] = useState("");
-    useEffect(() => {
-      fetchCategories();
-      fetchDishes();
-    }, []);
+  const [dishes, setDishes] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [dishIdToDelete, setDishIdToDelete] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [changepasswordmodal, setChangepasswordmodal] = useState(false);
+  const [sortOrder, setSortOrder] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
+  const [oldPassword, setOldPassword] = useState("");
   
-  
-    const fetchCategories = () => {
-      axios.get("http://localhost:8000/api/allCategory")
-        .then((response) => {
-          if (response.status !== 200) {
-            throw new Error("Network response was not ok");
-          }
-          setCategories(response.data.category);
-        })
-        .catch((error) => console.error("Error fetching categories:", error));
-    };
-  
-  
-    const fetchDishes = () => {
-      axios.get("http://localhost:8000/api/allDish")
-        .then((response) => {
-          if (response.status === 200 && Array.isArray(response.data.dish)) {
-            setDishes(response.data.dish);
-          } else {
-            console.error("Expected an array of dishes but received:", response.data);
-          }
-        })
-        .catch((error) => console.error("Error fetching dishes:", error));
-    };
-  
-    const toggleDrawer = () => {
-      setIsSidebarOpen(prev => !prev);
-    };
-  
-    const toggleNotifications = () => {
-      const panel = document.getElementById("notification-panel");
-      panel.style.display =
-        panel.style.display === "none" || panel.style.display === ""
-          ? "block"
-          : "none";
-    };
-  
-  
-    const handleDeleteClick = (dishId) => {
-      setDishIdToDelete(dishId);
-      localStorage.setItem("dishIdToDelete", dishId);
-    };
-  
-  
-    const handleDeleteConfirm = () => {
-      const dishId = localStorage.getItem("dishIdToDelete");
-      if (dishId) {
-        axios
-          .delete(`http://localhost:8000/api/deleteDish/${dishId}`)
-          .then((response) => {
-            if (response.status === 200) {
-  
-              fetchDishes();
-            }
-          })
-          .catch((error) => console.error("Error deleting dish:", error));
-      }
-    };
-  
-  
-  
-    const handleEditClick = (dish) => {
-      localStorage.setItem("dishId", dish._id);
-      localStorage.setItem("dishData", JSON.stringify(dish));
-      window.location.href = "/editDish";
-    };
-  
-    // ... existing code ...
-    const handlePasswordChange = () => {
-      // Check if new password and confirm password match
-      if (newPassword !== confirmPassword) {
-        alert("Passwords do not match.");
-        return;
-      }
-  
-      // Make sure password is not empty
-      if (!newPassword || !confirmPassword) {
-        alert("Please enter a new password.");
-        return;
-      }
-  
-      const userId = localStorage.getItem("userId");
-  
-      if (!userId) {
-        console.error("User ID is not available.");
-        return;
-      }
-  
-      const passwordData = {
-        newPassword: newPassword, // Send new password
-        confirmPassword: confirmPassword // Send confirm password
-      };
-  
-      // Send the PUT request to update the password
-      fetch(`http://localhost:8000/api/updateuser/${userId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(passwordData),
+
+  const token = localStorage.getItem("authToken");
+
+  const fetchOrder = () => {
+    axios.post("http://localhost/avadh_api/chef/dashboard/view_order.php", {} , {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          console.log(response.data.orders)
+        } else {
+          console.error("Expected an array of dishes but received:", response.data);
+        }
       })
-        .then(response => {
-          if (!response.ok) throw new Error("Network response was not ok");
-  
-          // Hide the modal after successful password change
-          const changePasswordModal = document.getElementById('changepassModal');
-          if (changePasswordModal) {
-            // Remove the 'show' class directly
-            changePasswordModal.classList.remove('show');
-            changePasswordModal.style.display = 'none'; // Also set display to none
-  
-            // Remove the backdrop
-            const backdrop = document.querySelector('.modal-backdrop');
-            if (backdrop) {
-              backdrop.remove(); // Remove the backdrop element
-            }
-  
-            // Optionally, reset the modal content
-            setNewPassword("");
-            setConfirmPassword("");
+      .catch((error) => console.error("Error fetching dishes:", error));
+  };
+
+  const fetchCategories = () => {
+    axios.post("http://localhost/avadh_api/chef/category/view_category.php")
+      .then((response) => {
+        if (response.status !== 200) {
+          throw new Error("Network response was not ok");
+        }
+        setCategories(response.data.category);
+      })
+      .catch((error) => console.error("Error fetching categories:", error));
+  };
+
+
+  const fetchDishes = () => {
+    axios.post("http://localhost/avadh_api/chef/dish/view_dish.php")
+      .then((response) => {
+        if (response.status === 200 && Array.isArray(response.data.dish)) {
+          setDishes(response.data.dish);
+        } else {
+          console.error("Expected an array of dishes but received:", response.data);
+        }
+      })
+      .catch((error) => console.error("Error fetching dishes:", error));
+  };
+
+  useEffect(() => {
+    // fetchCategories();
+    // fetchDishes();
+    fetchOrder();
+  }, []);
+
+  const toggleDrawer = () => {
+    setIsSidebarOpen(prev => !prev);
+  };
+
+  const toggleNotifications = () => {
+    const panel = document.getElementById("notification-panel");
+    panel.style.display =
+      panel.style.display === "none" || panel.style.display === ""
+        ? "block"
+        : "none";
+  };
+
+
+  const handleDeleteClick = (dishId) => {
+    setDishIdToDelete(dishId);
+    localStorage.setItem("dishIdToDelete", dishId);
+  };
+
+
+  const handleDeleteConfirm = () => {
+    const dishId = localStorage.getItem("dishIdToDelete");
+    if (dishId) {
+      axios
+        .delete(`http://localhost:8000/api/deleteDish/${dishId}`)
+        .then((response) => {
+          if (response.status === 200) {
+
+            fetchDishes();
           }
-  
-          return response.json();
         })
-        .catch(error => {
-          console.error("Error changing password:", error);
-        });
+        .catch((error) => console.error("Error deleting dish:", error));
+    }
+  };
+
+
+
+  const handleEditClick = (dish) => {
+    localStorage.setItem("dishId", dish._id);
+    localStorage.setItem("dishData", JSON.stringify(dish));
+    window.location.href = "/editDish";
+  };
+
+  // ... existing code ...
+  const handlePasswordChange = () => {
+    // Check if new password and confirm password match
+    if (newPassword !== confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
+
+    // Make sure password is not empty
+    if (!newPassword || !confirmPassword) {
+      alert("Please enter a new password.");
+      return;
+    }
+
+    const userId = localStorage.getItem("userId");
+
+    if (!userId) {
+      console.error("User ID is not available.");
+      return;
+    }
+
+    const passwordData = {
+      newPassword: newPassword, // Send new password
+      confirmPassword: confirmPassword // Send confirm password
     };
-    // ... existing code ...
-    const handleLogout = () => {
-      if (window.bootstrap && window.bootstrap.Modal) {
-        const logoutModal = document.getElementById('logoutModal');
-        const modal = new window.bootstrap.Modal(logoutModal);
-        modal.hide();
-      }
-  
-      localStorage.removeItem("authToken");
-      localStorage.removeItem("userId");
-  
-      navigate("/login", { replace: true });
-  
-      window.history.pushState(null, '', window.location.href);
-    };
-  
-    const handleSortChange = (event) => {
-      setSortOrder(event.target.value);
-    };
-  
-    const getSortedDishes = () => {
-      const filteredDishes = dishes.filter(dish => 
-        dish.dishName.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-  
-      if (sortOrder === "A") {
-        return [...filteredDishes].sort((a, b) => a.dishName.localeCompare(b.dishName));
-      } else if (sortOrder === "B") {
-        return [...filteredDishes].sort((a, b) => b.dishName.localeCompare(a.dishName));
-      } else if (sortOrder === "C") {
-        return [...filteredDishes].sort((a, b) => a.sellingPrice - b.sellingPrice);
-      } else if (sortOrder === "D") {
-        return [...filteredDishes].sort((a, b) => a.status.localeCompare(b.status));
-      } else if (sortOrder === "E") {
-        return [...filteredDishes].sort((a, b) => {
-          const categoryA = categories.find(category => category._id === a.dishCategory)?.categoryName || "";
-          const categoryB = categories.find(category => category._id === b.dishCategory)?.categoryName || "";
-          return categoryA.localeCompare(categoryB);
-        });
-      } else if (sortOrder === "F") {
-        return [...filteredDishes].sort((a, b) => {
-          const categoryA = categories.find(category => category._id === a.dishCategory)?.categoryName || "";
-          const categoryB = categories.find(category => category._id === b.dishCategory)?.categoryName || "";
-          return categoryB.localeCompare(categoryA);
-        });
-      }
-      return filteredDishes;
-    };
+
+    // Send the PUT request to update the password
+    fetch(`http://localhost:8000/api/updateuser/${userId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(passwordData),
+    })
+      .then(response => {
+        if (!response.ok) throw new Error("Network response was not ok");
+
+        // Hide the modal after successful password change
+        const changePasswordModal = document.getElementById('changepassModal');
+        if (changePasswordModal) {
+          // Remove the 'show' class directly
+          changePasswordModal.classList.remove('show');
+          changePasswordModal.style.display = 'none'; // Also set display to none
+
+          // Remove the backdrop
+          const backdrop = document.querySelector('.modal-backdrop');
+          if (backdrop) {
+            backdrop.remove(); // Remove the backdrop element
+          }
+
+          // Optionally, reset the modal content
+          setNewPassword("");
+          setConfirmPassword("");
+        }
+
+        return response.json();
+      })
+      .catch(error => {
+        console.error("Error changing password:", error);
+      });
+  };
+  // ... existing code ...
+  const handleLogout = () => {
+    if (window.bootstrap && window.bootstrap.Modal) {
+      const logoutModal = document.getElementById('logoutModal');
+      const modal = new window.bootstrap.Modal(logoutModal);
+      modal.hide();
+    }
+
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userId");
+
+    navigate("/login", { replace: true });
+
+    window.history.pushState(null, '', window.location.href);
+  };
+
+  const handleSortChange = (event) => {
+    setSortOrder(event.target.value);
+  };
+
+  const getSortedDishes = () => {
+    const filteredDishes = dishes.filter(dish =>
+      dish.dishName.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    if (sortOrder === "A") {
+      return [...filteredDishes].sort((a, b) => a.dishName.localeCompare(b.dishName));
+    } else if (sortOrder === "B") {
+      return [...filteredDishes].sort((a, b) => b.dishName.localeCompare(a.dishName));
+    } else if (sortOrder === "C") {
+      return [...filteredDishes].sort((a, b) => a.sellingPrice - b.sellingPrice);
+    } else if (sortOrder === "D") {
+      return [...filteredDishes].sort((a, b) => a.status.localeCompare(b.status));
+    } else if (sortOrder === "E") {
+      return [...filteredDishes].sort((a, b) => {
+        const categoryA = categories.find(category => category._id === a.dishCategory)?.categoryName || "";
+        const categoryB = categories.find(category => category._id === b.dishCategory)?.categoryName || "";
+        return categoryA.localeCompare(categoryB);
+      });
+    } else if (sortOrder === "F") {
+      return [...filteredDishes].sort((a, b) => {
+        const categoryA = categories.find(category => category._id === a.dishCategory)?.categoryName || "";
+        const categoryB = categories.find(category => category._id === b.dishCategory)?.categoryName || "";
+        return categoryB.localeCompare(categoryA);
+      });
+    }
+    return filteredDishes;
+  };
   return (
     <section id={styles.a_selectTable}>
-    <ChefNavbar toggleDrawer={toggleDrawer} showSearch={false} toggleNotifications={toggleNotifications} />
-    <ChefSidePanel isOpen={isSidebarOpen} isHistory={true} />
+      <ChefNavbar toggleDrawer={toggleDrawer} showSearch={false} toggleNotifications={toggleNotifications} />
+      <ChefSidePanel isOpen={isSidebarOpen} isHistory={true} />
 
-    <div id={styles['a_main-content']}>
-      <div className={styles["db_content-container"]}>
-        <div className={`container-fluid ${styles.a_main}`}>
-          <div className="d-flex justify-content-between align-items-center flex-wrap">
-            <div className="text-nowrap" style={{ fontSize: "30px", fontWeight: "600" }}>
-            History
-            </div>
-            <div className={`d-flex justify-content-between align-items-center ${styles.v_new_addz}`}>
-              <div className={`${styles.a_search} ${styles.v_search} m-0`}>
-                <input 
-                  type="search" 
-                  placeholder="Search..." 
-                  className="search-input" 
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
+      <div id={styles['a_main-content']}>
+        <div className={styles["db_content-container"]}>
+          <div className={`container-fluid ${styles.a_main}`}>
+            <div className="d-flex justify-content-between align-items-center flex-wrap">
+              <div className="text-nowrap" style={{ fontSize: "30px", fontWeight: "600" }}>
+                History
               </div>
-              <div className="me-3">
-                <select className={styles.v_search1 } value={sortOrder} onChange={handleSortChange}>
-                  <option value="">Sort by</option>
-                  <option value="A">Name A-Z</option>
-                  <option value="B">Name Z-A</option>
-                  <option value="E">Category A-Z</option>
-                  <option value="F">Category Z-A</option>
-                  <option value="C">Price</option>
-                  <option value="D">Status</option>            
-                </select>
-              </div>
-              {/* <div>
+              <div className={`d-flex justify-content-between align-items-center ${styles.v_new_addz}`}>
+                <div className={`${styles.a_search} ${styles.v_search} m-0`}>
+                  <input
+                    type="search"
+                    placeholder="Search..."
+                    className="search-input"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                <div className="me-3">
+                  <select className={styles.v_search1} value={sortOrder} onChange={handleSortChange}>
+                    <option value="">Sort by</option>
+                    <option value="A">Name A-Z</option>
+                    <option value="B">Name Z-A</option>
+                    <option value="E">Category A-Z</option>
+                    <option value="F">Category Z-A</option>
+                    <option value="C">Price</option>
+                    <option value="D">Status</option>
+                  </select>
+                </div>
+                {/* <div>
                 <Link to={"/addDiah"}>
                   <button
                     type="button"
@@ -248,102 +268,103 @@ export default function History() {
                   </button>
                 </Link>
               </div> */}
+              </div>
             </div>
           </div>
-        </div>
-        <div className={styles.m_table} style={{ padding: "30px 10px", borderRadius: "5px" }}>
-          <table border="0" width="100%" data-bs-spy="scroll">
-            <thead>
-              <tr align="center" bgcolor="#F3F3F3" className={styles.m_table_heading} >
-                <td  className='fw-normal'>Image</td>
-                <td className='fw-normal'>Name</td>
-                <td className='fw-normal'>Category</td>
-                <td className='fw-normal'>Price</td>
-                <td className='fw-normal'>Status</td>
-                <td className='fw-normal'>Action</td>
-              </tr>
-            </thead>
-            <tbody>
-              {getSortedDishes().map((dish) => (
-                <tr key={dish._id} align="center">
-                  <td className="text-center">
-                    <img
-                      src={`http://localhost:8000/${dish.dishImage}`}
-                      className={styles.v_menu_rowmar}
-                      alt="Dish"
-                    />
-                  </td>
-                  <td className="text-center">{dish.dishName}</td>
-                  <td className="text-center">
-                    {
-                      categories.find(category => category._id === dish.dishCategory)?.categoryName ||
-                      "Unknown Category"
-                    }
-                  </td>
-                  <td className="text-center">₹ {dish.sellingPrice}</td>
-                  <td className={dish.status === "available" ? "text-success" : "text-danger"}>
-                    {dish.status}
-                  </td>
-                  <td>
-                    <div className={styles.m_table_icon}>
+          <div className={styles.m_table} style={{ padding: "30px 10px", borderRadius: "5px" }}>
+            <table border="0" width="100%" data-bs-spy="scroll">
+              <thead>
+                <tr align="center" bgcolor="#F3F3F3" className={styles.m_table_heading} >
+                  <td className='fw-normal'>Order ID</td>
+                  <td className='fw-normal'>Date</td>
+                  <td className='fw-normal'>Customer Name</td>
+                  <td className='fw-normal'>Amount</td>
+                  <td className='fw-normal'>Status</td>
+                  <td className='fw-normal'>Action</td>
+                </tr>
+              </thead>
+              <tbody>
+                {getSortedDishes().map((dish) => (
+                  <tr key={dish._id} align="center">
+                    <td className="text-center">
+                      <img
+                        src={`http://localhost:8000/${dish.dishImage}`}
+                        className={styles.v_menu_rowmar}
+                        alt="Dish"
+                      />
+                    </td>
+                    <td className="text-center">{dish.dishName}</td>
+                    <td className="text-center">
+                      {
+                        categories.find(category => category._id === dish.dishCategory)?.categoryName ||
+                        "Unknown Category"
+                      }
+                    </td>
+                    <td className="text-center">₹ {dish.sellingPrice}</td>
+                    <td className={dish.status === "available" ? "text-success" : "text-danger"}>
+                      {dish.status}
+                    </td>
+                    <td>
+                      <div className={styles.m_table_icon}>
 
 
-                      <div className={styles.m_pencile}>
-                        <Link to={"/editDish"} onClick={() => handleEditClick(dish)} >
-                          <button aria-label="Edit Chef" className={`${styles['delete-button']} ${styles.v_btn_edit}`}>
-                            <i className="fa-solid fa-pencil"></i>
+                        <div className={styles.m_pencile}>
+                          <Link to={"/editDish"} onClick={() => handleEditClick(dish)} >
+                            <button aria-label="Edit Chef" className={`${styles['delete-button']} ${styles.v_btn_edit}`}>
+                              <i className="fa-solid fa-pencil"></i>
+                            </button>
+                          </Link>
+                        </div>
+
+                        <div className={styles.m_trash}>
+                          <button
+                            className={`${styles['delete-button']} ${styles.v_btn_edit}`}
+                            data-bs-toggle="modal"
+                            data-bs-target="#exampleModal"
+                            onClick={() => handleDeleteClick(dish._id)}
+                          >
+                            <i className="fa-regular fa-trash-can"></i>
                           </button>
-                        </Link>
+                        </div>
                       </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
 
-                      <div className={styles.m_trash}>
+            {/* Modal for delete confirmation */}
+            <div
+              className="modal fade"
+              id="exampleModal"
+              tabIndex="-1"
+              aria-labelledby="exampleModalLabel"
+              aria-hidden="true"
+            >
+              <div className="modal-dialog modal-dialog-centered">
+                <div className="modal-content" style={{ border: "none", backgroundColor: "#f6f6f6" }}>
+                  <div className="modal-body">
+                    <div className="text-center">
+                      <div style={{ fontSize: "35px", fontWeight: "700", marginBottom: "20px" }}>
+                        Delete
+                      </div>
+                      <div style={{ fontSize: "22px", fontWeight: "600", marginBottom: "35px" }}>
+                        Are You Sure You Want To Delete?
+                      </div>
+                      <div className="d-flex justify-content-center align-items-center my-3">
+                        <button type="button" className="btn border-secondary border mx-3" data-bs-dismiss="modal">
+                          Cancel
+                        </button>
                         <button
-                          className={`${styles['delete-button']} ${styles.v_btn_edit}`}
-                          data-bs-toggle="modal"
-                          data-bs-target="#exampleModal"
-                          onClick={() => handleDeleteClick(dish._id)}
+                          type="button"
+                          className="btn border text-white"
+                          style={{ backgroundColor: "#4B6C52" }}
+                          onClick={handleDeleteConfirm}
+                          data-bs-dismiss="modal"
                         >
-                          <i className="fa-regular fa-trash-can"></i>
+                          Yes
                         </button>
                       </div>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {/* Modal for delete confirmation */}
-          <div
-            className="modal fade"
-            id="exampleModal"
-            tabIndex="-1"
-            aria-labelledby="exampleModalLabel"
-            aria-hidden="true"
-          >
-            <div className="modal-dialog modal-dialog-centered">
-              <div className="modal-content" style={{ border: "none", backgroundColor: "#f6f6f6" }}>
-                <div className="modal-body">
-                  <div className="text-center">
-                    <div style={{ fontSize: "35px", fontWeight: "700", marginBottom: "20px" }}>
-                      Delete
-                    </div>
-                    <div style={{ fontSize: "22px", fontWeight: "600", marginBottom: "35px" }}>
-                      Are You Sure You Want To Delete?
-                    </div>
-                    <div className="d-flex justify-content-center align-items-center my-3">
-                      <button type="button" className="btn border-secondary border mx-3" data-bs-dismiss="modal">
-                        Cancel
-                      </button>
-                      <button
-                        type="button"
-                        className="btn border text-white"
-                        style={{ backgroundColor: "#4B6C52" }}
-                        onClick={handleDeleteConfirm}
-                        data-bs-dismiss="modal"
-                      >
-                        Yes
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -352,10 +373,9 @@ export default function History() {
           </div>
         </div>
       </div>
-    </div>
 
-    {/* Change Password Modal */}
-    <div
+      {/* Change Password Modal */}
+      <div
         className={`modal fade ${style.m_model_ChangePassword}`}
         id="changepassModal"  // Ensure this ID matches
         tabIndex="-1"
@@ -387,40 +407,40 @@ export default function History() {
           </div>
         </div>
       </div>
-    {/* Logout Modal */}
-    <div
-      className={`modal fade ${style.m_model_logout}`}
-      id="logoutModal"
-      tabIndex="-1"
-      aria-labelledby="logoutModalLabel"
-      aria-hidden="true"
-    >
-      <div className="modal-dialog modal-dialog-centered">
-        <div
-          className={`modal-content ${style.m_model_con}`}
-          style={{ border: "none", backgroundColor: "#f6f6f6" }}
-        >
-          <div className={style.m_log}>
-            <div className={style.m_logout}>
-              <span>Logout</span>
-            </div>
-            <div className={style.m_text}>
-              <span>Are You Sure You Want To Logout?</span>
-            </div>
-            <div className={style.m_btn_cancel_yes}>
-              <div className={style.m_btn_cancel_logout}>
-                <button data-bs-dismiss="modal">Cancel</button>
+      {/* Logout Modal */}
+      <div
+        className={`modal fade ${style.m_model_logout}`}
+        id="logoutModal"
+        tabIndex="-1"
+        aria-labelledby="logoutModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div
+            className={`modal-content ${style.m_model_con}`}
+            style={{ border: "none", backgroundColor: "#f6f6f6" }}
+          >
+            <div className={style.m_log}>
+              <div className={style.m_logout}>
+                <span>Logout</span>
               </div>
-              <div className={style.m_btn_yes}>
-                <button type="button" data-bs-toggle="modal" data-bs-target="#logoutModal" onClick={handleLogout}>
-                  Logout
-                </button>
+              <div className={style.m_text}>
+                <span>Are You Sure You Want To Logout?</span>
+              </div>
+              <div className={style.m_btn_cancel_yes}>
+                <div className={style.m_btn_cancel_logout}>
+                  <button data-bs-dismiss="modal">Cancel</button>
+                </div>
+                <div className={style.m_btn_yes}>
+                  <button type="button" data-bs-toggle="modal" data-bs-target="#logoutModal" onClick={handleLogout}>
+                    Logout
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
   )
 }

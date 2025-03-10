@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell } from '@fortawesome/free-solid-svg-icons';
@@ -7,6 +7,11 @@ import styles from "../../css/WaiterDashboaed.module.css";
 function ChefNavbar({ chefName, toggleDrawer, showSearch }) {
   const loggedInUserName = localStorage.getItem("firstName");
   console.log("loggedInUserId", loggedInUserName);
+
+  const [dropdown,setDropDown] = useState(false);
+  const handleDropdownClick = ()=>{
+    setDropDown(!dropdown);
+  }
 
   return (
     <nav className={`navbar navbar-light bg-light shadow fixed-top ${styles.a_navbar}`}>
@@ -31,7 +36,7 @@ function ChefNavbar({ chefName, toggleDrawer, showSearch }) {
           </div>
           <div className={`$styles['a_pro'] d-flex align-items-center align-content-center`}>
             <img src={require("../../Image/Ellipse 717.png")} alt="" />
-            <div className={`${styles.b_name} dropdown show`}>
+            <div className={`${styles.b_name} dropdown show`} onClick={handleDropdownClick} >
               <a
                 className="btn dropdown-toggle"
                 href="#"
@@ -45,6 +50,7 @@ function ChefNavbar({ chefName, toggleDrawer, showSearch }) {
               </a>
               <div
                 className={`${styles.m_active} dropdown-menu ${styles["dropdown-menu"]}`}
+                style={{ display: dropdown ? 'block' : 'none' }}
                 aria-labelledby="dropdownMenuLink"
               >
                 <a

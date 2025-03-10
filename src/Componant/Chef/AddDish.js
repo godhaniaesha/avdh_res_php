@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
-
+import bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import { Modal } from 'bootstrap';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEraser, faFloppyDisk } from "@fortawesome/free-solid-svg-icons";
@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom'; // Ensure this is imported for n
 
 function AddDish(props) {
   const [categories, setCategories] = useState([]);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [dishName, setDishName] = useState("");
   const [dishCategory, setDishCategory] = useState("");
   const [sellingPrice, setSellingPrice] = useState("");
@@ -25,7 +26,7 @@ function AddDish(props) {
   const [confirmPassword, setConfirmPassword] = useState(""); // State for confirm password
   const [changepasswordmodal, setChangepasswordmodal] = useState(false); // State for change password modal
   const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState(""); // Initialize navigate
+  const [oldPassword, setOldPassword] = useState(""); // Initialize navigate
 
   // Fetch categories from the API using axios
   const fetchCategories = async () => {
@@ -61,7 +62,7 @@ function AddDish(props) {
       // Prepare form data using FormData to handle the file upload
       const formData = new FormData();
       formData.append("dishName", dishName); // Append dish name
-      formData.append("dishCategory", dishCategory); 
+      formData.append("dishCategory", dishCategory);
       console.log(dishCategory)// Append dish category ID
       formData.append("sellingPrice", sellingPrice); // Append selling price
       formData.append("costPrice", costPrice); // Append cost price
@@ -84,8 +85,23 @@ function AddDish(props) {
 
       // Handle the response
       console.log("Dish added successfully!");
+      if (response.status == 200) {
+        // Show success modal
+        const modalElement = document.getElementById('imgModal');
+        if (modalElement) {
+            const successModal = new Modal(modalElement);
+            successModal.show();
+            setTimeout(() => {
+                successModal.hide();
+                navigate('/chef_variant');
+            }, 2000);
+        }
+    } else {
+        alert(response.data.message || 'Failed to add table');
+    }
+      setShowSuccessModal(true);
       clearForm(); // Reset the form fields after submission
-      alert("Dish added successfully!");
+      // alert("Dish added successfully!");
     } catch (error) {
       console.error("Error adding dish:", error.message);
       // alert(error.message); // Display the error to the user
@@ -314,40 +330,40 @@ function AddDish(props) {
       </div>
       {/* Change Password Modal */}
       <div
-          className={`modal fade ${style.m_model_ChangePassword}`}
-          id="changepassModal"  // Ensure this ID matches
-          tabIndex="-1"
-          aria-labelledby="changepassModalLabel"
-          aria-hidden="true"
-        >
-          <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
-            <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
-              <div className={`modal-body ${style.m_change_pass_text}`}>
-                <span>Change Password</span>
+        className={`modal fade ${style.m_model_ChangePassword}`}
+        id="changepassModal"  // Ensure this ID matches
+        tabIndex="-1"
+        aria-labelledby="changepassModalLabel"
+        aria-hidden="true"
+      >
+        <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
+          <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
+            <div className={`modal-body ${style.m_change_pass_text}`}>
+              <span>Change Password</span>
+            </div>
+            <div className={style.m_new}>
+              <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
+            </div>
+            <div className={style.m_new}>
+              <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+            </div>
+            <div className={style.m_confirm}>
+              <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+            </div>
+            <div className={style.m_btn_cancel_change}>
+              <div className={style.m_btn_cancel}>
+                <button data-bs-dismiss="modal">Cancel</button>
               </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
-              </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-              </div>
-              <div className={style.m_confirm}>
-                <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-              </div>
-              <div className={style.m_btn_cancel_change}>
-                <div className={style.m_btn_cancel}>
-                  <button data-bs-dismiss="modal">Cancel</button>
-                </div>
-                <div className={style.m_btn_change}>
-                  <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
-                </div>
+              <div className={style.m_btn_change}>
+                <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
               </div>
             </div>
           </div>
         </div>
+      </div>
       {/* Logout Modal */}
-       {/* Logout Modal */}
-       <div
+      {/* Logout Modal */}
+      <div
         className={`modal fade ${style.m_model_logout}`}
         id="logoutModal"
         tabIndex="-1"
@@ -381,7 +397,50 @@ function AddDish(props) {
           </div>
         </div>
       </div>
+
+      {/* Add Successfully Modal */}
+      {/* {/ Success Modal /} */}
+      <div
+            className="modal fade"
+            id="imgModal"
+            tabIndex="-1"
+            aria-labelledby="successModalLabel"
+            aria-hidden="true"
+          >
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content" style={{ border: 'none', backgroundColor: '#f6f6f6', padding: '20px' }}>
+                <div className="modal-body text-center">
+                  <h4 style={{
+                    fontSize: '24px',
+                    fontWeight: '500',
+                    marginBottom: '20px'
+                  }}>
+                    Add Successfully!
+                  </h4>
+                  <div style={{
+                    width: '60px',
+                    height: '60px',
+                    borderRadius: '50%',
+                    backgroundColor: '#4B6C52',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '0 auto'
+                  }}>
+                    <i className="fas fa-check" style={{
+                      color: 'white',
+                      fontSize: '30px'
+                    }}></i>
+                    <img src="../../Image/right.png" alt="" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
     </div>
+
+
+
   );
 }
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+import bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -31,7 +31,7 @@ function EditDish() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [changepasswordmodal, setChangepasswordmodal] = useState(false);
   const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
 
   // Fetching dish data from localStorage on component mount
   const dishId = localStorage.getItem("dishId"); // Get the dish ID from local storage
@@ -43,7 +43,7 @@ function EditDish() {
 
     if (dishId) {
       // Fetch the dish data using the dish ID
-      axios.post(`http://localhost/avadh_api/chef/dish/view_dish.php`,formData) // Adjust the endpoint as necessary
+      axios.post(`http://localhost/avadh_api/chef/dish/view_dish.php`, formData) // Adjust the endpoint as necessary
         .then((response) => {
           console.log(response, "response");
           if (response.status === 200) {
@@ -59,9 +59,9 @@ function EditDish() {
               image: parsedDishData.dishImage,
             });
             setImageFile(parsedDishData.dishImage);
-            console.log("imageFile", imageFile);
-
+            
           }
+          console.log("imageFile", imageFile);
         })
         .catch((error) => console.error("Error fetching dish data:", error));
     } else {
@@ -77,7 +77,8 @@ function EditDish() {
       [name]: files ? files[0] : value,
     }));
     if (files) {
-      setImageFile(files[0].name);
+      setImageFile(files[0]);
+      console.log("---", files[0].name);
     }
   };
 
@@ -102,8 +103,8 @@ function EditDish() {
     formData.append("description", dishData.description);
 
     // Append image file if it exists
-    if (imageFile && imageFile instanceof File) {
-      formData.append("image", imageFile[0].name);
+    if (imageFile) {
+      formData.append("image", imageFile);
       console.log(imageFile);
     }
 
@@ -153,84 +154,84 @@ function EditDish() {
     panel.style.display = panel.style.display === "none" || panel.style.display === "" ? "block" : "none";
   };
 
-// ... existing code ...
-const handlePasswordChange = () => {
+  // ... existing code ...
+  const handlePasswordChange = () => {
     // Check if new password and confirm password match
     if (newPassword !== confirmPassword) {
-        alert("Passwords do not match.");
-        return;
+      alert("Passwords do not match.");
+      return;
     }
 
     // Make sure password is not empty
     if (!newPassword || !confirmPassword) {
-        alert("Please enter a new password.");
-        return;
+      alert("Please enter a new password.");
+      return;
     }
 
     const userId = localStorage.getItem("userId");
 
     if (!userId) {
-        console.error("User ID is not available.");
-        return;
+      console.error("User ID is not available.");
+      return;
     }
 
     const passwordData = {
-        newPassword: newPassword, // Send new password
-        confirmPassword: confirmPassword // Send confirm password
+      newPassword: newPassword, // Send new password
+      confirmPassword: confirmPassword // Send confirm password
     };
 
     // Send the PUT request to update the password
     fetch(`http://localhost:8000/api/updateuser/${userId}`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(passwordData),
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(passwordData),
     })
-    .then(response => {
+      .then(response => {
         if (!response.ok) throw new Error("Network response was not ok");
-        
+
         // Hide the modal after successful password change
         const changePasswordModal = document.getElementById('changepassModal');
         if (changePasswordModal) {
-            // Remove the 'show' class directly
-            changePasswordModal.classList.remove('show');
-            changePasswordModal.style.display = 'none'; // Also set display to none
+          // Remove the 'show' class directly
+          changePasswordModal.classList.remove('show');
+          changePasswordModal.style.display = 'none'; // Also set display to none
 
-            // Remove the backdrop
-            const backdrop = document.querySelector('.modal-backdrop');
-            if (backdrop) {
-                backdrop.remove(); // Remove the backdrop element
-            }
+          // Remove the backdrop
+          const backdrop = document.querySelector('.modal-backdrop');
+          if (backdrop) {
+            backdrop.remove(); // Remove the backdrop element
+          }
 
-            // Optionally, reset the modal content
-            setNewPassword("");
-            setConfirmPassword("");
+          // Optionally, reset the modal content
+          setNewPassword("");
+          setConfirmPassword("");
         }
 
         return response.json();
-    })
-    .catch(error => {
+      })
+      .catch(error => {
         console.error("Error changing password:", error);
-    });
-};
-// ... existing code ...
+      });
+  };
+  // ... existing code ...
 
 
-const handleLogout = () => {
-  if (window.bootstrap && window.bootstrap.Modal) {
-    const logoutModal = document.getElementById('logoutModal');
-    const modal = new window.bootstrap.Modal(logoutModal);
-    modal.hide();
-  }
+  const handleLogout = () => {
+    if (window.bootstrap && window.bootstrap.Modal) {
+      const logoutModal = document.getElementById('logoutModal');
+      const modal = new window.bootstrap.Modal(logoutModal);
+      modal.hide();
+    }
 
-  localStorage.removeItem("authToken");
-  localStorage.removeItem("userId");
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userId");
 
-  navigate("/login", { replace: true });
+    navigate("/login", { replace: true });
 
-  window.history.pushState(null, '', window.location.href);
-};
+    window.history.pushState(null, '', window.location.href);
+  };
   return (
     <div id={styles.a_selectTable}>
       <ChefNavbar toggleDrawer={toggleDrawer} showSearch={false} toggleNotifications={toggleNotifications} />
@@ -312,8 +313,7 @@ const handleLogout = () => {
                     />
                     <label htmlFor="image"
                       className={`form-control ${styless.m_add_file} ${styless.v_dishinput_pad} d-flex flex-wrap justify-content-between align-items-center`}>
-                        {console.log(imageFile)}
-                      <span>{imageFile ? imageFile : "No file chosen"}</span>
+                      <span>{imageFile?.name ? imageFile.name : imageFile}</span>
 
                       <span className={`btn btn-primary ${styless.d_choose_file}`}>CHOOSE</span>
                     </label>
@@ -377,39 +377,39 @@ const handleLogout = () => {
         </div>
 
         <div
-        className={`modal fade ${style.m_model_logout}`}
-        id="logoutModal"
-        tabIndex="-1"
-        aria-labelledby="logoutModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-dialog-centered">
-          <div
-            className={`modal-content ${style.m_model_con}`}
-            stylee={{ border: "none", backgroundColor: "#f6f6f6" }}
-          >
-            <div className={style.m_log}>
-              <div className={style.m_logout}>
-                <span>Logout</span>
-              </div>
-              <div className={style.m_text}>
-                <span>Are You Sure You Want To Logout?</span>
-              </div>
-              <div className={style.m_btn_cancel_yes}>
-                <div className={style.m_btn_cancel_logout}>
-                  <button data-bs-dismiss="modal">Cancel</button>
+          className={`modal fade ${style.m_model_logout}`}
+          id="logoutModal"
+          tabIndex="-1"
+          aria-labelledby="logoutModalLabel"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog modal-dialog-centered">
+            <div
+              className={`modal-content ${style.m_model_con}`}
+              stylee={{ border: "none", backgroundColor: "#f6f6f6" }}
+            >
+              <div className={style.m_log}>
+                <div className={style.m_logout}>
+                  <span>Logout</span>
                 </div>
-                <div className={style.m_btn_yes}>
-                  {/* <button onClick={handleLogout}>Logout</button> */}
-                  <button type="button" data-bs-toggle="modal" data-bs-target="#logoutModal" onClick={handleLogout}>
-                    Logout
-                  </button>
+                <div className={style.m_text}>
+                  <span>Are You Sure You Want To Logout?</span>
+                </div>
+                <div className={style.m_btn_cancel_yes}>
+                  <div className={style.m_btn_cancel_logout}>
+                    <button data-bs-dismiss="modal">Cancel</button>
+                  </div>
+                  <div className={style.m_btn_yes}>
+                    {/* <button onClick={handleLogout}>Logout</button> */}
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#logoutModal" onClick={handleLogout}>
+                      Logout
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
       </div>
     </div>
   );
