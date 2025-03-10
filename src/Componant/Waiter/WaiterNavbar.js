@@ -1,13 +1,21 @@
 import React, { useEffect, useState } from "react";
-import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
-
+import bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import styles from "../../css/WaiterDashboaed.module.css";
 import axios from "axios";
 
 const WaiterNavbar = ({ toggleDrawer, toggleNotifications, waiterName, showSearch, setSearchQuery }) => {
-  const [loggedInUserName,setloggedInUserName] = useState('');
+  const [loggedInUserName, setloggedInUserName] = useState('');
+  const [userData, setUserData] = useState();
   console.log("loggedInUserId", loggedInUserName);
-  var token ;
+  var token;
+  useEffect(() => {
+    const dropdownElementList = document.querySelectorAll('.dropdown-toggle');
+    dropdownElementList.forEach((dropdownToggleEl) => {
+      new bootstrap.Dropdown(dropdownToggleEl);
+    });
+  }, []);
   useEffect(() => {
     // const loggedInUser = localStorage.getItem("userId");
     token = localStorage.getItem("authToken");
@@ -18,35 +26,41 @@ const WaiterNavbar = ({ toggleDrawer, toggleNotifications, waiterName, showSearc
     //   },
     // });
     // console.log('profile',response);
-          // setWaiterName(matchingWaiter.firstName);
- 
-      getUser();
+    // setWaiterName(matchingWaiter.firstName);
+
+    getUser();
     // console.log(token1);
     // setToken(token1);
   }, []);
-const getUser = async ()=>{
-  const token = localStorage.getItem('authToken');
-  console.log("Token:", token);
-  
-  // const response = await axios.post("http://localhost/avadh_api/waiter/profile/change_profile.php",{},{
-  //   // headers: {
-  //   //   Authorization: `Bearer ${token}`,
-  //   //   "Content-Type": "application/json",
-  //   // },
-  // });
-  const response = await axios.post(
-    "http://localhost/avadh_api/waiter/profile/change_profile.php",
-    {},
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data", // Important for file uploads
-      },
-    }
-  );
-  console.log("profile", response.data.user.firstName);
-  setloggedInUserName(response.data.user.firstName)
-}
+  const getUser = async () => {
+    const token = localStorage.getItem('authToken');
+    console.log("Token:", token);
+
+    // const response = await axios.post("http://localhost/avadh_api/waiter/profile/change_profile.php",{},{
+    //   // headers: {
+    //   //   Authorization: `Bearer ${token}`,
+    //   //   "Content-Type": "application/json",
+    //   // },
+    // });
+    const response = await axios.post(
+      "http://localhost/avadh_api/waiter/profile/change_profile.php",
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data", // Important for file uploads
+        },
+      }
+    );
+    console.log("profile", response.data.user);
+    setUserData(response.data.user)
+    setloggedInUserName(response.data.user.firstName)
+  }
+
+  const [dropdown,setDropDown] = useState(false);
+  const handleDropdownClick = ()=>{
+    setDropDown(!dropdown);
+  }
 
   return (
     <>
@@ -83,7 +97,11 @@ const getUser = async ()=>{
               </span>
             </i>
             <div className="a_pro d-flex align-items-center align-content-center">
-              <img src={require("../../Image/Ellipse 717.png")} alt="" />
+              {userData?.image ? <img src={`http://localhost/avadh_api/images/${userData?.image}`} alt={userData?.image} style={{ width: '35px', height: '35px' }}></img>
+                :
+                <img src={require("../../Image/Ellipse 717.png")} alt="" />
+              }
+              {/* <img src={require("../../Image/Ellipse 717.png")} alt="" /> */}
               <div className={`${styles.b_name} dropdown show`}>
                 <a
                   className="btn dropdown-toggle"
@@ -93,12 +111,14 @@ const getUser = async ()=>{
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                   aria-haspopup="true"
+                  onClick={handleDropdownClick}
                 >
                   <span id="accountant_name">{loggedInUserName}</span>
                 </a>
                 <div
                   className={`${styles.m_active} dropdown-menu ${styles["dropdown-menu"]}`}
                   aria-labelledby="dropdownMenuLink"
+                  style={{ display: dropdown ? 'block' : 'none' }}
                 >
                   <a
                     className="dropdown-item"
@@ -135,6 +155,34 @@ const getUser = async ()=>{
                   </a>
                 </div>
               </div>
+              {/* <div className="dropdown">
+      <button
+        className="btn btn-primary dropdown-toggle"
+        type="button"
+        id="dropdownMenuButton"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        Dropdown
+      </button>
+      <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <li>
+          <a className="dropdown-item" href="#">
+            Action
+          </a>
+        </li>
+        <li>
+          <a className="dropdown-item" href="#">
+            Another action
+          </a>
+        </li>
+        <li>
+          <a className="dropdown-item" href="#">
+            Something else here
+          </a>
+        </li>
+      </ul>
+    </div> */}
             </div>
           </div>
         </div>

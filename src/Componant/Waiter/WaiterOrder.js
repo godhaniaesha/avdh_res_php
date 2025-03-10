@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+import bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import WaiterSidePanel from './WaiterSidePanel';
@@ -21,24 +21,38 @@ const WaiterOrder = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [changepasswordmodal, setChangepasswordmodal] = useState(false);
   const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
   const [searchQuery, setSearchQuery] = useState(""); // State to hold search query
   const [tableSearchQuery, setTableSearchQuery] = useState(""); // State to hold table search query
+
+  let token;
+
+
+  const fetchOrders = async () => {
+    token = localStorage.getItem("authToken");
+
+    try {
+      const response = axios.post("http://localhost/avadh_api/waiter/order/view_order.php", {}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      let hello = await response;
+      console.log("Fetched data123:", hello.data.orders);
+      console.log("zdfasfaefg", hello.data.orders);
+
+      setOrders(hello.data.orders); // Store the orders in state
+      
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    }
+  };
 
   useEffect(() => {
     fetchOrders(); // Fetch orders on component mount
     // fetchTables(); // Uncomment if you need to fetch tables
   }, []);
 
-  const fetchOrders = async () => {
-    try {
-      const response = await axios.get("http://localhost:8000/api/allOrders");
-      console.log("Fetched data:", response.data.orders);
-      setOrders(response.data.orders); // Store the orders in state
-    } catch (error) {
-      console.error("Error fetching orders:", error);
-    }
-  };
 
   const toggleDrawer = () => {
     setIsSidebarOpen(prev => !prev);
@@ -109,7 +123,7 @@ const WaiterOrder = () => {
         console.error("Error changing password:", error);
       });
   };
-  fetchOrders();
+  // fetchOrders();
 
   const handleLogout = () => {
     if (window.bootstrap && window.bootstrap.Modal) {
@@ -128,7 +142,7 @@ const WaiterOrder = () => {
 
   // Function to filter orders based on search query
   // const filteredOrders = orders.filter(order =>
-  
+
   //   order.tableNo.status === true && // Only include orders with tables that have status true
   //   order.orderDish.some(dish => 
   //     dish.dish.dishName.toLowerCase().includes(searchQuery.toLowerCase())
@@ -136,11 +150,11 @@ const WaiterOrder = () => {
   // );
   const filteredOrders = orders.filter(order =>
     order.tableNo?.status === true && // Ensure tableNo exists before accessing status
-    order.orderDish.some(dish => 
+    order.orderDish.some(dish =>
       dish.dish.dishName.toLowerCase().includes(searchQuery.toLowerCase())
     ) && (order.tableNo?.tableName?.toLowerCase().includes(tableSearchQuery.toLowerCase()) ?? false) // Ensure tableName exists before accessing
   );
-  
+
   return (
     <section id="a_selectTable">
       <WaiterNavbar
@@ -149,7 +163,7 @@ const WaiterOrder = () => {
         showSearch={false}
       />
       <WaiterSidePanel isOpen={isSidebarOpen} iswaiterorder={true} />
-    
+
       <div id={styles['a_main-content']}>
         <div className={`container-fluid ${styles.a_main}`}>
           <div className={styles.m_chef_list}>
@@ -157,12 +171,12 @@ const WaiterOrder = () => {
               <span>Order Status</span>
             </div> */}
           </div>
-              <div className="d-flex justify-content-between align-items-center flex-wrap">
-              <div className="text-nowrap" style={{ fontSize: "30px", fontWeight: "600" }}>
-                Order Status
-              </div>
-              <div className={`d-flex justify-content-between align-items-center ${styles.v_new_addz}`}>
-                {/* <div className={`${styles.a_search} ${styles.v_search} m-0`}>
+          <div className="d-flex justify-content-between align-items-center flex-wrap">
+            <div className="text-nowrap" style={{ fontSize: "30px", fontWeight: "600" }}>
+              Order Status
+            </div>
+            <div className={`d-flex justify-content-between align-items-center ${styles.v_new_addz}`}>
+              {/* <div className={`${styles.a_search} ${styles.v_search} m-0`}>
                   <input 
                     type="search" 
                     placeholder="Search by Dish..." 
@@ -171,7 +185,7 @@ const WaiterOrder = () => {
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
                 </div> */}
-                <div className={`${styles.a_search} ${styles.v_search} me-2`}>
+              {/* <div className={`${styles.a_search} ${styles.v_search} me-2`}>
                   <input 
                     type="search" 
                     placeholder="Search by Table Name..." 
@@ -179,8 +193,8 @@ const WaiterOrder = () => {
                     value={tableSearchQuery}
                     onChange={(e) => setTableSearchQuery(e.target.value)} // Update table search query
                   />
-                </div>
-                <div className=' me-4'>
+                </div> */}
+              {/* <div className=' me-4'>
                   <Link to={"/addDiah"}>
                     <button
                       type="button"
@@ -190,9 +204,9 @@ const WaiterOrder = () => {
                       <FontAwesomeIcon icon={faPlus} className="text-white me-2" /> Add New
                     </button>
                   </Link>
-                </div>
-              </div>
+                </div> */}
             </div>
+          </div>
           <div className={`${styles.m_table} ${styles.x_table} me-5`} style={{ padding: '30px 10px 0px 10px', borderRadius: '5px' }}>
             <table id={styles.orderTable} border="0" width="100%" data-bs-spy="scroll">
               <thead>
@@ -206,14 +220,14 @@ const WaiterOrder = () => {
                 </tr>
               </thead>
               <tbody>
-                {Array.isArray(filteredOrders) && filteredOrders.map(order => (
+                {Array.isArray(orders) && orders.map(order => (
                   order.orderDish.map(dish => (
                     <tr key={dish._id} align="center">
-                      <td>{order.tableNo?.tableName || "Unknown"}</td>
+                      <td>{order.tableNo || "Unknown"}</td>
                       <td>
-                        {dish.dish.dishImage ? (
+                        {dish.dishImage ? (
                           <img
-                            src={`http://localhost:8000/${dish.dish.dishImage}`}
+                            src={`http://localhost/avadh_api/images/${dish.dishImage}`}
                             className="p-1 m-1"
                             alt={dish.dish.dishName}
                           />
@@ -221,10 +235,10 @@ const WaiterOrder = () => {
                           <span>No Image Available</span>
                         )}
                       </td>
-                      <td>{dish.dish.dishName}</td>
+                      <td>{dish.dishName}</td>
                       <td>
                         {dish.variant.length > 0 ? (
-                          dish.variant.map(v => v.variantName).join(", ")
+                          dish.variant.map(v => v.name).join(", ")
                         ) : (
                           <span style={{ color: 'red' }}>No Variants</span>
                         )}
@@ -247,37 +261,37 @@ const WaiterOrder = () => {
         </div>
       </div>
       <div
-            className={`modal fade ${styl.m_model_ChangePassword}`}
-            id="changepassModal"
-            tabIndex="-1"
-            aria-labelledby="changepassModalLabel"
-            aria-hidden="true"
-          >
-            <div className={`modal-dialog modal-dialog-centered ${styl.m_model}`}>
-              <div className={`modal-content ${styl.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
-                <div className={`modal-body ${styl.m_change_pass_text}`}>
-                  <span>Change Password</span>
-                </div>
-                <div className={styl.m_old}>
-                  <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
-                </div>
-                <div className={styl.m_new}>
-                  <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-                </div>
-                <div className={styl.m_confirm}>
-                  <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-                </div>
-                <div className={styl.m_btn_cancel_change}>
-                  <div className={styl.m_btn_cancel}>
-                    <button data-bs-dismiss="modal">Cancel</button>
-                  </div>
-                  <div className={styl.m_btn_change}>
-                    <button type="button" onClick={handlePasswordChange}>Change</button>
-                  </div>
-                </div>
+        className={`modal fade ${styl.m_model_ChangePassword}`}
+        id="changepassModal"
+        tabIndex="-1"
+        aria-labelledby="changepassModalLabel"
+        aria-hidden="true"
+      >
+        <div className={`modal-dialog modal-dialog-centered ${styl.m_model}`}>
+          <div className={`modal-content ${styl.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
+            <div className={`modal-body ${styl.m_change_pass_text}`}>
+              <span>Change Password</span>
+            </div>
+            <div className={styl.m_old}>
+              <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
+            </div>
+            <div className={styl.m_new}>
+              <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+            </div>
+            <div className={styl.m_confirm}>
+              <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+            </div>
+            <div className={styl.m_btn_cancel_change}>
+              <div className={styl.m_btn_cancel}>
+                <button data-bs-dismiss="modal">Cancel</button>
+              </div>
+              <div className={styl.m_btn_change}>
+                <button type="button" onClick={handlePasswordChange}>Change</button>
               </div>
             </div>
           </div>
+        </div>
+      </div>
       <div
         className={`modal fade ${styl.m_model_logout}`}
         id="logoutModal"
