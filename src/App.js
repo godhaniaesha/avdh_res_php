@@ -101,6 +101,7 @@ function App() {
           <Route path="/Waiter_order" element={<WaiterOrder />} />
           <Route path="/waiter_profile" element={<WaiterProfile />} />
           <Route path="/QuantityUpdater" element={<QuantityUpdater />} />
+          
 
         </Routes>
       </Router>
