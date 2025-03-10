@@ -10,6 +10,7 @@ import styles from "../../css/AddCategory.module.css";
 import style from "../../css/EditChef.module.css";
 import styl from "../../css/BillPayment.module.css";
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function EditCategory() {
     const [catName, setCatName] = useState(''); // State for category name
@@ -34,14 +35,21 @@ function EditCategory() {
 
     // Function to fetch category details from the API
     const getCatDetails = async (ecatId) => {
+        var token = localStorage.getItem("authToken");
+        const formData = new FormData(); 
+        formData.append('cat_id', ecatId); // Append new image if selected
         try {
             // Added http:// to the URL
-            const response = await fetch(`http://localhost:8000/api/getCategory/${ecatId}`);
-            if (!response.ok) throw new Error('Failed to fetch category details');
-            const catData = await response.json();
+            const response = await axios.post('http://localhost/avadh_api/chef/category/view_category.php',formData,{
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+            console.log('view',response.data.categories);
+            const catData = response.data.categories;
             console.log(catData, "catData");
 
-            populateCatForm(catData.category); // Populate the form with fetched data
+            populateCatForm(catData); // Populate the form with fetched data
         } catch (error) {
             console.error('Error fetching category details:', error.message);
         }
@@ -56,26 +64,35 @@ function EditCategory() {
     // Function to handle form submission
     const updateCatDetails = async (event) => {
         event.preventDefault(); // Prevent default form submission
+        var token = localStorage.getItem("authToken");
+        var cat_id = localStorage.getItem("ecatId");
         try {
             if (!storedCatId) throw new Error('Category ID not found in localStorage');
             const catNameValue = catName.trim();
             if (!catNameValue) throw new Error('Category name is required');
 
             const formData = new FormData(); // Create a FormData object
+            formData.append('cat_id', cat_id); // Append category name
             formData.append('categoryName', catNameValue); // Append category name
             if (image) {
                 formData.append('categoryImage', image); // Append new image if selected
             }
 
             // Send PUT request to update the category
-            const response = await fetch(`http://localhost:8000/api/updateCategory/${storedCatId}`, {
-                method: 'PUT',
-                body: formData
-            });
-
-            if (!response.ok) throw new Error('Failed to update category details');
-            console.log('Category details updated successfully!');
+            // const response = await fetch(`http://localhost/avadh_api/chef/category/view_category.php`, {
+            //     method: 'PUT',
+            //     body: formData
+            // });
+            const response = await axios.post('http://localhost/avadh_api/chef/category/update_category.php',formData,{
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+            // console.log('view',response);
             window.location.href = "/chef_category"; // Redirect to category list page
+            
+            // if (!response.ok) throw new Error('Failed to update category details');
+            // console.log('Category details updated successfully!');
         } catch (error) {
             console.error('Error updating category details:', error.message);
         }

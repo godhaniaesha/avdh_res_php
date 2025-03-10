@@ -566,7 +566,7 @@ function WaiterMenu() {
                 placeholder="Search by Dish Name..."
                 className="search-input"
                 value={searchQuery} // Bind the input to searchQuery
-                onChange={(e) => setSearchQuery(e.target.value)} // Update searchQuery on input change
+                onChange={(e) => {setSearchQuery(e.target.value)}} // Update searchQuery on input change
               />
             </div>
             <a>
@@ -606,7 +606,7 @@ function WaiterMenu() {
               <h3 className={styles.a_title}>All Dishes</h3>
             </div>
             <div className={`${styles.a_listsubCategory} row row-cols`} id="cat">
-              {dishes.map((dish) => (
+              {filteredDishes.map((dish) => (
                 <div className={styles.a_card_category} key={dish.id}>
                   <div className={`${styles.a_img} d-flex justify-content-center`}>
                     <img

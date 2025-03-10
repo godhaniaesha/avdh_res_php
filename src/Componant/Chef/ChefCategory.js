@@ -70,16 +70,36 @@ function ChefCategory(props) {
 
     // Function to delete a category by its ID
     const deleteCatById = async (catId) => {
-        const deleteUrl = `http://localhost:8000/api/deleteCategory/${catId}`;  // Corrected the URL
+        var token = localStorage.getItem("authToken");
+        const formData = new FormData();
+        formData.append("cat_id", catId);
+        // console.log('datattta',data);
         try {
-            const response = await fetch(deleteUrl, { method: "DELETE" });
-            if (!response.ok) throw new Error("Failed to delete category");
-            console.log("Category deleted successfully");
+            await axios.post(`http://localhost/avadh_api/chef/category/delete_category.php`, formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data",
+                  },
+            });
+
+            // localStorage.setItem('bookTable', JSON.stringify(data));
+            // localStorage.setItem("tableId", data.id);
             fetchCategories();  // Refetch categories after deletion
-            closeDeleteModal();  // Close the modal after successful deletion
+            closeDeleteModal();
         } catch (error) {
-            console.error("Error deleting category:", error);
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
         }
+        // const deleteUrl = `http://localhost:8000/api/deleteCategory/${catId}`;  // Corrected the URL
+        // try {
+        //     const response = await fetch(deleteUrl, { method: "DELETE" });
+        //     if (!response.ok) throw new Error("Failed to delete category");
+        //     console.log("Category deleted successfully");
+        //     fetchCategories();  // Refetch categories after deletion
+        //     closeDeleteModal();  // Close the modal after successful deletion
+        // } catch (error) {
+        //     console.error("Error deleting category:", error);
+        // }
     };
 
     // Open modal to confirm deletion of a category
@@ -259,12 +279,12 @@ function ChefCategory(props) {
                                                 <td className="text-center">
                                                     <div className={styles.m_table_icon}>
                                                         <div className={styles.m_pencile}>
-                                                            <button onClick={() => openEditCategory(cat._id)} className={`${styles['edit-butdish']} ${styles.v_btn_edit}`}>
+                                                            <button onClick={() => openEditCategory(cat.id)} className={`${styles['edit-butdish']} ${styles.v_btn_edit}`}>
                                                                 <i className="fa-solid fa-pencil"></i>
                                                             </button>
                                                         </div>
                                                         <div className={styles.m_trash}>
-                                                            <button onClick={() => openDeleteModal(cat._id)} className={`${styles['delete-button']} ${styles.v_btn_edit}`}>
+                                                            <button onClick={() => openDeleteModal(cat.id)} className={`${styles['delete-button']} ${styles.v_btn_edit}`}>
                                                                 <i className="fa-regular fa-trash-can"></i>
                                                             </button>
                                                         </div>
