@@ -23,19 +23,21 @@ export default function History() {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const [oldPassword, setOldPassword] = useState("");
-  
+  const [history, setHistory] = useState([])
+
 
   const token = localStorage.getItem("authToken");
 
   const fetchOrder = () => {
-    axios.post("http://localhost/avadh_api/chef/dashboard/view_order.php", {} , {
+    axios.post("http://localhost/avadh_api/chef/history/history.php", {}, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
       .then((response) => {
         if (response.status === 200) {
-          console.log(response.data.orders)
+          console.log(response.data.data)
+          setHistory(response.data.data)
         } else {
           console.error("Expected an array of dishes but received:", response.data);
         }
@@ -116,67 +118,6 @@ export default function History() {
   };
 
   // ... existing code ...
-  const handlePasswordChange = () => {
-    // Check if new password and confirm password match
-    if (newPassword !== confirmPassword) {
-      alert("Passwords do not match.");
-      return;
-    }
-
-    // Make sure password is not empty
-    if (!newPassword || !confirmPassword) {
-      alert("Please enter a new password.");
-      return;
-    }
-
-    const userId = localStorage.getItem("userId");
-
-    if (!userId) {
-      console.error("User ID is not available.");
-      return;
-    }
-
-    const passwordData = {
-      newPassword: newPassword, // Send new password
-      confirmPassword: confirmPassword // Send confirm password
-    };
-
-    // Send the PUT request to update the password
-    fetch(`http://localhost:8000/api/updateuser/${userId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(passwordData),
-    })
-      .then(response => {
-        if (!response.ok) throw new Error("Network response was not ok");
-
-        // Hide the modal after successful password change
-        const changePasswordModal = document.getElementById('changepassModal');
-        if (changePasswordModal) {
-          // Remove the 'show' class directly
-          changePasswordModal.classList.remove('show');
-          changePasswordModal.style.display = 'none'; // Also set display to none
-
-          // Remove the backdrop
-          const backdrop = document.querySelector('.modal-backdrop');
-          if (backdrop) {
-            backdrop.remove(); // Remove the backdrop element
-          }
-
-          // Optionally, reset the modal content
-          setNewPassword("");
-          setConfirmPassword("");
-        }
-
-        return response.json();
-      })
-      .catch(error => {
-        console.error("Error changing password:", error);
-      });
-  };
-  // ... existing code ...
   const handleLogout = () => {
     if (window.bootstrap && window.bootstrap.Modal) {
       const logoutModal = document.getElementById('logoutModal');
@@ -196,34 +137,31 @@ export default function History() {
     setSortOrder(event.target.value);
   };
 
-  const getSortedDishes = () => {
-    const filteredDishes = dishes.filter(dish =>
-      dish.dishName.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+  const getSortedHistory = () => {
+    const sortedHistory = [...history];
 
     if (sortOrder === "A") {
-      return [...filteredDishes].sort((a, b) => a.dishName.localeCompare(b.dishName));
+      // Sort by Order ID (Ascending)
+      return sortedHistory.sort((a, b) => a.id.localeCompare(b.id));
     } else if (sortOrder === "B") {
-      return [...filteredDishes].sort((a, b) => b.dishName.localeCompare(a.dishName));
+      return sortedHistory.sort((a, b) => b.id.localeCompare(a.id));
     } else if (sortOrder === "C") {
-      return [...filteredDishes].sort((a, b) => a.sellingPrice - b.sellingPrice);
+      return sortedHistory.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     } else if (sortOrder === "D") {
-      return [...filteredDishes].sort((a, b) => a.status.localeCompare(b.status));
+      return sortedHistory.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
     } else if (sortOrder === "E") {
-      return [...filteredDishes].sort((a, b) => {
-        const categoryA = categories.find(category => category._id === a.dishCategory)?.categoryName || "";
-        const categoryB = categories.find(category => category._id === b.dishCategory)?.categoryName || "";
-        return categoryA.localeCompare(categoryB);
-      });
+      return sortedHistory.sort((a, b) => a.firstName.localeCompare(b.firstName));
     } else if (sortOrder === "F") {
-      return [...filteredDishes].sort((a, b) => {
-        const categoryA = categories.find(category => category._id === a.dishCategory)?.categoryName || "";
-        const categoryB = categories.find(category => category._id === b.dishCategory)?.categoryName || "";
-        return categoryB.localeCompare(categoryA);
-      });
-    }
-    return filteredDishes;
+      return sortedHistory.sort((a, b) => b.firstName.localeCompare(a.firstName));
+    } else if (sortOrder === "G") {
+      return sortedHistory.sort((a, b) => a.totalAmount - b.totalAmount);
+    } else if (sortOrder === "H") {
+      return sortedHistory.sort((a, b) => b.totalAmount - a.totalAmount);
+    } 
+
+    return history;
   };
+
   return (
     <section id={styles.a_selectTable}>
       <ChefNavbar toggleDrawer={toggleDrawer} showSearch={false} toggleNotifications={toggleNotifications} />
@@ -249,12 +187,14 @@ export default function History() {
                 <div className="me-3">
                   <select className={styles.v_search1} value={sortOrder} onChange={handleSortChange}>
                     <option value="">Sort by</option>
-                    <option value="A">Name A-Z</option>
-                    <option value="B">Name Z-A</option>
-                    <option value="E">Category A-Z</option>
-                    <option value="F">Category Z-A</option>
-                    <option value="C">Price</option>
-                    <option value="D">Status</option>
+                    <option value="A">Order ID (A-Z)</option>
+                    <option value="B">Order ID (Z-A)</option>
+                    <option value="C">Date (Newest First)</option>
+                    <option value="D">Date (Oldest First)</option>
+                    <option value="E">Customer Name (A-Z)</option>
+                    <option value="F">Customer Name (Z-A)</option>
+                    <option value="G">Amount (Low to High)</option>
+                    <option value="H">Amount (High to Low)</option>
                   </select>
                 </div>
                 {/* <div>
@@ -280,54 +220,23 @@ export default function History() {
                   <td className='fw-normal'>Customer Name</td>
                   <td className='fw-normal'>Amount</td>
                   <td className='fw-normal'>Status</td>
-                  <td className='fw-normal'>Action</td>
                 </tr>
               </thead>
               <tbody>
-                {getSortedDishes().map((dish) => (
-                  <tr key={dish._id} align="center">
+                {getSortedHistory().map((history) => (
+                  <tr key={history.id} align="center">
                     <td className="text-center">
-                      <img
-                        src={`http://localhost:8000/${dish.dishImage}`}
-                        className={styles.v_menu_rowmar}
-                        alt="Dish"
-                      />
+                      {history.id}
                     </td>
-                    <td className="text-center">{dish.dishName}</td>
+                    <td className="text-center">{new Date(history.createdAt).toLocaleDateString("en-GB")}</td>
                     <td className="text-center">
-                      {
-                        categories.find(category => category._id === dish.dishCategory)?.categoryName ||
-                        "Unknown Category"
-                      }
+                      {history.firstName}
                     </td>
-                    <td className="text-center">₹ {dish.sellingPrice}</td>
-                    <td className={dish.status === "available" ? "text-success" : "text-danger"}>
-                      {dish.status}
+                    <td className="text-center">₹ {history.totalAmount}</td>
+                    <td className={history.orderStatus === "Accepted" ? "text-success" : "text-danger"}>
+                      {history.orderStatus}
                     </td>
-                    <td>
-                      <div className={styles.m_table_icon}>
 
-
-                        <div className={styles.m_pencile}>
-                          <Link to={"/editDish"} onClick={() => handleEditClick(dish)} >
-                            <button aria-label="Edit Chef" className={`${styles['delete-button']} ${styles.v_btn_edit}`}>
-                              <i className="fa-solid fa-pencil"></i>
-                            </button>
-                          </Link>
-                        </div>
-
-                        <div className={styles.m_trash}>
-                          <button
-                            className={`${styles['delete-button']} ${styles.v_btn_edit}`}
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal"
-                            onClick={() => handleDeleteClick(dish._id)}
-                          >
-                            <i className="fa-regular fa-trash-can"></i>
-                          </button>
-                        </div>
-                      </div>
-                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -373,40 +282,7 @@ export default function History() {
           </div>
         </div>
       </div>
-
-      {/* Change Password Modal */}
-      <div
-        className={`modal fade ${style.m_model_ChangePassword}`}
-        id="changepassModal"  // Ensure this ID matches
-        tabIndex="-1"
-        aria-labelledby="changepassModalLabel"
-        aria-hidden="true"
-      >
-        <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
-          <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
-            <div className={`modal-body ${style.m_change_pass_text}`}>
-              <span>Change Password</span>
-            </div>
-            <div className={style.m_new}>
-              <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
-            </div>
-            <div className={style.m_new}>
-              <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-            </div>
-            <div className={style.m_confirm}>
-              <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-            </div>
-            <div className={style.m_btn_cancel_change}>
-              <div className={style.m_btn_cancel}>
-                <button data-bs-dismiss="modal">Cancel</button>
-              </div>
-              <div className={style.m_btn_change}>
-                <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      
       {/* Logout Modal */}
       <div
         className={`modal fade ${style.m_model_logout}`}

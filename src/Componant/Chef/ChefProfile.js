@@ -11,7 +11,7 @@ import axios from 'axios';
 
 function ChefProfile() {
   // State to hold chef data
-  const [formData, setformData] = useState({
+  const [formData, setFormdata] = useState({
     firstName: "",
     lastName: "",
     email: "",
@@ -46,7 +46,7 @@ function ChefProfile() {
           const userData = response.data.user
 
           console.log(userData)
-          setformData({
+          setFormdata({
             firstName: userData.firstName || '',
             lastName: userData.lastName || '',
             email: userData.email || '',
@@ -65,26 +65,30 @@ function ChefProfile() {
   // Handle profile save
   const handleProfileSave = async (e) => {
     e.preventDefault();
-  
-    const updatedData = {
-      ...formData, // Include all current chef data
-      image: imageName, // Use the image name from the state
-    };
+
+    const formData = new FormData();
+    formData.append("firstName", document.getElementById("First_Name").value);
+    formData.append("lastName", document.getElementById("Last_name").value);
+    formData.append("email", document.getElementById("Email").value);
+    formData.append("phone", document.getElementById("Phone").value);
+    formData.append("image", imageName || formData.image); 
+    // const updatedData = {
+    //   ...formData, // Include all current chef data
+    //   image: imageName, // Use the image name from the state
+    // };
   
     // If a new image is selected, update the image field with the new file name
     const imageInput = document.getElementById("image");
     if (imageInput.files.length > 0) {
-      updatedData.image = imageInput.files[0].name; // Get the file name from input
+      formData.set("image", imageInput.files[0]); // Get the file name from input
     }
   
     try {
       const response = await axios.post(
-        "http://localhost/avadh_api/chef/profile/change_profile.php",
-        updatedData, // No need to wrap it inside another object
-        {
+        "http://localhost/avadh_api/chef/profile/change_profile.php", formData , {// No need to wrap it inside another object
           headers: {
             Authorization: `Bearer ${token}`, // Ensure `token` is defined
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data"
           },
         }
       );
@@ -121,7 +125,7 @@ function ChefProfile() {
     };
     const handleChange = (e) => {
       const { name, value } = e.target;
-      setformData(prevState => ({
+      setFormdata(prevState => ({
         ...prevState,
         [name]: value, // Update specific form field value
       }));
@@ -135,66 +139,7 @@ function ChefProfile() {
     };
 
     // ... existing code ...
-    const handlePasswordChange = () => {
-      // Check if new password and confirm password match
-      if (newPassword !== confirmPassword) {
-        alert("Passwords do not match.");
-        return;
-      }
 
-      // Make sure password is not empty
-      if (!newPassword || !confirmPassword) {
-        alert("Please enter a new password.");
-        return;
-      }
-
-      const userId = localStorage.getItem("userId");
-
-      if (!userId) {
-        console.error("User ID is not available.");
-        return;
-      }
-
-      const passwordData = {
-        newPassword: newPassword, // Send new password
-        confirmPassword: confirmPassword // Send confirm password
-      };
-
-      // Send the PUT request to update the password
-      fetch(`http://localhost:8000/api/updateuser/${userId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(passwordData),
-      })
-        .then(response => {
-          if (!response.ok) throw new Error("Network response was not ok");
-
-          // Hide the modal after successful password change
-          const changePasswordModal = document.getElementById('changepassModal');
-          if (changePasswordModal) {
-            // Remove the 'show' class directly
-            changePasswordModal.classList.remove('show');
-            changePasswordModal.style.display = 'none'; // Also set display to none
-
-            // Remove the backdrop
-            const backdrop = document.querySelector('.modal-backdrop');
-            if (backdrop) {
-              backdrop.remove(); // Remove the backdrop element
-            }
-
-            // Optionally, reset the modal content
-            setNewPassword("");
-            setConfirmPassword("");
-          }
-
-          return response.json();
-        })
-        .catch(error => {
-          console.error("Error changing password:", error);
-        });
-    };
     // ... existing code ...
 
     return (
@@ -218,7 +163,7 @@ function ChefProfile() {
                       id="First_Name"
                       placeholder="First Name"
                       value={formData.firstName}
-                      onChange={(e) => setformData({ ...formData, firstName: e.target.value })}
+                      onChange={(e) => setFormdata({ ...formData, firstName: e.target.value })}
                       required
                     />
                   </div>
@@ -231,7 +176,7 @@ function ChefProfile() {
                       id="Last_name"
                       placeholder="Last Name"
                       value={formData.lastName}
-                      onChange={(e) => setformData({ ...formData, lastName: e.target.value })}
+                      onChange={(e) => setFormdata({ ...formData, lastName: e.target.value })}
                       required
                     />
                   </div>
@@ -244,7 +189,7 @@ function ChefProfile() {
                       id="Email"
                       placeholder="Email"
                       value={formData.email}
-                      onChange={(e) => setformData({ ...formData, email: e.target.value })}
+                      onChange={(e) => setFormdata({ ...formData, email: e.target.value })}
                       required
                     />
                   </div>
@@ -257,7 +202,7 @@ function ChefProfile() {
                       id="Phone"
                       placeholder="Phone"
                       value={formData.phone}
-                      onChange={(e) => setformData({ ...formData, phone: e.target.value })}
+                      onChange={(e) => setFormdata({ ...formData, phone: e.target.value })}
                       maxLength="10"
                       required
                     />
@@ -284,38 +229,7 @@ function ChefProfile() {
         </div>
 
         {/* Change Password Modal */}
-        <div
-          className={`modal fade ${style.m_model_ChangePassword}`}
-          id="changepassModal"  // Ensure this ID matches
-          tabIndex="-1"
-          aria-labelledby="changepassModalLabel"
-          aria-hidden="true"
-        >
-          <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
-            <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
-              <div className={`modal-body ${style.m_change_pass_text}`}>
-                <span>Change Password</span>
-              </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
-              </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-              </div>
-              <div className={style.m_confirm}>
-                <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-              </div>
-              <div className={style.m_btn_cancel_change}>
-                <div className={style.m_btn_cancel}>
-                  <button data-bs-dismiss="modal">Cancel</button>
-                </div>
-                <div className={style.m_btn_change}>
-                  <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        
         <div
           className={`modal fade ${style.m_model_logout}`}
           id="logoutModal"
