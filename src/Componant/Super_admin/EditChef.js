@@ -6,6 +6,7 @@ import SuperSidePanel from "./SuperSidePanel";
 import styles from "../../css/EditChef.module.css";
 import style from "../../css/BillPayment.module.css";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 function EditChef() {
     const [imageName, setImageName] = useState("");
@@ -15,6 +16,7 @@ function EditChef() {
     const navigate = useNavigate();
  const [oldPassword, setOldPassword] = useState("");
     const [chefData, setChefData] = useState({
+        _id: '',
         firstName: '',
         lastName: '',
         email: '',
@@ -27,7 +29,7 @@ function EditChef() {
         country: '',
         profession: '',
         image: '',
-        _id: '',
+       
     });
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -49,36 +51,66 @@ function EditChef() {
         }));
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const updatedData = {
-            ...chefData,
-            image: imageName ? imageName : chefData.image,
-        };
+ // ... existing code ...
+const handleImageChange = (e) => {
+    if (e.target.files.length > 0) {
+        const file = e.target.files[0];
+        setImageName(file.name);
+        setChefData(prev => ({
+            ...prev,
+            chefImage: file  // Store the actual file object
+        }));
+    }
+};
 
-        fetch(`http://localhost:8000/api/updateuser/${chefData._id}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(updatedData),
-        })
-            .then((response) => {
-                if (!response.ok) throw new Error("Network response was not ok");
-                alert("Chef data updated successfully!");
-                window.location.href = '/superChef';
-            })
-            .catch((error) => {
-                console.error("Error updating chef data:", error);
-                alert("Failed to update chef data. Please try again.");
-            });
-    };
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    const token = localStorage.getItem("authToken");
+    const formDataToSend = new FormData();
+    
+    // Append all form fields
+    formDataToSend.append("user_id", chefData.id);
+    formDataToSend.append("firstName", chefData.firstName);
+    formDataToSend.append("lastName", chefData.lastName);
+    formDataToSend.append("email", chefData.email);
+    formDataToSend.append("phone", chefData.phone);
+    formDataToSend.append("dateOfBirth", chefData.dateOfBirth);
+    formDataToSend.append("gender", chefData.gender);
+    formDataToSend.append("address", chefData.address);
+    formDataToSend.append("city", chefData.city);
+    formDataToSend.append("state", chefData.state);
+    formDataToSend.append("country", chefData.country);
+    
+    // Handle image upload
+    if (chefData.chefImage instanceof File) {
+        formDataToSend.append("image", chefData.chefImage);
+    }
 
-    const handleImageChange = (e) => {
-        if (e.target.files.length > 0) {
-            setImageName(e.target.files[0].name);
+    try {
+        const response = await axios.post(
+            "http://localhost/avadh_api/super_admin/chef/update_chef.php",
+            formDataToSend,
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Accept": "application/json",
+                },
+            }
+        );
+
+        if (response.data.success) {
+            alert("Chef data updated successfully!");
+            navigate('/superChef');
+        } else {
+            alert(response.data.message || "Failed to update chef data");
         }
-    };
+    } catch (error) {
+        console.error("Error updating chef data:", error);
+        alert("Failed to update chef data. Please try again.");
+    }
+};
+// ... existing code ...
     const handlePasswordChange = () => {
         // Check if new password and confirm password match
         if (newPassword !== confirmPassword) {
@@ -298,7 +330,7 @@ function EditChef() {
                                 />
                                 <label htmlFor="image"
                                     className={`form-control ${styles.m_add_file} d-flex flex-wrap justify-content-between align-items-center`} >
-                                    <span>{imageName || chefData.image || "No file chosen"}</span>
+                                    <span>{imageName || chefData.chefImage || "No file chosen"}</span>
                                     <span className={`btn btn-primary ${styles.d_choose_file}`}>CHOOSE </span>
                                 </label>
                             </div>

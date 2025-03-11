@@ -31,70 +31,7 @@ function EditAccountant() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const navigate = useNavigate();
     const [oldPassword, setOldPassword] = useState("");
-    // useEffect(() => {
-    //     const accountantData = localStorage.getItem('accountantData');
-    //     if (accountantData) {
-    //         setFormData(JSON.parse(accountantData)); // Set form data from localStorage
-    //     }
-    // }, []);
-
-    // const handleChange = (e) => {
-    //     const { name, value } = e.target;
-    //     setFormData((prevData) => ({
-    //         ...prevData,
-    //         [name]: value,
-    //     }));
-    // };
-
-    // const handleFileChange = (e) => {
-    //     setFormData({ ...formData, image: e.target.files[0] });
-    //     setImageName(e.target.files[0].name); // Set the image name for display
-    // };
-
-    // const handleSubmit = async (event) => {
-    //     event.preventDefault();
-    //     try {
-    //         const accountantId = formData._id; // Use the ID from formData
-            
-    //         if (!accountantId) {
-    //             throw new Error('Accountant ID not found');
-    //         }
-
-    //         const dataToSend = {
-    //             ...formData,
-    //             image: formData.image.name // Use the image name for submission
-    //         };
-
-    //         const token = localStorage.getItem('authToken');
-    //         console.log("Token:", token);
-
-    //         // Ensure the URL is correct
-    //         // const response = await fetch(`http://localhost/avadh_api/super_admin/accountant/update_accountant.php/${accountantId}`, {
-    //         //     method: 'PUT',
-    //         //     headers: {
-    //         //         'Content-Type': 'application/json'
-    //         //     },
-    //         //     body: JSON.stringify(dataToSend)
-    //         // });
-    //         const response = await axios.post("http://localhost/avadh_api/super_admin/accountant/update_accountant.php", formData, {
-    //             headers: {
-    //                 'Authorization': `Bearer ${token}`,
-    //                 'Accept': 'application/json',
-    //             }
-    //         })
-
-    //         if (!response.ok) {
-    //             throw new Error('Failed to update Accountant details');
-    //         } else {
-    //             console.log('Accountant details updated successfully!');
-    //             window.location.href = "/superaccountlist"; // Redirect after successful update
-    //         }
-    //     } catch (error) {
-    //         console.error('Error updating Accountant details:', error.message);
-    //     }
-    // };
-
- 
+   
 
 
     useEffect(() => {
@@ -137,9 +74,23 @@ function EditAccountant() {
             formDataToSend.append("userId", formData.id);
             formDataToSend.append("firstName", formData.firstName);
             formDataToSend.append("lastName", formData.lastName);
+            formDataToSend.append("email", formData.email);
+            formDataToSend.append("phone", formData.phone);
+            formDataToSend.append("dateOfBirth", formData.dateOfBirth);
+            formDataToSend.append("gender", formData.gender);
+            formDataToSend.append("address", formData.address);
+            formDataToSend.append("city", formData.city);
+            formDataToSend.append("state", formData.state);
+            formDataToSend.append("country", formData.country);
             if (formData.image) {
                 formDataToSend.append("image", formData.image);
             }
+            // formDataToSend.append("userId", formData.id);
+            // formDataToSend.append("firstName", formData.firstName);
+            // formDataToSend.append("lastName", formData.lastName);
+            // if (formData.image) {
+            //     formDataToSend.append("image", formData.image);
+            // }
     
             console.log("Sending FormData:", [...formDataToSend.entries()]); 
     

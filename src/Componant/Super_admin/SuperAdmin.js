@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
-import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+import bootstrap from "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 import { Link, useNavigate } from "react-router-dom";
 import Chart from "chart.js/auto";
-import styles from '../../css/SuperAdmin.module.css'; // Ensure you have a corresponding CSS file
+import styles from "../../css/SuperAdmin.module.css"; // Ensure you have a corresponding CSS file
 import SuperNavbar from "./SuperNavbar";
 import SuperSidePanel from "./SuperSidePanel";
-import ChangePasswordModal from './ChangePasswordModal'; // Import the modal component
-import Button from 'react-bootstrap/Button';
+import ChangePasswordModal from "./ChangePasswordModal"; // Import the modal component
+import Button from "react-bootstrap/Button";
 import style from "../../css/BillPayment.module.css";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
-
+import axios from "axios";
 
 const SuperAdmin = (props) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -22,17 +22,52 @@ const SuperAdmin = (props) => {
   const [changepasswordmodal, setChangepasswordmodal] = useState(false);
 
   // Define data first
+  const [counts, setCounts] = useState({
+    chefs: 0,
+    waiters: 0,
+    accountants: 0,
+  });
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+        const token = localStorage.getItem("authToken");
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        };
+
+        try {
+            // Fetch all counts in parallel
+            const [chefResponse, waiterResponse, accountantResponse] = await Promise.all([
+                axios.post('http://localhost/avadh_api/super_admin/chef/view_chef.php', {}, { headers }),
+                axios.post('http://localhost/avadh_api/super_admin/waiter/view_waiter.php', {}, { headers }),
+                axios.post('http://localhost/avadh_api/super_admin/accountant/view_accountant.php', {}, { headers })
+            ]);
+            
+            
+            // Count the length of data arrays from each response
+            setCounts({
+                chefs: chefResponse.data.chefs ? chefResponse.data.chefs.length : 0,
+                waiters: waiterResponse.data.data ? waiterResponse.data.data.length : 0,
+                accountants: accountantResponse.data.data ? accountantResponse.data.data.length : 0
+            });
+        } catch (error) {
+            console.error("Error fetching counts:", error);
+        }
+    };
+
+    fetchCounts();
+}, []);
+
   const data = [
-    { name: "Chefs", value: 10, color: "#62b2fc" }, // Blue
-    { name: "Waiter", value: 20, color: "#9bdfc4" }, // Green
-    { name: "Accountant", value: 30, color: "#f99bab" }, // Pink
+    { name: "Chefs", value: counts.chefs, color: "#62b2fc" }, // Blue
+    { name: "Waiter", value: counts.waiters, color: "#9bdfc4" }, // Green
+    { name: "Accountant", value: counts.accountants, color: "#f99bab" }, // Pink
   ];
 
   // Then calculate total using data
   const total = data.reduce((acc, item) => acc + item.value, 0);
 
   useEffect(() => {
-
     // Initialize chart
     const ctx = document.getElementById("myLineChart").getContext("2d");
     const myLineChart = new Chart(ctx, {
@@ -96,13 +131,13 @@ const SuperAdmin = (props) => {
     };
   }, []);
   const toggleDrawer = () => {
-    setIsSidebarOpen(prev => !prev);
+    setIsSidebarOpen((prev) => !prev);
   };
 
   const handleLogout = () => {
     // Check if Bootstrap's Modal is available
     if (window.bootstrap && window.bootstrap.Modal) {
-      const logoutModal = document.getElementById('logoutModal');
+      const logoutModal = document.getElementById("logoutModal");
       const modal = new window.bootstrap.Modal(logoutModal);
       modal.hide(); // Close the modal
     } else {
@@ -116,9 +151,8 @@ const SuperAdmin = (props) => {
     // Redirect to login page
     navigate("/login", { replace: true });
 
-    window.history.pushState(null, '', window.location.href);
+    window.history.pushState(null, "", window.location.href);
   };
-
 
   // Function to open the Change Password Modal
   const openChangePasswordModal = () => {
@@ -146,11 +180,10 @@ const SuperAdmin = (props) => {
 
     const passwordData = {
       newPassword: newPassword, // Send new password
-      confirmPassword: confirmPassword // Send confirm password
+      confirmPassword: confirmPassword, // Send confirm password
     };
 
     console.log(passwordData);
-
 
     // Send the PUT request to update the password
     fetch(`http://localhost:8000/api/updateuser/${userId}`, {
@@ -160,10 +193,10 @@ const SuperAdmin = (props) => {
       },
       body: JSON.stringify(passwordData),
     })
-      .then(response => {
+      .then((response) => {
         if (!response.ok) throw new Error("Network response was not ok");
         console.log(response);
-        const changePasswordModal = document.getElementById('changepassModal');
+        const changePasswordModal = document.getElementById("changepassModal");
         console.log(changePasswordModal);
 
         const modal = new window.bootstrap.Modal(changePasswordModal);
@@ -178,9 +211,8 @@ const SuperAdmin = (props) => {
         setNewPassword("");
         setConfirmPassword("");
         return response.json();
-
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error changing password:", error);
       });
   };
@@ -188,8 +220,7 @@ const SuperAdmin = (props) => {
     <section id="a_selectTable">
       <SuperNavbar toggleDrawer={toggleDrawer} /> {/* Pass showSearch prop */}
       <SuperSidePanel isOpen={isSidebarOpen} issuper={true} />
-
-      <div id={styles['a_main-content']}>
+      <div id={styles["a_main-content"]}>
         <div className={`container-fluid ${styles.aesh_conf}`}>
           <div>
             <div className="row p-0 m-0">
@@ -240,7 +271,7 @@ const SuperAdmin = (props) => {
                     </div>
                   </div>
                   <div className="b_text">
-                    <h1>12</h1>
+                  <h1>{counts.chefs}</h1>
                     <p>Total Chef</p>
                   </div>
                 </div>
@@ -257,7 +288,7 @@ const SuperAdmin = (props) => {
                     </div>
                   </div>
                   <div className="b_text">
-                    <h1>20</h1>
+                  <h1>{counts.waiters}</h1>
                     <p>Total Waiter</p>
                   </div>
                 </div>
@@ -272,8 +303,11 @@ const SuperAdmin = (props) => {
               <h3>Monthly Order</h3>
               <div className="row justify-content-center">
                 <div className="col-md-12 p-0" id="chartContainer">
-                  <div className="canvas_height" style={{ height: "50vh", maxHeight: "50vh", width: "100%" }}>
-                    <canvas id="myLineChart" ></canvas>
+                  <div
+                    className="canvas_height"
+                    style={{ height: "50vh", maxHeight: "50vh", width: "100%" }}
+                  >
+                    <canvas id="myLineChart"></canvas>
                   </div>
                 </div>
               </div>
@@ -283,105 +317,142 @@ const SuperAdmin = (props) => {
             <div>
               <h3>Staff</h3>
             </div>
-            <div style={{ display: "flex", alignItems: "center" }} className={`${styles.x_dchart}`}>
-      <div style={{ position: "relative" }}>
-        {/* Increased Chart Size */}
-        <PieChart width={350} height={350}>
-          <Pie
-            data={data}
-            cx={175} // Centering X
-            cy={175} // Centering Y
-            innerRadius={90} // Increased Inner Radius
-            outerRadius={130} // Increased Outer Radius
-            fill="#8884d8"
-            dataKey="value"
-          >
-            {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.color} />
-            ))}
-          </Pie>
-          <Tooltip />
-        </PieChart>
+            <div
+              style={{ display: "flex", alignItems: "center" }}
+              className={`${styles.x_dchart}`}
+            >
+              <div style={{ position: "relative" }}>
+                {/* Increased Chart Size */}
+                <PieChart width={350} height={350}>
+                  <Pie
+                    data={data}
+                    cx={175} // Centering X
+                    cy={175} // Centering Y
+                    innerRadius={90} // Increased Inner Radius
+                    outerRadius={130} // Increased Outer Radius
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {data.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
 
-        {/* Centered Total Value */}
-        <h2
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            fontSize: "24px",
-            fontWeight: "bold",
-          }}
-        >
-          {total}
-        </h2>
-      </div>
+                {/* Centered Total Value */}
+                <h2
+                  style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    fontSize: "24px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {total}
+                </h2>
+              </div>
 
-      {/* Legend */}
-      <div style={{ marginLeft: "20px" }} className={`${styles.x_dotc} `}>
-        {data.map((entry, index) => (
-          <div
-            key={index}
-            style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}
-            className="justify-content-between"
-          >
-            <div className="d-flex align-items-center justify-content-center"> <div
-              style={{
-                width: "12px",
-                height: "12px",
-                backgroundColor: entry.color,
-                borderRadius: "50%",
-                marginRight: "5px",
-              }}
-            ></div>
-            <span>{entry.name}</span></div>
-           
-            <span style={{ marginLeft: "10px", fontWeight: "bold" }}>
-              {entry.value}
-            </span>
+              {/* Legend */}
+              <div
+                style={{ marginLeft: "20px" }}
+                className={`${styles.x_dotc} `}
+              >
+                {data.map((entry, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      marginBottom: "5px",
+                    }}
+                    className="justify-content-between"
+                  >
+                    <div className="d-flex align-items-center justify-content-center">
+                      {" "}
+                      <div
+                        style={{
+                          width: "12px",
+                          height: "12px",
+                          backgroundColor: entry.color,
+                          borderRadius: "50%",
+                          marginRight: "5px",
+                        }}
+                      ></div>
+                      <span>{entry.name}</span>
+                    </div>
+
+                    <span style={{ marginLeft: "10px", fontWeight: "bold" }}>
+                      {entry.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-        ))}
-      </div>
-    </div>
-           
-          </div>
-      
         </div>
 
         <div
           className={`modal fade ${style.m_model_ChangePassword}`}
-          id="changepassModal"  // Ensure this ID matches
+          id="changepassModal" // Ensure this ID matches
           tabIndex="-1"
           aria-labelledby="changepassModalLabel"
           aria-hidden="true"
         >
-          <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
-            <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
+          <div
+            className={`modal-dialog modal-dialog-centered ${style.m_model}`}
+          >
+            <div
+              className={`modal-content ${style.m_change_pass}`}
+              style={{ border: "none", backgroundColor: "#f6f6f6" }}
+            >
               <div className={`modal-body ${style.m_change_pass_text}`}>
                 <span>Change Password</span>
               </div>
               <div className={style.m_new}>
-                <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
+                <input
+                  type="password"
+                  placeholder="Old Password"
+                  value={oldPassword}
+                  onChange={(e) => setOldPassword(e.target.value)}
+                />
               </div>
               <div className={style.m_new}>
-                <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+                <input
+                  type="password"
+                  placeholder="New Password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
               </div>
               <div className={style.m_confirm}>
-                <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                <input
+                  type="password"
+                  placeholder="Confirm Password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
               </div>
               <div className={style.m_btn_cancel_change}>
                 <div className={style.m_btn_cancel}>
                   <button data-bs-dismiss="modal">Cancel</button>
                 </div>
                 <div className={style.m_btn_change}>
-                  <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
+                  <button
+                    type="button"
+                    data-bs-toggle="modal"
+                    data-bs-target="#changepassModal"
+                    onClick={handlePasswordChange}
+                  >
+                    Change
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
 
         {/* Logout Modal */}
         <div
@@ -405,11 +476,18 @@ const SuperAdmin = (props) => {
                 </div>
                 <div className={styles.m_btn_cancel_yes}>
                   <div className={styles.m_btn_cancel_logout}>
-                    <button id="cancelBtn" data-bs-dismiss="modal">Cancel</button>
+                    <button id="cancelBtn" data-bs-dismiss="modal">
+                      Cancel
+                    </button>
                   </div>
                   <div className={styles.m_btn_yes}>
                     {/* <button id="yesBtn">Yes</button> */}
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#logoutModal" onClick={handleLogout}>
+                    <button
+                      type="button"
+                      data-bs-toggle="modal"
+                      data-bs-target="#logoutModal"
+                      onClick={handleLogout}
+                    >
                       Logout
                     </button>
                   </div>

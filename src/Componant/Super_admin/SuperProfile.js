@@ -7,6 +7,7 @@ import styles from '../../css/SuperProfile.module.css';
 import style from "../../css/BillPayment.module.css";
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import axios from 'axios';
 
 function SuperProfile() {
     const [formData, setFormData] = useState({
@@ -25,73 +26,73 @@ function SuperProfile() {
     const navigate = useNavigate();
  const [oldPassword, setOldPassword] = useState("");
 
-    useEffect(() => {
-        const id = localStorage.getItem("userId");
-        setAdminId(id);
+ useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    const id = localStorage.getItem("userId");
+    setAdminId(id);
 
-        if (id) {
-            // Fetch user data from the backend using the ID
-            fetch(`http://localhost:8000/api/getUser/${id}`)
-                .then(response => {
-                    if (!response.ok) throw new Error("Network response was not ok");
-                    return response.json();
-                })
-                .then(data => {
-                    const userData = data.user;
+    if (token) {
+        // Fetch user data using axios
+        axios.post('http://localhost/avadh_api/super_admin/profile/change_profile.php', {}, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => {
+            const userData = response.data.user;
+            setFormData({
+                firstName: userData.firstName || '',
+                lastName: userData.lastName || '',
+                email: userData.email || '',
+                phone: userData.phone || '',
+                image: userData.image || '',
+            });
+            setImageName(userData.image || "");
+        })
+        .catch(error => {
+            console.error("Error fetching user data:", error);
+        });
+    }
+}, []);
 
-                    setFormData({
-                        firstName: userData.firstName || '',
-                        lastName: userData.lastName || '',
-                        email: userData.email || '',
-                        phone: userData.phone || '',
-                        image: userData.image || '',
-                    });
-                    setImageName(userData.image || ""); // Set image name from user data
-                })
-                .catch(error => {
-                    console.error("Error fetching user data:", error);
-                });
-        }
-    }, []);
+const handleProfileSave = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem("authToken");
 
-    const handleProfileSave = (e) => {
-        e.preventDefault();
-        const updatedData = {
-            ...formData,  // Spread operator to include all current form data
-            image: imageName, // Use the image name from the state
-        };
+    try {
+        const formDataToSend = new FormData();
+        formDataToSend.append('firstName', formData.firstName);
+        formDataToSend.append('lastName', formData.lastName);
+        formDataToSend.append('email', formData.email);
+        formDataToSend.append('phone', formData.phone);
 
-        // If a new image is selected, update the image field with the new file name
+        // If a new image is selected, append it
         const imageInput = document.getElementById("image");
         if (imageInput.files.length > 0) {
-            updatedData.image = imageInput.files[0].name; // Get the file name from input
+            formDataToSend.append('image', imageInput.files[0]);
         }
 
-        if (!AdminId) {
-            console.error("AdminId is not available.");
-            return;
+        const response = await axios.post(
+            'http://localhost/avadh_api/super_admin/profile/change_profile.php',
+            formDataToSend,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
+        );
+
+        if (response.data.success) {
+            alert("Profile updated successfully!");
+        } else {
+            alert(response.data.message || "Failed to update profile");
         }
-
-        // Make the request to update the user details
-        fetch(`http://localhost:8000/api/updateuser/${AdminId}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(updatedData),
-        })
-            .then((response) => {
-                if (!response.ok) throw new Error("Network response was not ok");
-                return response.json();
-            })
-            .then((data) => {
-                alert("Data updated successfully!");
-            })
-            .catch((error) => {
-                alert("Failed to update data. Please try again.");
-            });
-    };
-
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        alert("Failed to update profile. Please try again.");
+    }
+};
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevState => ({
@@ -144,6 +145,8 @@ function SuperProfile() {
 
         const userId = localStorage.getItem("userId");
 
+        console.log(userId,"userId");
+        
         if (!userId) {
             console.error("User ID is not available.");
             return;

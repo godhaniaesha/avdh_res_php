@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
-
 import styles from '../../css/EditWaiter.module.css';
 import SuperSidePanel from './SuperSidePanel';
 import SuperNavbar from './SuperNavbar';

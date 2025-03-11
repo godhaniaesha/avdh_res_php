@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal } from 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 // import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+import bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import SuperNavbar from './SuperNavbar';
 import SuperSidePanel from './SuperSidePanel';
 import styles from "../../css/AddTable.module.css"; // Corrected import for CSS
@@ -20,7 +20,7 @@ function AddTable(props) {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [changepasswordmodal, setChangepasswordmodal] = useState(false);
     const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState("");
+    const [oldPassword, setOldPassword] = useState("");
     // Function to fetch existing tables from the server
     const fetchTables = async () => {
         try {
@@ -53,7 +53,7 @@ function AddTable(props) {
     useEffect(() => {
         // Import Bootstrap's JavaScript
         require('bootstrap/dist/js/bootstrap.bundle.min.js');
-        
+
         // Clean up function
         return () => {
             const modalElement = document.getElementById('imgModal');
@@ -66,9 +66,9 @@ function AddTable(props) {
         };
     }, []);
 
-     const toggleDrawer = () => {
+    const toggleDrawer = () => {
         setIsSidebarOpen(prev => !prev);
-      };
+    };
 
     const clearForm = () => {
         setTableQuantity(1);
@@ -80,11 +80,11 @@ function AddTable(props) {
     const getNextTableNumber = () => {
         const existingNumbers = tables.map(table => {
             // Extract number from tableName (e.g., "table 2" -> 2)
-            const match = table.tableName.match(/\d+/); 
+            const match = table.tableName.match(/\d+/);
             return match ? parseInt(match[0], 10) : 0; // Convert to integer or default to 0
         });
         // Return max number + 1, or start at 1 if no tables exist
-        return existingNumbers.length > 0 ? Math.max(...existingNumbers) + 1 : 1; 
+        return existingNumbers.length > 0 ? Math.max(...existingNumbers) + 1 : 1;
     };
 
     const profilesave = async (event) => {
@@ -92,7 +92,7 @@ function AddTable(props) {
 
         try {
             const token = localStorage.getItem('authToken');
-            
+
             if (!tableGuest) {
                 alert("Please enter guest capacity");
                 return;
@@ -117,13 +117,13 @@ function AddTable(props) {
             if (response.status == 200) {
                 // Clear form
                 clearForm();
-                
+
                 // Show success modal
                 const modalElement = document.getElementById('imgModal');
                 if (modalElement) {
                     const successModal = new Modal(modalElement);
                     successModal.show();
-                    
+
                     // Automatically close modal and redirect after 2 seconds
                     setTimeout(() => {
                         successModal.hide();
@@ -316,79 +316,79 @@ function AddTable(props) {
                         </div>
                     </div> */}
                     {/* Success Modal */}
-<div 
-    className="modal fade" 
-    id="imgModal" 
-    tabIndex="-1" 
-    aria-labelledby="successModalLabel" 
-    aria-hidden="true"
->
-    <div className="modal-dialog modal-dialog-centered">
-        <div className="modal-content" style={{ border: 'none', backgroundColor: '#f6f6f6', padding: '20px' }}>
-            <div className="modal-body text-center">
-                <h4 style={{ 
-                    fontSize: '24px', 
-                    fontWeight: '500', 
-                    marginBottom: '20px' 
-                }}>
-                    Add Successfully!
-                </h4>
-                <div style={{ 
-                    width: '60px', 
-                    height: '60px', 
-                    borderRadius: '50%', 
-                    backgroundColor: '#4B6C52', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center',
-                    margin: '0 auto'
-                }}>
-                    <i className="fas fa-check" style={{ 
-                        color: 'white', 
-                        fontSize: '30px' 
-                    }}></i>
-                    {/* <img src="../../Image/right.png" alt="" /> */}
+                    <div
+                        className="modal fade"
+                        id="imgModal"
+                        tabIndex="-1"
+                        aria-labelledby="successModalLabel"
+                        aria-hidden="true"
+                    >
+                        <div className="modal-dialog modal-dialog-centered">
+                            <div className="modal-content" style={{ border: 'none', backgroundColor: '#f6f6f6', padding: '20px' }}>
+                                <div className="modal-body text-center">
+                                    <h4 style={{
+                                        fontSize: '24px',
+                                        fontWeight: '500',
+                                        marginBottom: '20px'
+                                    }}>
+                                        Add Successfully!
+                                    </h4>
+                                    <div style={{
+                                        width: '60px',
+                                        height: '60px',
+                                        borderRadius: '50%',
+                                        backgroundColor: '#4B6C52',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        margin: '0 auto'
+                                    }}>
+                                        <i className="fas fa-check" style={{
+                                            color: 'white',
+                                            fontSize: '30px'
+                                        }}></i>
+                                        {/* <img src="../../Image/right.png" alt="" /> */}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
+                {/* Change Password Modal */}
+                <div
+                    className={`modal fade ${style.m_model_ChangePassword}`}
+                    id="changepassModal"  // Ensure this ID matches
+                    tabIndex="-1"
+                    aria-labelledby="changepassModalLabel"
+                    aria-hidden="true"
+                >
+                    <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
+                        <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
+                            <div className={`modal-body ${style.m_change_pass_text}`}>
+                                <span>Change Password</span>
+                            </div>
+                            <div className={style.m_new}>
+                                <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
+                            </div>
+                            <div className={style.m_new}>
+                                <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+                            </div>
+                            <div className={style.m_confirm}>
+                                <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                            </div>
+                            <div className={style.m_btn_cancel_change}>
+                                <div className={style.m_btn_cancel}>
+                                    <button data-bs-dismiss="modal">Cancel</button>
+                                </div>
+                                <div className={style.m_btn_change}>
+                                    <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                  {/* Change Password Modal */}
-           <div
-          className={`modal fade ${style.m_model_ChangePassword}`}
-          id="changepassModal"  // Ensure this ID matches
-          tabIndex="-1"
-          aria-labelledby="changepassModalLabel"
-          aria-hidden="true"
-        >
-          <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
-            <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
-              <div className={`modal-body ${style.m_change_pass_text}`}>
-                <span>Change Password</span>
-              </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
-              </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-              </div>
-              <div className={style.m_confirm}>
-                <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-              </div>
-              <div className={style.m_btn_cancel_change}>
-                <div className={style.m_btn_cancel}>
-                  <button data-bs-dismiss="modal">Cancel</button>
-                </div>
-                <div className={style.m_btn_change}>
-                  <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
-            <div
+                <div
                     className={`modal fade ${style.m_model_logout}`}
                     id="logoutModal"
                     tabIndex="-1"

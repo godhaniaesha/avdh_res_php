@@ -93,7 +93,6 @@ const AccountList = () => {
   const toggleDrawer = () => {
     setIsSidebarOpen(prev => !prev);
   };
-
   const handleLogout = () => {
     // Check if Bootstrap's Modal is available
     if (window.bootstrap && window.bootstrap.Modal) {
