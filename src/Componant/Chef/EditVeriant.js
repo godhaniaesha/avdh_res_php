@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+import bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -11,6 +11,7 @@ import { useParams } from 'react-router-dom';
 import style from "../../css/EditChef.module.css";
 import styl from "../../css/BillPayment.module.css";
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function EditVeriant() {
   const [dishCategories, setDishCategories] = useState([]);
@@ -29,14 +30,14 @@ function EditVeriant() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [changepasswordmodal, setChangepasswordmodal] = useState(false);
   const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+
+  const token = localStorage.getItem("authToken");
 
   const populateCategoryOptions = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/allCategory");
-      if (!response.ok) throw new Error("Failed to fetch categories");
-      const categories = await response.json();
-      setDishCategories(categories.category);
+      const response = await axios.post("http://localhost/avadh_api/chef/category/view_category.php");
+      setDishCategories(response.data.categories);
     } catch (error) {
       console.error('Error fetching categories:', error.message);
     }
@@ -59,29 +60,36 @@ function EditVeriant() {
   };
   const populateDishOptions = async (categoryId) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/allDish?dishCategory=${categoryId}`);
-      if (!response.ok) throw new Error("Failed to fetch dishes");
-      const dishes = await response.json();
-      setDishes(dishes.dish);
+      const response = await axios.post(`http://localhost/avadh_api/chef/dish/view_dish.php`);
+      const dishes = response.data.data
+
+      setDishes(dishes.filter(dish => dish.dishCategory == categoryId));
     } catch (error) {
       console.error('Error fetching dishes:', error.message);
     }
   };
 
   const getVariantDetails = async (variantId) => {
+    const formData = new FormData();
+    formData.append("var_id", variantId);
+
     try {
-      const response = await fetch(`http://localhost:8000/api/getVariant/${variantId}`);
-      if (!response.ok) throw new Error('Failed to fetch variant details');
-      const { variant } = await response.json();
+      const response = await axios.post(`http://localhost/avadh_api/chef/variant/view_variant.php`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const variant = response.data.variants;
+      console.log(variant)
       setVariantData({
-        dishCategory: variant.dishName.dishCategory,
-        dishName: variant.dishName._id,
-        varName: variant.variantName,
+        categoryName: variant.category.categoryName,
+        dishName: variant.dish.dishName,
+        variantName: variant.variantName,
         price: variant.price,
         variantImage: null,
       });
       setImageName(variant.variantImage || '');
-      populateDishOptions(variant.dishName.dishCategory);
+      populateDishOptions(variant.category.id);
     } catch (error) {
       console.error('Error fetching variant details:', error);
     }
@@ -115,31 +123,33 @@ function EditVeriant() {
 
   const editVariant = async (event) => {
     event.preventDefault();
-    const { dishCategory, dishName, varName, price, variantImage } = variantData;
+    const { categoryName, dishName, variantName, price, variantImage } = variantData;
 
-    if (!dishCategory || !dishName || !varName || !price) {
+    if (!categoryName || !dishName || !variantName || !price) {
       alert('All fields are required');
       return;
     }
 
     const formData = new FormData();
-    formData.append('categoryName', dishCategory);
+    formData.append('var_id', id);
+    formData.append('categoryName', categoryName);
     formData.append('dishName', dishName);
-    formData.append('variantName', varName);
+    formData.append('variantName', variantName);
     formData.append('price', price);
     if (variantImage) {
       formData.append('variantImage', variantImage); // Append the image file
     }
 
     try {
-      const response = await fetch(`http://localhost:8000/api/updateVariant/${id}`, {
-        method: 'PUT',
-        body: formData, // Send FormData
+      const response = await axios.post(`http://localhost/avadh_api/chef/variant/update_variant.php`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
-      if (!response.ok) throw new Error('Failed to update variant details');
       console.log('Variant details updated successfully!');
-      window.location.href = "/chef_variant"; // Redirect to the variant list
+      navigate('/chef_variant')
+      // window.location.href = "/chef_variant"; // Redirect to the variant list
     } catch (error) {
       console.error('Error updating variant details:', error.message);
     }
@@ -227,7 +237,7 @@ function EditVeriant() {
           <form id={styles.editVariant} onSubmit={editVariant}>
             <div className={`row ${styles.v_row_adddish}`}>
               <div className="col-xs-12 col-md-6" style={{ padding: 0 }}>
-                <select className={`form-select ${styles['form-select']} ${styles['form-control']} ${styles.v_dishinput_pad}`} name="dishCategory" value={variantData.dishCategory} onChange={handleChange} required>
+                <select className={`form-select ${styles['form-select']} ${styles['form-control']} ${styles.v_dishinput_pad}`} name="dishCategory" value={variantData.categoryName} onChange={handleChange} required>
                   <option value="" disabled>Select Dish Category</option>
                   {Array.isArray(dishCategories) && dishCategories.map(category => (
                     <option key={category._id} value={category._id}>{category.categoryName}</option>
@@ -245,7 +255,7 @@ function EditVeriant() {
             </div>
             <div className={`row ${styles.v_row_adddish}`}>
               <div className="col-xs-12 col-md-6" style={{ padding: 0 }}>
-                <input type="text" className={`${styles['form-control']} ${styles.v_dishinput_pad}`} placeholder="Variant Name" required aria-label="Variant Name" name="varName" value={variantData.varName} onChange={handleChange} />
+                <input type="text" className={`${styles['form-control']} ${styles.v_dishinput_pad}`} placeholder="Variant Name" required aria-label="Variant Name" name="varName" value={variantData.variantName} onChange={handleChange} />
               </div>
               <div className="col-xs-12 col-md-6" style={{ padding: 0 }}>
                 <input
@@ -290,37 +300,37 @@ function EditVeriant() {
         </div>
       </div>
       <div
-          className={`modal fade ${style.m_model_ChangePassword}`}
-          id="changepassModal"  // Ensure this ID matches
-          tabIndex="-1"
-          aria-labelledby="changepassModalLabel"
-          aria-hidden="true"
-        >
-          <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
-            <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
-              <div className={`modal-body ${style.m_change_pass_text}`}>
-                <span>Change Password</span>
+        className={`modal fade ${style.m_model_ChangePassword}`}
+        id="changepassModal"  // Ensure this ID matches
+        tabIndex="-1"
+        aria-labelledby="changepassModalLabel"
+        aria-hidden="true"
+      >
+        <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
+          <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
+            <div className={`modal-body ${style.m_change_pass_text}`}>
+              <span>Change Password</span>
+            </div>
+            <div className={style.m_new}>
+              <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
+            </div>
+            <div className={style.m_new}>
+              <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+            </div>
+            <div className={style.m_confirm}>
+              <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+            </div>
+            <div className={style.m_btn_cancel_change}>
+              <div className={style.m_btn_cancel}>
+                <button data-bs-dismiss="modal">Cancel</button>
               </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
-              </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-              </div>
-              <div className={style.m_confirm}>
-                <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-              </div>
-              <div className={style.m_btn_cancel_change}>
-                <div className={style.m_btn_cancel}>
-                  <button data-bs-dismiss="modal">Cancel</button>
-                </div>
-                <div className={style.m_btn_change}>
-                  <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
-                </div>
+              <div className={style.m_btn_change}>
+                <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
               </div>
             </div>
           </div>
         </div>
+      </div>
       <div
         className={`modal fade ${styl.m_model_logout}`}
         id="logoutModal"

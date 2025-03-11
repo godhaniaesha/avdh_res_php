@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
-
 import 'bootstrap/dist/css/bootstrap.min.css';
+import bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import { Modal } from 'bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEraser, faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
 import ChefNavbar from './ChefNavbar';
 import ChefSidePanel from './ChefSidePanel';
 import styles from "../../css/AddVeriant.module.css";
-import style from "../../css/BillPayment.module.css"; 
+import style from "../../css/BillPayment.module.css";
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function AddVeriant(props) {
   const [dishCategories, setDishCategories] = useState([]);
@@ -26,29 +27,43 @@ function AddVeriant(props) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [changepasswordmodal, setChangepasswordmodal] = useState(false);
   const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
 
   // Fetch categories from the API
   const fetchCategories = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/allCategory');
+      const response = await fetch('http://localhost/avadh_api/chef/category/view_category.php', {
+        method: 'POST',
+      });
+
       if (!response.ok) throw new Error('Failed to fetch categories');
+
       const data = await response.json();
-      setDishCategories(data.category);
+      setDishCategories(data.categories);
     } catch (error) {
       console.error('Error fetching categories:', error);
       alert('Failed to fetch categories. Please try again.');
     }
   };
+  ;
 
   // Fetch dishes based on selected category
   const fetchDishNames = async (categoryId) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/allDish?dishCategory=${categoryId}`);
+
+      const formData = new FormData();
+      formData.append('dish_id', categoryId);
+      const response = await fetch(`http://localhost/avadh_api/chef/dish/view_dish.php`, {
+        method: 'POST',
+      });
+
       if (!response.ok) throw new Error('Failed to fetch dishes');
+
       const data = await response.json();
-      if (data && Array.isArray(data.dish)) {
-        setDishes(data.dish.filter(dish => dish.dishCategory === categoryId));
+
+      if (data) {
+        setDishes(data.data.filter(dish => dish.dishCategory == categoryId));
+        console.log(dishes)
       } else {
         console.error('Fetched dishes data is not an array:', data);
         setDishes([]);
@@ -58,6 +73,7 @@ function AddVeriant(props) {
       alert('Failed to fetch dishes. Please try again.');
     }
   };
+
 
   // Handle input changes
   const handleChange = (e) => {
@@ -78,97 +94,118 @@ function AddVeriant(props) {
     event.preventDefault();
     const { dishCategory, dishName, varName, price, imageFile } = variantData;
 
-    // Validate input fields
     if (!dishCategory || !dishName || !varName || !price || !imageFile) {
       alert('Please fill out all fields.');
       return;
     }
 
     const formData = new FormData();
-    // Append data to FormData object with keys matching API expectations
-    formData.append('categoryName', dishCategory); // Use 'categoryName' as per your API's structure
+    formData.append('categoryName', dishCategory);
     formData.append('dishName', dishName);
     formData.append('variantName', varName);
     formData.append('price', price);
-    formData.append('variantImage', imageFile); // Append the image file
+    formData.append('variantImage', imageFile);
+
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      alert("No authentication token found");
+      return;
+    }
 
     try {
-      const response = await fetch('http://localhost:8000/api/createVariant', {
-        method: 'POST',
-        body: formData, // Sending FormData
+      const response = await axios.post(`http://localhost/avadh_api/chef/variant/add_variant.php`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
       });
-      if (!response.ok) throw new Error('Failed to add variant');
-      setShowModal(true); // Show success modal
-      // Reset variant data after successful addition
+
+      if (response.status == 200) {
+        // Show success modal
+        const modalElement = document.getElementById('imgModal');
+        if (modalElement) {
+            const successModal = new Modal(modalElement);
+            successModal.show();
+            setTimeout(() => {
+                successModal.hide();
+                navigate('/chef_variant');
+            }, 2000);
+        }
+    } else {
+        alert(response.data.message || 'Failed to add table');
+    }
+      // setShowModal(true);
       setVariantData({ dishCategory: '', dishName: '', varName: '', price: '', imageFile: null });
+
     } catch (error) {
       console.error('Error adding variant:', error);
-      alert('Failed to add variant. Please try again.'); // Notify user
+      alert('Failed to add variant. Please try again.');
     }
   };
 
-// ... existing code ...
-const handlePasswordChange = () => {
+
+  // ... existing code ...
+  const handlePasswordChange = () => {
     // Check if new password and confirm password match
     if (newPassword !== confirmPassword) {
-        alert("Passwords do not match.");
-        return;
+      alert("Passwords do not match.");
+      return;
     }
 
     // Make sure password is not empty
     if (!newPassword || !confirmPassword) {
-        alert("Please enter a new password.");
-        return;
+      alert("Please enter a new password.");
+      return;
     }
 
     const userId = localStorage.getItem("userId");
 
     if (!userId) {
-        console.error("User ID is not available.");
-        return;
+      console.error("User ID is not available.");
+      return;
     }
 
     const passwordData = {
-        newPassword: newPassword, // Send new password
-        confirmPassword: confirmPassword // Send confirm password
+      newPassword: newPassword, // Send new password
+      confirmPassword: confirmPassword // Send confirm password
     };
 
     // Send the PUT request to update the password
     fetch(`http://localhost:8000/api/updateuser/${userId}`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(passwordData),
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(passwordData),
     })
-    .then(response => {
+      .then(response => {
         if (!response.ok) throw new Error("Network response was not ok");
-        
+
         // Hide the modal after successful password change
         const changePasswordModal = document.getElementById('changepassModal');
         if (changePasswordModal) {
-            // Remove the 'show' class directly
-            changePasswordModal.classList.remove('show');
-            changePasswordModal.style.display = 'none'; // Also set display to none
+          // Remove the 'show' class directly
+          changePasswordModal.classList.remove('show');
+          changePasswordModal.style.display = 'none'; // Also set display to none
 
-            // Remove the backdrop
-            const backdrop = document.querySelector('.modal-backdrop');
-            if (backdrop) {
-                backdrop.remove(); // Remove the backdrop element
-            }
+          // Remove the backdrop
+          const backdrop = document.querySelector('.modal-backdrop');
+          if (backdrop) {
+            backdrop.remove(); // Remove the backdrop element
+          }
 
-            // Optionally, reset the modal content
-            setNewPassword("");
-            setConfirmPassword("");
+          // Optionally, reset the modal content
+          setNewPassword("");
+          setConfirmPassword("");
         }
 
         return response.json();
-    })
-    .catch(error => {
+      })
+      .catch(error => {
         console.error("Error changing password:", error);
-    });
-};
-// ... existing code ...
+      });
+  };
+  // ... existing code ...
 
   // Fetch categories when the component mounts
   useEffect(() => {
@@ -183,7 +220,7 @@ const handlePasswordChange = () => {
     setIsSidebarOpen(prev => !prev);
   };
 
-  
+
   const handleLogout = () => {
     if (window.bootstrap && window.bootstrap.Modal) {
       const logoutModal = document.getElementById('logoutModal');
@@ -201,7 +238,7 @@ const handlePasswordChange = () => {
   return (
     <div id={styles['a_selectTable']}>
       <ChefNavbar toggleDrawer={toggleDrawer} toggleNotifications={toggleNotifications} showSearch={false} />
-      <ChefSidePanel isOpen={isSidebarOpen}/>
+      <ChefSidePanel isOpen={isSidebarOpen} />
       <div id={styles['a_main-content']}>
         <div className={`container-fluid ${styles.a_main}`}>
           <div>
@@ -222,7 +259,7 @@ const handlePasswordChange = () => {
                   <option value="" disabled>Select Dish Category</option>
                   {Array.isArray(dishCategories) && dishCategories.length > 0 ? (
                     dishCategories.map(category => (
-                      <option key={category._id} value={category._id}>
+                      <option key={category.id} value={category.id}>
                         {category.categoryName}
                       </option>
                     ))
@@ -244,7 +281,7 @@ const handlePasswordChange = () => {
                   <option value="" disabled>Select Dish Name</option>
                   {Array.isArray(dishes) && dishes.length > 0 ? (
                     dishes.map(dish => (
-                      <option key={dish._id} value={dish._id}>{dish.dishName}</option>
+                      <option key={dish.id} value={dish.id}>{dish.dishName}</option>
                     ))
                   ) : (
                     <option value="" disabled>No dishes available</option>
@@ -305,86 +342,111 @@ const handlePasswordChange = () => {
               </button>
             </div>
           </form>
-          {showModal && (
-            <div className={`modal fade ${styles.v_adddish_modal} show`} style={{ display: 'block' }} tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div className="modal-dialog modal-dialog-centered">
-                <div className={`modal-content ${styles.v_adddish_modal}`} style={{ border: 'none', backgroundColor: '#f6f6f6' }}>
-                  <div className="modal-body" style={{ height: '250px' }}>
-                    <div className="text-center" style={{ marginTop: '25px' }}>
-                      <div style={{ fontSize: '32px', fontWeight: 700, marginBottom: '30px' }}>Added Successfully!</div>
-                      <div><img src="./Image/right.png" alt="" /></div>
+          {/* {/ Success Modal /} */}
+          <div
+            className="modal fade"
+            id="imgModal"
+            tabIndex="-1"
+            aria-labelledby="successModalLabel"
+            aria-hidden="true"
+          >
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content" style={{ border: 'none', backgroundColor: '#f6f6f6', padding: '20px' }}>
+                <div className="modal-body text-center">
+                  <h4 style={{
+                    fontSize: '24px',
+                    fontWeight: '500',
+                    marginBottom: '20px'
+                  }}>
+                    Add Successfully!
+                  </h4>
+                  <div style={{
+                    width: '60px',
+                    height: '60px',
+                    borderRadius: '50%',
+                    backgroundColor: '#4B6C52',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '0 auto'
+                  }}>
+                    <i className="fas fa-check" style={{
+                      color: 'white',
+                      fontSize: '30px'
+                    }}></i>
+                    <img src="../../Image/right.png" alt="" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            className={`modal fade ${style.m_model_ChangePassword}`}
+            id="changepassModal"  // Ensure this ID matches
+            tabIndex="-1"
+            aria-labelledby="changepassModalLabel"
+            aria-hidden="true"
+          >
+            <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
+              <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
+                <div className={`modal-body ${style.m_change_pass_text}`}>
+                  <span>Change Password</span>
+                </div>
+                <div className={style.m_new}>
+                  <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
+                </div>
+                <div className={style.m_new}>
+                  <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+                </div>
+                <div className={style.m_confirm}>
+                  <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                </div>
+                <div className={style.m_btn_cancel_change}>
+                  <div className={style.m_btn_cancel}>
+                    <button data-bs-dismiss="modal">Cancel</button>
+                  </div>
+                  <div className={style.m_btn_change}>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            className={`modal fade ${style.m_model_logout}`}
+            id="logoutModal"
+            tabIndex="-1"
+            aria-labelledby="logoutModalLabel"
+            aria-hidden="true"
+          >
+            <div className="modal-dialog modal-dialog-centered">
+              <div
+                className={`modal-content ${style.m_model_con}`}
+                stylee={{ border: "none", backgroundColor: "#f6f6f6" }}
+              >
+                <div className={style.m_log}>
+                  <div className={style.m_logout}>
+                    <span>Logout</span>
+                  </div>
+                  <div className={style.m_text}>
+                    <span>Are You Sure You Want To Logout?</span>
+                  </div>
+                  <div className={style.m_btn_cancel_yes}>
+                    <div className={style.m_btn_cancel_logout}>
+                      <button data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                    <div className={style.m_btn_yes}>
+                      {/* <button onClick={handleLogout}>Logout</button> */}
+                      <button type="button" data-bs-toggle="modal" data-bs-target="#logoutModal" onClick={handleLogout}>
+                        Logout
+                      </button>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          )}
-          <div
-          className={`modal fade ${style.m_model_ChangePassword}`}
-          id="changepassModal"  // Ensure this ID matches
-          tabIndex="-1"
-          aria-labelledby="changepassModalLabel"
-          aria-hidden="true"
-        >
-          <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
-            <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
-              <div className={`modal-body ${style.m_change_pass_text}`}>
-                <span>Change Password</span>
-              </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
-              </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-              </div>
-              <div className={style.m_confirm}>
-                <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-              </div>
-              <div className={style.m_btn_cancel_change}>
-                <div className={style.m_btn_cancel}>
-                  <button data-bs-dismiss="modal">Cancel</button>
-                </div>
-                <div className={style.m_btn_change}>
-                  <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
-                </div>
-              </div>
-            </div>
           </div>
-        </div>
-          <div
-        className={`modal fade ${style.m_model_logout}`}
-        id="logoutModal"
-        tabIndex="-1"
-        aria-labelledby="logoutModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-dialog-centered">
-          <div
-            className={`modal-content ${style.m_model_con}`}
-            stylee={{ border: "none", backgroundColor: "#f6f6f6" }}
-          >
-            <div className={style.m_log}>
-              <div className={style.m_logout}>
-                <span>Logout</span>
-              </div>
-              <div className={style.m_text}>
-                <span>Are You Sure You Want To Logout?</span>
-              </div>
-              <div className={style.m_btn_cancel_yes}>
-                <div className={style.m_btn_cancel_logout}>
-                  <button data-bs-dismiss="modal">Cancel</button>
-                </div>
-                <div className={style.m_btn_yes}>
-                  {/* <button onClick={handleLogout}>Logout</button> */}
-                  <button type="button" data-bs-toggle="modal" data-bs-target="#logoutModal" onClick={handleLogout}>
-                    Logout
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
         </div>
       </div>
     </div>
