@@ -377,6 +377,7 @@ function WaiterMenu() {
   // };
 
   const handleOrderSend = async () => {
+    token = localStorage.getItem("authToken");
     // Get the email value from the input field
     const email = document.getElementById("email").value;
     const firstName = document.getElementById("firstname").value;
@@ -395,26 +396,47 @@ function WaiterMenu() {
         const orderData = {
           email: email, // Include the email in the order data
           firstName: firstName,
+          lastName: lastName,
+          phone: contactno, 
           tableNo: tableId, // Include the table ID
           orderDish: orderItems.map(item => ({
-            dish: item._id, // Get the dish ID
-            variant: item.variants.map(variant => variant._id), // Get the variant IDs
+            dish: item.id, // Get the dish ID
+            variant: item.variants.map(variant => variant.id), // Get the variant IDs
             qty: item.quantity // Get the quantity
           })),
           totalAmount: totalPrice, // Total price of the order
           orderStatus: "Pending", // Set the order status
           paymentStatus: "Unpaid" // Set the payment status
         };
+        const formData = new FormData();
+        formData.append("tableNo", orderData.tableNo);
+        formData.append("email", orderData.email);
+        formData.append("firstName", orderData.firstName);
+        formData.append("lastName", orderData.lastName);
+        formData.append("phone", orderData.phone);
 
+        // Append order dishes in the required format
+        orderData.orderDish.forEach(item => {
+          formData.append("dish_id[]", item.dish);
+          formData.append("quantity[]", item.qty);
+          if(item?.variant.length > 0 ){
+            formData.append("varaints_id[]", item.variant); // Stored as a comma-separated string
+          }
+        });
         console.log("Order Data to be Sent:", orderData); // Debugging: Check the structure of your orderData
 
         // Make the POST request to create the order
-        // const response = await axios.post("http://localhost:8000/api/createOrder", orderData, {
-        //   headers: {
-        //     "Content-Type": "application/json", // Set the content type to JSON
-        //   },
-        // });
+        const response = await axios.post("http://localhost/avadh_api/waiter/order/add_order.php", formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          });
 
+        console.log('Order Data', response);
+        navigate('/waiter_order');
+        // setOrderItems([])
         // Check the response status
         // if (response.status === 201) {
         //   console.log("Order sent successfully!", response.data); // Log success
@@ -566,7 +588,7 @@ function WaiterMenu() {
                 placeholder="Search by Dish Name..."
                 className="search-input"
                 value={searchQuery} // Bind the input to searchQuery
-                onChange={(e) => {setSearchQuery(e.target.value)}} // Update searchQuery on input change
+                onChange={(e) => { setSearchQuery(e.target.value) }} // Update searchQuery on input change
               />
             </div>
             <a>
@@ -671,7 +693,7 @@ function WaiterMenu() {
           </div>
           <div className={styles.a_listBody}>
             {orderItems.map((item, index) => (
-              <div className={`${styles.a_order} d-flex`} key={index}>
+              <div className={`${styles.a_order} d-flex mt-3`} key={index}>
                 <div className={styles.a_orderImg}>
                   <img src={`http://localhost/avadh_api/images/${item.dishImage}`} alt={item.dishName} />
                 </div>

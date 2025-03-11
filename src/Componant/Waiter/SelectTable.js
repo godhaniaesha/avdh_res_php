@@ -70,14 +70,13 @@ function SelectTable(props) {
         if (chosenTable === newTable.number) {
             return; // If the table is already selected, do nothing
         }
-        console.log('SSS',newTable);
         const previousChosenTable = tables.find(table => table.selected);
         if (previousChosenTable) {
             previousChosenTable.selected = false;
         }
-
+        console.log('SSS',newTable);
         newTable.selected = true;
-        setChosenTable(newTable.number);
+        setChosenTable(newTable.id);
         setGuestCount(newTable.guestCount);
 
         setTables([...tables]); // Trigger re-render with updated table data
@@ -89,8 +88,8 @@ function SelectTable(props) {
             return;
         }
 
-        const selectedTable = tables.find(table => table.number === chosenTable);
-        console.log(selectedTable);
+        const selectedTable = tables.find(table => table.id === chosenTable);
+        console.log('selectedTable',selectedTable);
         var name = selectedTable.number.split(" ");
         console.log(name[1]);
         const formData = new FormData();
@@ -107,8 +106,8 @@ function SelectTable(props) {
                   },
             });
 
-            // localStorage.setItem('bookTable', JSON.stringify(data));
-            // localStorage.setItem("tableId", data.id);
+            localStorage.setItem('bookTable', JSON.stringify(selectedTable));
+            localStorage.setItem("tableId", selectedTable.id);
             navigate('/waiter_menu');
         } catch (error) {
             console.error('Error:', error);
