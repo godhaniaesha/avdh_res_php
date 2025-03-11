@@ -25,15 +25,21 @@ const BillPayment = () => {
  const [oldPassword, setOldPassword] = useState("");
   useEffect(() => {
     fetchOrders(); // Fetch all orders on component mount
-    fetchTables(); // Fetch tables on component mount
+    // fetchTables(); // Fetch tables on component mount
   }, []);
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/allOrders");
-      if (!response.ok) throw new Error("Network response was not ok");
-      const data = await response.json();
-      setOrders(data.orders);
+      const response = await axios.post("http://localhost/avadh_api/Accountant/bill_payment/view_order.php",{},{
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
+      // if (!response.ok) throw new Error("Network response was not ok");
+      // const data = await response.json();
+      console.log(response.data.orders);
+      setOrders(response.data.orders);
+      setTables(response.data.orders);
     } catch (error) {
       console.error("Error fetching orders:", error);
     }
@@ -51,10 +57,11 @@ const BillPayment = () => {
     }
   };
 
-  const handleTableClick = async (tableId) => {
-    setSelectedTableId(tableId);
+  const handleTableClick = async (tableId ,tableName) => {
+    setSelectedTableId(tableName);
+    // alert("Table " + tableName );
     try {
-      const ordersForTable = await fetchOrdersForTable(tableId);
+      const ordersForTable = await fetchOrdersForTable(tableName);
       setOrderDetails(ordersForTable);
       calculateTotalPrice(ordersForTable);
     } catch (error) {
@@ -64,11 +71,14 @@ const BillPayment = () => {
 
   const fetchOrdersForTable = async (tableId) => {
     try {
-      const response = await axios.get(`http://localhost:8000/api/getOrderTableId/${tableId}`);
-      if (response.status !== 200) {
-        throw new Error(`Unexpected response code: ${response.status}`);
-      }
-      return response.data.order; // Assuming the response data is an array of orders
+      var data = orders.filter(order => order.tableNo === tableId && order.paymentStatus  ==='Unpaid');
+      console.log('orderdetails', data);
+      return data;
+      // const response = await axios.get(`http://localhost:8000/api/getOrderTableId/${tableId}`);
+      // if (response.status !== 200) {
+      //   throw new Error(`Unexpected response code: ${response.status}`);
+      // }
+      // return response.data.order; // Assuming the response data is an array of orders
     } catch (error) {
       console.error("Error fetching orders for table:", error);
       return []; // Return an empty array on error
@@ -82,59 +92,74 @@ const BillPayment = () => {
 
   const updatePaymentStatus = async () => {
     try {
+      // const ordersToUpdate = orderDetails.map(order => ({
+      //   ...order,
+      //   paymentStatus: 'Paid' // Update the status to 'Paid'
+      // }));
+      // console.log('helllo',ordersToUpdate);
+      // const responses = await Promise.all(ordersToUpdate.map(async (order) => {
+      //   console.log("order", order.tableNo);
+
+      //   try {
+      //     const response = await fetch(`http://localhost:8000/api/updateOrderStatus/${order._id}`, {
+      //       method: 'PUT',
+      //       headers: {
+      //         'Content-Type': 'application/json',
+      //       },
+      //       body: JSON.stringify({ paymentStatus: order.paymentStatus }),
+      //     });
+
+      //     if (response.ok) {
+      //       // console.log("response",response);
+
+      //       const tableResponse = await fetch(`http://localhost:8000/api/getTable/${order.tableNo}`);
+      //       const tableData = await tableResponse.json();
+
+      //       if (tableData.status) {
+      //         await fetch(`http://localhost:8000/api/updateTable/${order.tableNo}`, {
+      //           method: 'PUT',
+      //           headers: {
+      //             'Content-Type': 'application/json',
+      //           },
+      //           body: JSON.stringify({ status: false }),
+      //         });
+      //       }
+
+      //       // Delete the order after updating the payment status
+      //       await deleteOrder(order._id); // Call the delete function
+      //     }
+
+      //     return response; // Return the response for further processing
+      //   } catch (fetchError) {
+      //     console.error(`Error updating order ID ${order._id}:`, fetchError);
+      //     return null; // Return null if there's an error
+      //   }
+      // }));
+      // fetchOrders()
+
+
+        
+      console.log("All orders processed.");
       const ordersToUpdate = orderDetails.map(order => ({
         ...order,
         paymentStatus: 'Paid' // Update the status to 'Paid'
       }));
-
-      const responses = await Promise.all(ordersToUpdate.map(async (order) => {
-        console.log("order", order.tableNo);
-
-        try {
-          const response = await fetch(`http://localhost:8000/api/updateOrderStatus/${order._id}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ paymentStatus: order.paymentStatus }),
-          });
-
-          if (response.ok) {
-            // console.log("response",response);
-
-            const tableResponse = await fetch(`http://localhost:8000/api/getTable/${order.tableNo}`);
-            const tableData = await tableResponse.json();
-
-            if (tableData.status) {
-              await fetch(`http://localhost:8000/api/updateTable/${order.tableNo}`, {
-                method: 'PUT',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ status: false }),
-              });
-            }
-
-            // Delete the order after updating the payment status
-            await deleteOrder(order._id); // Call the delete function
-          }
-
-          return response; // Return the response for further processing
-        } catch (fetchError) {
-          console.error(`Error updating order ID ${order._id}:`, fetchError);
-          return null; // Return null if there's an error
-        }
-      }));
-      fetchOrders()
-
-
-
-      const allUpdated = responses.every(response => response && response.ok);
-      if (allUpdated) {
-        console.log("All orders updated successfully");
-      } else {
-        console.error("Some orders failed to update");
-      }
+      // setTables([])
+      var data = tables.map(t => 
+        t._id === ordersToUpdate[0]._id 
+          ? { ...t, paymentStatus: 'Paid' } // Only update paymentStatus
+          : t // Keep the same object if no match
+      );
+      console.log('data123',tables);
+      console.log(ordersToUpdate);
+      console.log('data',data);
+      setTables(data);
+      // const allUpdated = responses.every(response => response && response.ok);
+      // if (allUpdated) {
+      //   console.log("All orders updated successfully");
+      // } else {
+      //   console.error("Some orders failed to update");
+      // }
     } catch (error) {
       console.error("Error updating order status:", error);
     }
@@ -253,22 +278,22 @@ const BillPayment = () => {
                 <div className={`${styles.v_chef_border} p-3`} id={styles.aesh_orders}>
                   {tables.length > 0 ? (
                     tables
-                      .filter(table => table.tableName.toLowerCase().includes(searchQuery.toLowerCase())) // Filter tables based on search query
+                      .filter(table => table?.tableNo?.toLowerCase().includes(searchQuery.toLowerCase())) // Filter tables based on search query
                       .map(table => {
                         const ordersForTable = orders.filter(order => order.tableNo?._id === table._id);
-                        const hasUnpaidOrder = ordersForTable.some(order => order.paymentStatus === "Unpaid");
+                        // const hasUnpaidOrder = ordersForTable.some(order => order.paymentStatus === "Unpaid");
 
                         return (
                           <div
                             key={table._id}
                             className="mb-3"
-                            onClick={() => handleTableClick(table._id)}
+                            onClick={() => handleTableClick(table.id,table.tableNo)}
                             data-table-id={table._id}
                           >
                             <div
                               className={`${styles.v_chef_border_order}`}
                               style={{
-                                backgroundColor: hasUnpaidOrder ? "#FFE6E6" : "#E3FCEE",
+                                backgroundColor: table.paymentStatus === "Unpaid" ? "#FFE6E6" : "#E3FCEE",
                                 borderRadius: "4px",
                                 padding: "12px 16px",
                                 position: "relative",
@@ -281,7 +306,7 @@ const BillPayment = () => {
                                   position: "absolute",
                                   top: "-10px",
                                   left: "12px",
-                                  backgroundColor: hasUnpaidOrder ? "#FF4D4D" : "#00A04A",
+                                  backgroundColor: table.paymentStatus ? "#FF4D4D" : "#00A04A",
                                   color: "white",
                                   padding: "4px 12px",
                                   borderRadius: "4px",
@@ -289,7 +314,7 @@ const BillPayment = () => {
                                   fontWeight: "500"
                                 }}
                               >
-                                {hasUnpaidOrder ? "Unpaid" : "Paid"}
+                                {table.paymentStatus}
                               </div>
 
                               {/* Content container with spacing for the badge */}
@@ -301,7 +326,7 @@ const BillPayment = () => {
                                     fontWeight: "500",
                                     marginRight: "12px"
                                   }}>
-                                    Order #{table.tableName || "Unknown"}
+                                    Order #{table.tableNo || "Unknown"}
                                   </span>
                                 </div>
 
@@ -349,30 +374,29 @@ const BillPayment = () => {
                         </div>
                       </div>
                       {
-                        tables.map(table => (
-                          table._id === selectedTableId && ( // Assuming each table has an 'id' property
-                            <div key={table.id} className={`${styles.v_bold_order} text-nowrap`}>
-                              (Table : <span>{table.tableName}</span>)
-                            </div>
-                          )
-                        ))
-                      }
+                       
+                          order.tableNo === selectedTableId && ( // Assuming each table has an 'id' property
+                            <div key={order.id} className={`${styles.v_bold_order} text-nowrap`}>
+                              (Table : <span>{order.tableNo}</span>)
+                            </div>)}
+                        {/* )) */}
+                      {/* } */}
                     </div>
                     <div className="border-bottom border-top p-sm-2 p-0">
                       <div style={{ fontWeight: '600' }} className='mb-2  mt-sm-0 mt-2'>Order Menu</div>
                       <div id={styles['order-details']}>
 
                         {order.orderDish.map((dishItem, dishIndex) => {
-                          const dishTotal = dishItem.dish.sellingPrice * dishItem.qty;
+                          const dishTotal = dishItem.sellingPrice * dishItem.qty;
                           const totalPriceForDish = dishTotal; // Adjust as needed
 
                           return (
                             <div key={dishIndex}>
                               <div className=" d-flex justify-content-between align-items-center p-1">
                                 <div className="my-0 d-flex align-items-center">
-                                  <img src={`http://localhost:8000/${dishItem.dish.dishImage}`} alt="" className={`me-3 ${styles.v_order_img}`} />
+                                  <img src={`http://localhost/avadh_api/images/${dishItem.dishImage}`} alt="" className={`me-3 ${styles.v_order_img}`} />
                                   <div>
-                                    <div style={{ fontWeight: '600' }}>{dishItem.dish.dishName || "Unknown Item"}</div>
+                                    <div style={{ fontWeight: '600' }}>{dishItem.dishName || "Unknown Item"}</div>
                                     <div>Qty: {dishItem.qty || 0}</div>
                                   </div>
                                 </div>
@@ -382,7 +406,7 @@ const BillPayment = () => {
                                 <div>
                                   {dishItem.variant.map((variant, variantIndex) => (
                                     <div key={variantIndex} className='d-flex justify-content-between p-1'>
-                                      <span>{variant.variantName}</span>
+                                      <span>{variant.name}</span>
                                       <span>₹{variant.price}</span>
                                     </div>
                                   ))}

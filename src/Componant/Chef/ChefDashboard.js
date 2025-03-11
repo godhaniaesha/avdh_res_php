@@ -25,20 +25,24 @@ function ChefDashboard() {
   const [confirmPassword, setConfirmPassword] = useState(""); // State for confirm password
   const [changepasswordmodal, setChangepasswordmodal] = useState(false); // State for change password modal
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
-
+  const [update,setUpdate] = useState(""); // State for update
   useEffect(() => {
     fetchOrders(); // Commented out for now
     // fetchTablebook(); // Commented out for now
     fetchTables(); // Fetch tables on component mount
-  }, []);
+  }, [update]);
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/allOrders");
-      if (!response.ok) throw new Error("Network response was not ok");
-      const data = await response.json();
-      console.log('responseorder', data.orders)
-      setOrders(data.orders);
+      const response = await axios.post("http://localhost/avadh_api/chef/dashboard/view_order.php",{},{
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
+      // if (!response.ok) throw new Error("Network response was not ok");
+      // const data = await response.json();
+      console.log('responseorder', response.data.orders)
+      setOrders(response.data.orders);
     } catch (error) {
       console.error("Error fetching orders:", error);
     }
@@ -49,14 +53,14 @@ function ChefDashboard() {
   const fetchTables = async () => {
     try {
       // Make an API call to fetch all tables
-      const response = await axios.get("http://localhost:8000/api/allTables");
-
+      const response = await axios.post("http://localhost/avadh_api/super_admin/tables/view_tables.php");
+      
       // Log the full response data for debugging
       console.log(response.data, "zdfsfgdhgj");
 
       // Check if the response is an array and filter for tables with status true
       const activeTables = Array.isArray(response.data.tables)
-        ? response.data.tables.filter(table => table.status === true) // Keep only tables where status is true
+        ? response.data.tables.filter(table => table.status === 'true') // Keep only tables where status is true
         : []; // If not an array, set activeTables to an empty array
 
 
@@ -72,11 +76,12 @@ function ChefDashboard() {
   };
 
 
-  const handleTableClick = async (tableId) => {
+  const handleTableClick = async (tableId ,tableName) => {
     setSelectedTableId(tableId);
+    // alert("Table " + tableName.replace());
 
     try {
-      const ordersForTable = await fetchOrdersForTable(tableId);
+      const ordersForTable = await fetchOrdersForTable(tableName.replace(/\D/g, ""));
       setOrderDetails(ordersForTable);
       console.log('orderDetailsswww ', ordersForTable);
 
@@ -88,17 +93,20 @@ function ChefDashboard() {
 
   const fetchOrdersForTable = async (tableId) => {
     try {
-      // Update the API endpoint to the correct one
-      const response = await axios.get(`http://localhost:8000/api/getOrderTableId/${tableId}`);
-      console.log(response.data.order, 'responsetablewise')
+      var data = orders.filter(order => order.tableNo === tableId && order.paymentStatus  ==='Unpaid');
+      console.log('orderdetails', data);
+      return data;
+      // // Update the API endpoint to the correct one
+      // const response = await axios.get(`http://localhost:8000/api/getOrderTableId/${tableId}`);
+      // console.log(response.data.order, 'responsetablewise')
 
-      // Check if the response is ok (status code 200)
-      if (response.status !== 200) {
-        throw new Error(`Unexpected response code: ${response.status}`);
-      }
+      // // Check if the response is ok (status code 200)
+      // if (response.status !== 200) {
+      //   throw new Error(`Unexpected response code: ${response.status}`);
+      // }
 
       // Return the orders associated with the specified table ID
-      return response.data.order; // Assuming the response data is an array of orders
+      // return response.data.order; // Assuming the response data is an array of orders
     } catch (error) {
       console.error("Error fetching orders for table:", error);
       return []; // Return an empty array on error
@@ -135,33 +143,38 @@ function ChefDashboard() {
   // Function to update order status for all orders of the selected table
   const updateOrderStatus = async () => {
     try {
-      const ordersToUpdate = orderDetails.map(order => ({
-        ...order,
-        orderStatus: 'Served' // Update the status to 'served'
-      }));
+      console.log(orderDetails[0]);
+  
+      await Promise.all(
+        orderDetails[0].orderDish.map(async (order) => {
+          var formData = new FormData();
+          formData.append("order_id", order.id);
+          formData.append("orderStatus", "Accepted");
+  
+          try {
+            const response = await axios.post(
+              "http://localhost/avadh_api/chef/dashboard/update_order.php",
+              formData,
+              {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+                  "Content-Type": "multipart/form-data", // Corrected content type
+                },
+              }
+            );
+            console.log(`Order ${order.id} updated successfully:`, response.data);
+          } catch (apiError) {
+            console.error(`Error updating order ID ${order.id}:`, apiError);
+          }
+        })
+      );
+      console.log("All orders processed.");
 
-      const responses = await Promise.all(ordersToUpdate.map(async (order) => {
-        try {
-          const response = await fetch(`http://localhost:8000/api/updateOrderStatus/${order._id}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ orderStatus: order.orderStatus }),
-          });
-          return response; // Return the response for further processing
-        } catch (fetchError) {
-          console.error(`Error updating order ID ${order._id}:`, fetchError);
-          return null; // Return null if there's an error
-        }
-      }));
-
-      const allUpdated = responses.every(response => response && response.ok);
-      if (allUpdated) {
-        console.log("All orders updated successfully");
-      } else {
-        console.error("Some orders failed to update");
-      }
+      setUpdate('true')
+      fetchOrders(); // Update the orders state after updating status
+      const ordersForTable = await fetchOrdersForTable(orderDetails[0].tableNo.replace(/\D/g, ""));
+      setOrderDetails(ordersForTable);
+      // fetchOrdersForTable(orderDetails[0].tableNo.replace(/\D/g, ""))
     } catch (error) {
       console.error("Error updating order status:", error);
     }
@@ -281,10 +294,10 @@ const handlePasswordChange = () => {
                       .filter(table => table.tableName.toLowerCase().includes(searchQuery.toLowerCase())) // Filter tables based on search query
                       .map(table => (
                         <div
-                          key={table._Id}
+                          key={table.Id}
                           className={`${styles.v_chef_border} p-3 d-flex justify-content-between align-items-center mt-1 mb-4 rounded`}
-                          onClick={() => handleTableClick(table._id)}
-                          data-table-id={table._Id}
+                          onClick={() => handleTableClick(table.id , table.tableName)}
+                          data-table-id={table.Id}
                         >
                           <div className="v_badge_position1">
                             {/* Add the badge for payment status */}
@@ -320,7 +333,7 @@ const handlePasswordChange = () => {
                 </div>
               </div>
 
-              <div className="col-md-12 col-lg-12 col-xl-8 col-sm-12 col-xs-12 ">
+              <div className="col-md-12 col-lg-12 col-xl-8 col-sm-12 col-xs-12">
                 <div className={`${styles.v_bold_order} ${styles.v_margin_mdscreen}`} style={{ fontSize: '30px', fontWeight: '600' }}>Order Details</div>
                 {orderDetails.map((order, index) => (
                   <div className={`${styles.v_chef_border_order}`} key={index}>
@@ -331,15 +344,15 @@ const handlePasswordChange = () => {
                           {new Date(order.createdAt).toLocaleString()}
                         </div>
                       </div>
-                      {
+                      {/* {
                         tables.map(table => (
-                          table._id === selectedTableId && ( // Assuming each table has an 'id' property
-                            <div key={table.id} className={`${styles.v_bold_order} text-nowrap`}>
-                              (Table : <span>{table.tableName}</span>)
+                          table._id === selectedTableId && ( // Assuming each table has an 'id' property */}
+                            <div key={order.id} className={`${styles.v_bold_order} text-nowrap`}>
+                              (Table : <span>{order.tableNo}</span>)
                             </div>
-                          )
-                        ))
-                      }
+                          {/* )
+                        )) */}
+                      {/* } */}
                     </div>
                     <div className="border-bottom border-top p-2">
                       <div style={{ fontWeight: '600' }} className='mb-2'>Order Menu</div>
@@ -347,17 +360,16 @@ const handlePasswordChange = () => {
                         {order.orderDish.map((dishItem, dishIndex) => {
 
 
-                          const dishTotal = dishItem.dish.sellingPrice * dishItem.qty;
+                          const dishTotal = (dishItem.sellingPrice * dishItem.qty);
                           const totalPriceForDish = dishTotal; // Adjust as needed
 
                           return (
-                            <div key={dishIndex}>
-
+                            <div key={dishIndex} style={{opacity : dishItem.orderStatus === 'Accepted' ? '0.5' :'1'}}>
                               <div className="d-flex justify-content-between align-items-center">
                                 <div className="my-0 d-flex align-items-center">
-                                  <img src={`http://localhost:8000/${dishItem.dish.dishImage}`} alt="" className={`me-3 ${styles.v_order_img}`} />
+                                  <img src={`http://localhost/avadh_api/images/${dishItem.dishImage}`} alt="" className={`me-3 ${styles.v_order_img}`} />
                                   <div>
-                                    <div style={{ fontWeight: '600' }}>{dishItem.dish.dishName || "Unknown Item"}</div>
+                                    <div style={{ fontWeight: '600' }}>{dishItem.dishName || "Unknown Item"}</div>
                                     <div>Qty: {dishItem.qty || 0}</div>
                                   </div>
                                 </div>
@@ -366,7 +378,7 @@ const handlePasswordChange = () => {
                               {dishItem.variant.length > 0 && (
                                 <div>
                                   {dishItem.variant.map((variant, variantIndex) => (
-                                    <div key={variantIndex}>{variant.variantName}: ₹{variant.price}</div>
+                                    <div key={variantIndex}>{variant.name}: ₹{variant.price}</div>
                                   ))}
                                 </div>
                               )}
