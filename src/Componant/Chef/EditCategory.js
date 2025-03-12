@@ -122,23 +122,7 @@ function EditCategory() {
         panel.style.display = panel.style.display === "none" || panel.style.display === "" ? "block" : "none";
     };
 
- 
 
-
-    const handleLogout = () => {
-        if (window.bootstrap && window.bootstrap.Modal) {
-            const logoutModal = document.getElementById('logoutModal');
-            const modal = new window.bootstrap.Modal(logoutModal);
-            modal.hide();
-        }
-
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("userId");
-
-        navigate("/login", { replace: true });
-
-        window.history.pushState(null, '', window.location.href);
-    };
     return (
         <div id={styles.a_selectTable}>
             <ChefNavbar toggleDrawer={toggleDrawer} showSearch={false} toggleNotifications={toggleNotifications} />
@@ -189,42 +173,6 @@ function EditCategory() {
                             </button>
                         </div>
                     </form>
-                </div>
-            </div>
-            {/* Change Password Modal */}
-            
-            <div
-                className={`modal fade ${styl.m_model_logout}`}
-                id="logoutModal"
-                tabIndex="-1"
-                aria-labelledby="logoutModalLabel"
-                aria-hidden="true"
-            >
-                <div className="modal-dialog modal-dialog-centered">
-                    <div
-                        className={`modal-content ${styl.m_model_con}`}
-                        stylee={{ border: "none", backgroundColor: "#f6f6f6" }}
-                    >
-                        <div className={styl.m_log}>
-                            <div className={styl.m_logout}>
-                                <span>Logout</span>
-                            </div>
-                            <div className={styl.m_text}>
-                                <span>Are You Sure You Want To Logout?</span>
-                            </div>
-                            <div className={styl.m_btn_cancel_yes}>
-                                <div className={styl.m_btn_cancel_logout}>
-                                    <button data-bs-dismiss="modal">Cancel</button>
-                                </div>
-                                <div className={styl.m_btn_yes}>
-                                    {/* <button onClick={handleLogout}>Logout</button> */}
-                                    <button type="button" data-bs-toggle="modal" data-bs-target="#logoutModal" onClick={handleLogout}>
-                                        Logout
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

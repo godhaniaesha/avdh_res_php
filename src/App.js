@@ -42,6 +42,7 @@ import SelectTable from "./Componant/Waiter/SelectTable";
 import EditTable from "./Componant/Super_admin/EditTable";
 import History from "./Componant/Chef/History";
 import Cust_history from "./Componant/Accountant/Cust_history";
+import PrivateRoutes from "./Componant/Chef/PrivateRoutes";
 
 
 function App() {
@@ -49,7 +50,7 @@ function App() {
     <>
       <Router>
         <Routes>
-          
+
           <Route path="/accountant" element={<BillPayment />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forgotpass" element={<ForgotPassword />} />
@@ -81,18 +82,20 @@ function App() {
           <Route path="/editaccount" element={<EditAccountant></EditAccountant>}></Route>
 
           {/* Chef */}
-          <Route path="/chef_board" element={<ChefDashboard />} />
-          <Route path="/chef_menu" element={<ChefMenuList />} />
-          <Route path="/chef_category" element={<ChefCategory />} />
-          <Route path="/chef_variant" element={<ChefVariant />} />
-          <Route path="/chefProfile" element={<ChefProfile />} />
-          <Route path="/addDiah" element={<AddDish />} />
-          <Route path="/editDish" element={<EditDish />} />
-          <Route path="/addCategory" element={<AddCategory />} />
-          <Route path="/editCategory" element={<EditCategory />} />
-          <Route path="/addVariant" element={<AddVeriant />} />
-          <Route path="/editVariant/:id" element={<EditVeriant />} />
-          <Route path="/history" element={<History />} />
+          <Route element={<PrivateRoutes />}>
+            <Route path="/chef_board" element={<ChefDashboard />} />
+            <Route path="/chef_menu" element={<ChefMenuList />} />
+            <Route path="/chef_category" element={<ChefCategory />} />
+            <Route path="/chef_variant" element={<ChefVariant />} />
+            <Route path="/chefProfile" element={<ChefProfile />} />
+            <Route path="/addDiah" element={<AddDish />} />
+            <Route path="/editDish" element={<EditDish />} />
+            <Route path="/addCategory" element={<AddCategory />} />
+            <Route path="/editCategory" element={<EditCategory />} />
+            <Route path="/addVariant" element={<AddVeriant />} />
+            <Route path="/editVariant/:id" element={<EditVeriant />} />
+            <Route path="/history" element={<History />} />
+          </Route>
 
           {/* Waiter */}
           <Route path="/Waiter_Dashboard" element={<WaiterDashboaed />} />
@@ -101,7 +104,7 @@ function App() {
           <Route path="/Waiter_order" element={<WaiterOrder />} />
           <Route path="/waiter_profile" element={<WaiterProfile />} />
           <Route path="/QuantityUpdater" element={<QuantityUpdater />} />
-          
+
 
         </Routes>
       </Router>

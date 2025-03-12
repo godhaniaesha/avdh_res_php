@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
-
+import bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import { Modal } from 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEraser, faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
@@ -17,11 +17,11 @@ function AddCategory(props) {
     const [chefName, setChefName] = useState(''); // State to hold logged-in chef's name
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState("");
+    const [oldPassword, setOldPassword] = useState("");
     const [newPassword, setNewPassword] = useState(""); // State for new password
     const [confirmPassword, setConfirmPassword] = useState(""); // State for confirm password
     const [changepasswordmodal, setChangepasswordmodal] = useState(false); // State for change password modal
-    
+
     const addCategory = async (event) => {
         event.preventDefault(); // Prevent form submission
 
@@ -44,24 +44,36 @@ function AddCategory(props) {
 
             var token = localStorage.getItem("authToken");
             try {
-              const response = await axios.post(
-                `http://localhost/avadh_api/chef/category/add_category.php`,
-                formData,
-                {
-                  headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "multipart/form-data",
-                  },
+                const response = await axios.post(
+                    `http://localhost/avadh_api/chef/category/add_category.php`,
+                    formData,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            "Content-Type": "multipart/form-data",
+                        },
+                    }
+                );
+
+                console.log("Category added successfully!");
+                if (response.status == 200) {
+                    // Show success modal
+                    const modalElement = document.getElementById('imgModal');
+                    if (modalElement) {
+                        const successModal = new Modal(modalElement);
+                        successModal.show();
+                        setTimeout(() => {
+                            successModal.hide();
+                            navigate('/chef_category');
+                        }, 2000);
+                    }
+                } else {
+                    alert(response.data.message || 'Failed to add table');
                 }
-              );
-        
-              console.log("Category added successfully!");
-              document.getElementById('imgModal').classList.add('show');
-              document.body.classList.add('modal-open');
-            // window.location.href = "/chef_category"; // Redirect to category list page
+                // window.location.href = "/chef_category"; // Redirect to category list page
 
             } catch (error) {
-              console.error("Error fetching dishes by category:", error);
+                console.error("Error fetching dishes by category:", error);
             }
             // Check if the request was successful
             // if (!response.ok) {
@@ -95,31 +107,6 @@ function AddCategory(props) {
         const panel = document.getElementById("notification-panel");
         panel.style.display = panel.style.display === "none" || panel.style.display === "" ? "block" : "none";
     };
-
-    const handleLogout = () => {
-        // Check if Bootstrap's Modal is available
-        if (window.bootstrap && window.bootstrap.Modal) {
-            const logoutModal = document.getElementById('logoutModal');
-            const modal = new window.bootstrap.Modal(logoutModal);
-            modal.hide(); // Close the modal
-        } else {
-            console.error("Bootstrap Modal is not available");
-        }
-
-        // Remove the authToken from localStorage
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("userId"); // Clear the userId if needed
-
-        // Redirect to login page
-        navigate("/login", { replace: true });
-
-        window.history.pushState(null, '', window.location.href);
-    };
-
-    // Function to handle password change
-   // ... existing code ...
-
-// ... existing code ...
 
     return (
         <div id={styles.a_selectTable}>
@@ -158,56 +145,47 @@ function AddCategory(props) {
                             </button>
                         </div>
                     </form>
-                    {/* Success modal */}
-                    <div className="modal fade ${styles.v_adddish_modal}" id="imgModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div className="modal-dialog modal-dialog-centered">
-                            <div className="modal-content ${styles.v_adddish_modal}" style={{ border: 'none', backgroundColor: '#f6f6f6' }}>
-                                <div className="modal-body" style={{ height: '250px' }}>
-                                    <div className="text-center" style={{ marginTop: '25px' }}>
-                                        <div style={{ fontSize: '32px', fontWeight: 700, marginBottom: '30px' }} className={styles.v_save_modal}>Add Successfully!</div>
-                                        <div><img src="./Image/right.png" alt="" className={styles.v_img_save} /></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {/* {/ Success Modal /} */}
+      <div
+            className="modal fade"
+            id="imgModal"
+            tabIndex="-1"
+            aria-labelledby="successModalLabel"
+            aria-hidden="true"
+          >
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content" style={{ border: 'none', backgroundColor: '#f6f6f6', padding: '20px' }}>
+                <div className="modal-body text-center">
+                  <h4 style={{
+                    fontSize: '24px',
+                    fontWeight: '500',
+                    marginBottom: '20px'
+                  }}>
+                    Add Successfully!
+                  </h4>
+                  <div style={{
+                    width: '60px',
+                    height: '60px',
+                    borderRadius: '50%',
+                    backgroundColor: '#4B6C52',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '0 auto'
+                  }}>
+                    <i className="fas fa-check" style={{
+                      color: 'white',
+                      fontSize: '30px'
+                    }}></i>
+                    <img src="../../Image/right.png" alt="" />
+                  </div>
                 </div>
+              </div>
+            </div>
+          </div>
+    </div>
 
-                {/* Logout Modal */}
-                <div
-                    className={`modal fade ${style.m_model_logout}`}
-                    id="logoutModal"
-                    tabIndex="-1"
-                    aria-labelledby="logoutModalLabel"
-                    aria-hidden="true"
-                >
-                    <div className="modal-dialog modal-dialog-centered">
-                        <div
-                            className={`modal-content ${style.m_model_con}`}
-                            style={{ border: "none", backgroundColor: "#f6f6f6" }}
-                        >
-                            <div className={style.m_log}>
-                                <div className={style.m_logout}>
-                                    <span>Logout</span>
-                                </div>
-                                <div className={style.m_text}>
-                                    <span>Are You Sure You Want To Logout?</span>
-                                </div>
-                                <div className={style.m_btn_cancel_yes}>
-                                    <div className={style.m_btn_cancel_logout}>
-                                        <button data-bs-dismiss="modal">Cancel</button>
-                                    </div>
-                                    <div className={style.m_btn_yes}>
-                                        {/* <button onClick={handleLogout}>Logout</button> */}
-                                        <button type="button"  data-bs-toggle="modal" data-bs-target="#logoutModal" onClick={handleLogout}>
-                                            Logout
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                
             </div>
         </div>
     );

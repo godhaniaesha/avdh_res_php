@@ -3,10 +3,17 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
 import styles from '../../css/ForgotPassword.module.css'; // Import the CSS module
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function ForgotPassword() {
+
+    const navigate = useNavigate();
     const [mobileNumber, setMobileNumber] = useState('');
     const [error, setError] = useState('');
+
+    const token = localStorage.getItem("authToken");
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -72,36 +79,37 @@ function ForgotPassword() {
         }
     };
 
+
     // Function to generate OTP by calling the generateOtp API
-    const generateOtp = async (userId) => {
+
+    const generateOtp = async (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append("phone", mobileNumber);
         try {
-            const response = await fetch("http://localhost:8000/api/generateOtp", {
-                method: 'POST',
+            const response = await axios.post("http://localhost/avadh_api/forgot.php", formData, {
                 headers: {
-                    'Content-Type': 'application/json'
+                    "Content-Type": "multipart/form-data",
                 },
-                body: JSON.stringify({
-                    userId: userId,
-                    phone: mobileNumber
-                })
             });
-
-            const result = await response.json();
-            console.log("Generate OTP response:", result);
-
-            // Check for success based on the response structure
-            if (result.status === 200 && result.message && result.message.includes("Otp Sent SuccessFully")) {
-                return true; // OTP sent successfully
+            
+            localStorage.setItem("mobileno",mobileNumber)
+            console.log("Generate OTP response:", response.data);
+            
+            if (response.data.success) {
+                navigate('/verifyotp');
+                
             } else {
-                return false; // Failed to send OTP
+                console.error("OTP sending failed:", response.data.message);
             }
         } catch (error) {
             console.error("Error generating OTP:", error);
-            return false;
         }
     };
+    
 
     return (
+
         <div className="container-fluid">
             <div className="row">
                 <div className="col no-padding-col p-0">
@@ -116,7 +124,7 @@ function ForgotPassword() {
                                     <h3>Forgot Password</h3>
                                     <p>Reset your password here!</p>
                                 </div>
-                                <form className={styles.a_form} id="forgotForm" onSubmit={handleSubmit}>
+                                <form className={styles.a_form} id="forgotForm" >
                                     <div className="mb-3">
                                         <div className={`${styles.a_input_group} d-flex justify-content-between`}>
                                             <input
@@ -138,8 +146,8 @@ function ForgotPassword() {
                                         </div>
                                         {error && <div className="text-danger">{error}</div>}
                                     </div>
-                                    <div className={`${styles.d_grid} text-center`}>
-                                        <button type="submit" className="btn" id="send_otp">Send Otp</button>
+                                    <div className={`${styles.d_grid} text-center`} onClick={generateOtp}>
+                                        <button  className="btn" id="send_otp" >Send Otp</button>
                                     </div>
                                 </form>
                             </div>

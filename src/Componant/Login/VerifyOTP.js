@@ -9,42 +9,42 @@ const VerifyOTP = () => {
   const [phone, setPhone] = useState(''); // Add phone state
   const otpInputs = useRef([]);
   const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
 
-  useEffect(() => {
-    const forgotId = localStorage.getItem('forgotId');
-    console.log("forgotId", forgotId);
+  // useEffect(() => {
+  //   const forgotId = localStorage.getItem('forgotId');
+  //   console.log("forgotId", forgotId);
 
 
-    if (forgotId) {
-      const fetchPhoneNumber = async () => {
-        try {
-          const response = await axios.get(`http://localhost:8000/api/getUser/${forgotId}`);
-          console.log("API Response:", response.data); // Log the API response
+  //   if (forgotId) {
+  //     const fetchPhoneNumber = async () => {
+  //       try {
+  //         const response = await axios.get(`http://localhost:8000/api/getUser/${forgotId}`);
+  //         console.log("API Response:", response.data); // Log the API response
 
-          if (response.data.user) {
-            console.log(response.data.user, "response.data.user");
+  //         if (response.data.user) {
+  //           console.log(response.data.user, "response.data.user");
 
-            setPhone(response.data.user.phone); // Set the phone number state
-            console.log("phone", response.data.user.phone);
+  //           setPhone(response.data.user.phone); // Set the phone number state
+  //           console.log("phone", response.data.user.phone);
 
-            // console.log("Fetched Phone Number:", response.user.phone); // Log the fetched phone number
-          } else {
-            setOtpError('User not found.');
-          }
-        } catch (error) {
-          console.error('Error fetching user:', error);
-          setOtpError('Failed to fetch user data.');
-        }
-      };
+  //           // console.log("Fetched Phone Number:", response.user.phone); // Log the fetched phone number
+  //         } else {
+  //           setOtpError('User not found.');
+  //         }
+  //       } catch (error) {
+  //         console.error('Error fetching user:', error);
+  //         setOtpError('Failed to fetch user data.');
+  //       }
+  //     };
 
-      fetchPhoneNumber();
-    } else {
-      setOtpError('User ID not found.');
-    }
+  //     fetchPhoneNumber();
+  //   } else {
+  //     setOtpError('User ID not found.');
+  //   }
 
-    otpInputs.current[0].focus();
-  }, []);
+  //   otpInputs.current[0].focus();
+  // }, []);
 
   const handleOtpChange = (value, index) => {
     const newOtp = [...otp];
@@ -75,18 +75,16 @@ const VerifyOTP = () => {
     console.log("otp number (after conversion):", otp1); // Log the phone number after conversion
 
     // Check if the entered OTP is complete
-    if (enteredOtp.length == 4 && phone) { // Ensure the length is exactly 4
+    if (enteredOtp.length == 4) { // Ensure the length is exactly 4
       try {
-        const response = await axios.post('http://localhost:8000/api/verifyOtp', {
-          phone: phone,  // Send the phone number with OTP
-          otp: otp1
-        });
+        
+        const formData = new FormData();
+        formData.append("otp", otp1);
+        const response = await axios.post('http://localhost/avadh_api/verify_otp.php', formData);
 
-        console.log("Server response:", response.data); // Log the server response
+        localStorage.setItem('forgetpassId', response.data.user_id);
 
-        // Check if the server response indicates success
-        if (response.data) {
-          // Redirect to the change password page
+        if (response.data.success) {
           navigate('/changepass');
         } else {
           // Handle incorrect OTP
@@ -94,13 +92,6 @@ const VerifyOTP = () => {
         }
       } catch (error) {
         console.error("Error verifying OTP:", error);
-        if (error.response) {
-          setOtpError(`Error: ${error.response.data.message || 'An error occurred while verifying the OTP.'}`);
-          console.log(error.response.data.message, "error.response.data.message");
-
-        } else {
-          setOtpError('An error occurred while verifying the OTP. Please try again.');
-        }
       }
     } else {
       // Handle incomplete OTP
@@ -108,25 +99,29 @@ const VerifyOTP = () => {
     }
   };
 
-  // const handleResendCode = async (e) => {
-  //   e.preventDefault();
-  //   const userId = localStorage.getItem('forgotId'); // Assuming userId is stored here
+  const handleResendCode = async (e) => {
+    e.preventDefault();
+    const mobileNumber = localStorage.getItem('mobileno')
+    const formData = new FormData();
+    formData.append("phone", mobileNumber);
+    try {
+      const response = await axios.post("http://localhost/avadh_api/forgot.php", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-  //   try {
-  //     const response = await axios.post('http://localhost:8000/api/generateOtp', {
-  //       userId: userId
-  //     });
+      console.log("Generate OTP response:", response.data);
 
-  //     if (response.data.success) {
-  //       alert('OTP has been resent to your mobile number.');
-  //     } else {
-  //       alert('Failed to resend OTP. Please try again.');
-  //     }
-  //   } catch (error) {
-  //     console.error("Error resending OTP:", error);
-  //     alert('An error occurred while resending the OTP. Please try again.');
-  //   }
-  // };
+      if (response.data.success) {
+        navigate('/verifyotp');
+      } else {
+        console.error("OTP sending failed:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error generating OTP:", error);
+    }
+  };
 
   return (
     <div className={`container-fluid ${styles.container}`}>
@@ -144,7 +139,7 @@ const VerifyOTP = () => {
                   <p>Enter OTP code sent to mobile!</p>
                 </div>
 
-                <form className={styles.a_form} onSubmit={handleSubmit}>
+                <form className={styles.a_form} >
                   <div className="d-flex justify-content-between flex-nowrap align-items-center mb-3" id={styles.otpContainer}>
                     {otp.map((value, index) => (
                       <input
@@ -161,13 +156,13 @@ const VerifyOTP = () => {
                   </div>
                   <div className="mb-3 text-center">
                     <label className="form-label" htmlFor="otp">Didn't receive OTP code?</label>
-                    {/* <a href="#" className="text-decoration-none d-block" onClick={handleResendCode}>
+                    <a className="text-decoration-none d-block" onClick={handleResendCode}>
                       Resend Code
-                    </a> */}
+                    </a>
                   </div>
                   {otpError && <div className={styles['text-danger']}>{otpError}</div>}
                   <div className={`${styles['d-grid']} text-center`}>
-                    <button type="submit" className="btn">
+                    <button className="btn" onClick={handleSubmit}>
                       Verify
                     </button>
                   </div>

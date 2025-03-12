@@ -78,7 +78,7 @@ function ChefMenuList() {
     formData.append("dish_id", dishIdToDelete);
     if (dishIdToDelete) {
       axios
-        .post(`http://localhost/avadh_api/chef/dish/delete_dish.php`,formData, {
+        .post(`http://localhost/avadh_api/chef/dish/delete_dish.php`, formData, {
           headers: {
             Authorization: `Bearer ${token}`, // Add Bearer token for authorization
           },
@@ -104,23 +104,6 @@ function ChefMenuList() {
     window.location.href = "/editDish";
   };
 
-  // ... existing code ...
-
-  // ... existing code ...
-  const handleLogout = () => {
-    if (window.bootstrap && window.bootstrap.Modal) {
-      const logoutModal = document.getElementById('logoutModal');
-      const modal = new window.bootstrap.Modal(logoutModal);
-      modal.hide();
-    }
-
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userId");
-
-    navigate("/login", { replace: true });
-
-    window.history.pushState(null, '', window.location.href);
-  };
 
   const handleSortChange = (event) => {
     setSortOrder(event.target.value);
@@ -299,41 +282,6 @@ function ChefMenuList() {
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Logout Modal */}
-      <div
-        className={`modal fade ${style.m_model_logout}`}
-        id="logoutModal"
-        tabIndex="-1"
-        aria-labelledby="logoutModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-dialog-centered">
-          <div
-            className={`modal-content ${style.m_model_con}`}
-            style={{ border: "none", backgroundColor: "#f6f6f6" }}
-          >
-            <div className={style.m_log}>
-              <div className={style.m_logout}>
-                <span>Logout</span>
-              </div>
-              <div className={style.m_text}>
-                <span>Are You Sure You Want To Logout?</span>
-              </div>
-              <div className={style.m_btn_cancel_yes}>
-                <div className={style.m_btn_cancel_logout}>
-                  <button data-bs-dismiss="modal">Cancel</button>
-                </div>
-                <div className={style.m_btn_yes}>
-                  <button type="button" data-bs-toggle="modal" data-bs-target="#logoutModal" onClick={handleLogout}>
-                    Logout
-                  </button>
                 </div>
               </div>
             </div>
