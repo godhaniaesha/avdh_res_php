@@ -12,13 +12,9 @@ import { Link, useNavigate } from "react-router-dom"; // Import Link for navigat
 function CustomerList(props) {
   const [customers, setCustomers] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [changepasswordmodal, setChangepasswordmodal] = useState(false);
   const [sortOption, setSortOption] = useState(""); // State for sort option
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
   const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState("");
 
   const loggedInUserId = localStorage.getItem("userId");
   console.log("loggedInUserId", loggedInUserId);

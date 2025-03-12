@@ -13,13 +13,9 @@ import axios from "axios";
 function Cust_history(props) {
   const [customers, setCustomers] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [changepasswordmodal, setChangepasswordmodal] = useState(false);
   const [sortOption, setSortOption] = useState(""); // State for sort option
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
   const navigate = useNavigate();
-  const [oldPassword, setOldPassword] = useState("");
   const [history, setHistory] = useState([])
 
   const token = localStorage.getItem("authToken");

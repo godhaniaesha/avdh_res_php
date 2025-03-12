@@ -16,13 +16,9 @@ export default function History() {
   const [categories, setCategories] = useState([]);
   const [dishIdToDelete, setDishIdToDelete] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [changepasswordmodal, setChangepasswordmodal] = useState(false);
   const [sortOrder, setSortOrder] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
-  const [oldPassword, setOldPassword] = useState("");
   const [history, setHistory] = useState([])
 
 

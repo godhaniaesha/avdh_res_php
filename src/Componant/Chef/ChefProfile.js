@@ -22,12 +22,8 @@ function ChefProfile() {
   const [userId, setuserId] = useState(null);
   const [imageName, setImageName] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [newPassword, setNewPassword] = useState(""); // State for new password
-  const [confirmPassword, setConfirmPassword] = useState(""); // State for confirm password
-  const [changepasswordmodal, setChangepasswordmodal] = useState(false); // State for change password modal
   const navigate = useNavigate();
-  const [oldPassword, setOldPassword] = useState("");
-
+  
   const token = localStorage.getItem("authToken");
 
   useEffect(() => {

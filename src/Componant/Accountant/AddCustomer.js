@@ -13,11 +13,7 @@ import styl from "../../css/BillPayment.module.css";
 function AddCustomer() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [changepasswordmodal, setChangepasswordmodal] = useState(false);
   const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState("");
 
   const toggleDrawer = () => {
     setIsSidebarOpen(prev => !prev);

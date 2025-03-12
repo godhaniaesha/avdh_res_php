@@ -20,10 +20,6 @@ function ChefDashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [tables, setTables] = useState([]); // State to hold table data
   const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState(""); // State for new password
-  const [confirmPassword, setConfirmPassword] = useState(""); // State for confirm password
-  const [changepasswordmodal, setChangepasswordmodal] = useState(false); // State for change password modal
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
   const [update,setUpdate] = useState(""); // State for update
   useEffect(() => {
@@ -205,96 +201,7 @@ function ChefDashboard() {
     window.history.pushState(null, '', window.location.href);
   };
 
-  // Function to handle password change
-  const handlePasswordChange = async () => {
-    // Validation checks
-    if (newPassword !== confirmPassword) {
-      alert("Passwords do not match.");
-      return;
-    }
-
-    if (!oldPassword || !newPassword || !confirmPassword) {
-      alert("Please fill in all password fields.");
-      return;
-    }
-
-    const token = localStorage.getItem("authToken");
-    
-    try {
-      const formData = new FormData();
-      formData.append('oldPassword', oldPassword);
-      formData.append('newPassword', newPassword);
-      formData.append('confirmPassword', confirmPassword);
-
-      const response = await axios.post(
-        'http://localhost/avadh_api/super_admin/profile/change_password.php',
-        formData,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }
-      );
-
-      let responseData;
-      if (typeof response.data === 'string') {
-        try {
-          const cleanJson = response.data.replace(/^\d+/, '');
-          responseData = JSON.parse(cleanJson);
-        } catch (e) {
-          console.error('Error parsing response:', e);
-          responseData = { success: false, message: 'Invalid response format' };
-        }
-      } else {
-        responseData = response.data;
-      }
-
-      if (responseData.success === true) {
-        alert(responseData.message || 'Password changed successfully');
-        
-        // Close the modal
-        try {
-          const changePasswordModal = document.getElementById("changepassModal");
-          if (changePasswordModal) {
-            const modalInstance = bootstrap.Modal.getInstance(changePasswordModal);
-            if (modalInstance) {
-              modalInstance.hide();
-            }
-          }
-        } catch (error) {
-          console.error("Error closing modal:", error);
-        }
-        
-        // Clear the password fields
-        setOldPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
-      } else {
-        alert(responseData.message || 'Failed to change password');
-      }
-    } catch (error) {
-      console.error("Error changing password:", error);
-      
-      if (error.response) {
-        try {
-          let errorData;
-          if (typeof error.response.data === 'string') {
-            const cleanJson = error.response.data.replace(/^\d+/, '');
-            errorData = JSON.parse(cleanJson);
-          } else {
-            errorData = error.response.data;
-          }
-          alert(errorData.message || 'Server error');
-        } catch (e) {
-          alert('Error processing server response');
-        }
-      } else if (error.request) {
-        alert('No response from server. Please check your connection.');
-      } else {
-        alert('Error: ' + error.message);
-      }
-    }
-  };
+ 
 
   return (
     <section id={styles.a_selectTable}>

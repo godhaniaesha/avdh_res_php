@@ -26,11 +26,7 @@ function EditVeriant() {
   const [imageName, setImageName] = useState('');
   const { id } = useParams();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [changepasswordmodal, setChangepasswordmodal] = useState(false);
   const navigate = useNavigate();
-  const [oldPassword, setOldPassword] = useState("");
 
   const token = localStorage.getItem("authToken");
 

@@ -15,11 +15,7 @@ function CustomerDetail() {
     const [customerData, setCustomerData] = useState(null);
     const [error, setError] = useState(null);
     const [orders, setOrders] = useState([]);
-    const [newPassword, setNewPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [changepasswordmodal, setChangepasswordmodal] = useState(false);
     const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState("");
 
     useEffect(() => {
         // Fetch customer data

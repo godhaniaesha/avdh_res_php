@@ -22,11 +22,7 @@ function AddDish(props) {
   const [dishImage, setImage] = useState(null);
   const [description, setDescription] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [newPassword, setNewPassword] = useState(""); // State for new password
-  const [confirmPassword, setConfirmPassword] = useState(""); // State for confirm password
-  const [changepasswordmodal, setChangepasswordmodal] = useState(false); // State for change password modal
   const navigate = useNavigate();
-  const [oldPassword, setOldPassword] = useState(""); // Initialize navigate
 
   // Fetch categories from the API using axios
   const fetchCategories = async () => {

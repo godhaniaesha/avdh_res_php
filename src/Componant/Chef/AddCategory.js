@@ -17,10 +17,6 @@ function AddCategory(props) {
     const [chefName, setChefName] = useState(''); // State to hold logged-in chef's name
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState("");
-    const [newPassword, setNewPassword] = useState(""); // State for new password
-    const [confirmPassword, setConfirmPassword] = useState(""); // State for confirm password
-    const [changepasswordmodal, setChangepasswordmodal] = useState(false); // State for change password modal
     
     const addCategory = async (event) => {
         event.preventDefault(); // Prevent form submission

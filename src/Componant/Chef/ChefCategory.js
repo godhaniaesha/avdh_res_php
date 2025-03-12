@@ -17,10 +17,6 @@ function ChefCategory(props) {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const navigate = useNavigate();
-    const [oldPassword, setOldPassword] = useState("");
-    const [newPassword, setNewPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [changepasswordmodal, setChangepasswordmodal] = useState(false);
     const [sortOrder, setSortOrder] = useState(""); // New state for sort order
     const [searchTerm, setSearchTerm] = useState(""); // New state for search term
 

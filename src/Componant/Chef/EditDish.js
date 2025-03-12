@@ -27,11 +27,7 @@ function EditDish() {
     image: null,
   });
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [changepasswordmodal, setChangepasswordmodal] = useState(false);
   const navigate = useNavigate();
-  const [oldPassword, setOldPassword] = useState("");
 
   // Fetching dish data from localStorage on component mount
   const dishId = localStorage.getItem("dishId"); // Get the dish ID from local storage

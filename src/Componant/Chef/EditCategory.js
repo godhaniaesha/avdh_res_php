@@ -18,11 +18,7 @@ function EditCategory() {
     const [storedCatId, setStoredCatId] = useState(''); // State for the category ID
     const [currentImageName, setCurrentImageName] = useState(''); // State for the current image name
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [newPassword, setNewPassword] = useState(""); // State for new password
-    const [confirmPassword, setConfirmPassword] = useState(""); // State for confirm password
-    const [changepasswordmodal, setChangepasswordmodal] = useState(false); // State for change password modal
     const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState("");
 
     useEffect(() => {
         // Get the category ID from local storage

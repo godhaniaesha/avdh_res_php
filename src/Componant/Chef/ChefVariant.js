@@ -18,10 +18,6 @@ function ChefVariant(props) {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // State to control modal visibility
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const navigate = useNavigate();
-    const [oldPassword, setOldPassword] = useState("");
-    const [newPassword, setNewPassword] = useState(""); // State for new password
-    const [confirmPassword, setConfirmPassword] = useState(""); // State for confirm password
-    const [changepasswordmodal, setChangepasswordmodal] = useState(false); // State for change password modal
     const [searchTerm, setSearchTerm] = useState(""); // State for search term
     const [sortOption, setSortOption] = useState(""); // State for sort option
     

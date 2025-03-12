@@ -16,13 +16,9 @@ const BillPayment = () => {
   const [orderDetails, setOrderDetails] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [tables, setTables] = useState([]); // State to hold table data
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [changepasswordmodal, setChangepasswordmodal] = useState(false);
+  const [tables, setTables] = useState([]); 
   const [searchQuery, setSearchQuery] = useState(""); // New state for search query
   const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState("");
   useEffect(() => {
     fetchOrders(); // Fetch all orders on component mount
     // fetchTables(); // Fetch tables on component mount
