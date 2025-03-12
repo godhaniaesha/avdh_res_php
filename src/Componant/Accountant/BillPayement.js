@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+import bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from '../../css/BillPayment.module.css'; // Import the CSS module
@@ -22,7 +22,7 @@ const BillPayment = () => {
   const [changepasswordmodal, setChangepasswordmodal] = useState(false);
   const [searchQuery, setSearchQuery] = useState(""); // New state for search query
   const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
   useEffect(() => {
     fetchOrders(); // Fetch all orders on component mount
     // fetchTables(); // Fetch tables on component mount
@@ -30,7 +30,7 @@ const BillPayment = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.post("http://localhost/avadh_api/Accountant/bill_payment/view_order.php",{},{
+      const response = await axios.post("http://localhost/avadh_api/Accountant/bill_payment/view_order.php", {}, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
@@ -57,7 +57,7 @@ const BillPayment = () => {
     }
   };
 
-  const handleTableClick = async (tableId ,tableName) => {
+  const handleTableClick = async (tableId, tableName) => {
     setSelectedTableId(tableName);
     // alert("Table " + tableName );
     try {
@@ -71,7 +71,7 @@ const BillPayment = () => {
 
   const fetchOrdersForTable = async (tableId) => {
     try {
-      var data = orders.filter(order => order.tableNo === tableId && order.paymentStatus  ==='Unpaid');
+      var data = orders.filter(order => order.tableNo === tableId && order.paymentStatus === 'Unpaid');
       console.log('orderdetails', data);
       return data;
       // const response = await axios.get(`http://localhost:8000/api/getOrderTableId/${tableId}`);
@@ -136,23 +136,57 @@ const BillPayment = () => {
       //   }
       // }));
       // fetchOrders()
-
-
-        
+      console.log('Fetching order', orderDetails)
+      await Promise.all(
+        orderDetails[0].orderDish.map(async (order) => {
+          var formData = new FormData();
+          formData.append("order_id", order.id);
+          formData.append("paymentStatus", "Paid");
+          try {
+            const response = await axios.post(
+              "http://localhost/avadh_api/chef/dashboard/update_order.php",
+              formData,
+              {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+                  "Content-Type": "multipart/form-data", // Corrected content type
+                },
+              }
+            );
+            console.log(`Order ${order.id} updated successfully:`, response.data);
+          } catch (apiError) {
+            console.error(`Error updating order ID ${order.id}:`, apiError);
+          }
+        })
+      );
+      var formData = new FormData();
+      formData.append("table_id", orderDetails[0].tableNo);
+      formData.append("status", "false");
+        const response = await axios.post(
+          "http://localhost/avadh_api/super_admin/tables/update_tables.php",
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+              "Content-Type": "multipart/form-data", // Corrected content type
+            },
+          }
+        );
       console.log("All orders processed.");
       const ordersToUpdate = orderDetails.map(order => ({
         ...order,
         paymentStatus: 'Paid' // Update the status to 'Paid'
       }));
       // setTables([])
-      var data = tables.map(t => 
-        t._id === ordersToUpdate[0]._id 
+      console.log("table is free now.");
+      var data = tables.map(t =>
+        t._id === ordersToUpdate[0]._id
           ? { ...t, paymentStatus: 'Paid' } // Only update paymentStatus
           : t // Keep the same object if no match
       );
-      console.log('data123',tables);
+      console.log('data123', tables);
       console.log(ordersToUpdate);
-      console.log('data',data);
+      console.log('data', data);
       setTables(data);
       // const allUpdated = responses.every(response => response && response.ok);
       // if (allUpdated) {
@@ -287,7 +321,7 @@ const BillPayment = () => {
                           <div
                             key={table._id}
                             className="mb-3"
-                            onClick={() => handleTableClick(table.id,table.tableNo)}
+                            onClick={() => handleTableClick(table.id, table.tableNo)}
                             data-table-id={table._id}
                           >
                             <div
@@ -374,12 +408,12 @@ const BillPayment = () => {
                         </div>
                       </div>
                       {
-                       
-                          order.tableNo === selectedTableId && ( // Assuming each table has an 'id' property
-                            <div key={order.id} className={`${styles.v_bold_order} text-nowrap`}>
-                              (Table : <span>{order.tableNo}</span>)
-                            </div>)}
-                        {/* )) */}
+
+                        order.tableNo === selectedTableId && ( // Assuming each table has an 'id' property
+                          <div key={order.id} className={`${styles.v_bold_order} text-nowrap`}>
+                            (Table : <span>{order.tableNo}</span>)
+                          </div>)}
+                      {/* )) */}
                       {/* } */}
                     </div>
                     <div className="border-bottom border-top p-sm-2 p-0">
@@ -449,37 +483,37 @@ const BillPayment = () => {
       </div>
       {/* Change Password Modal */}
       <div
-            className={`modal fade ${styl.m_model_ChangePassword}`}
-            id="changepassModal"
-            tabIndex="-1"
-            aria-labelledby="changepassModalLabel"
-            aria-hidden="true"
-          >
-            <div className={`modal-dialog modal-dialog-centered ${styl.m_model}`}>
-              <div className={`modal-content ${styl.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
-                <div className={`modal-body ${styl.m_change_pass_text}`}>
-                  <span>Change Password</span>
-                </div>
-                <div className={styl.m_old}>
-                  <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
-                </div>
-                <div className={styl.m_new}>
-                  <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-                </div>
-                <div className={styl.m_confirm}>
-                  <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-                </div>
-                <div className={styl.m_btn_cancel_change}>
-                  <div className={styl.m_btn_cancel}>
-                    <button data-bs-dismiss="modal">Cancel</button>
-                  </div>
-                  <div className={styl.m_btn_change}>
-                    <button type="button" onClick={handlePasswordChange}>Change</button>
-                  </div>
-                </div>
+        className={`modal fade ${styl.m_model_ChangePassword}`}
+        id="changepassModal"
+        tabIndex="-1"
+        aria-labelledby="changepassModalLabel"
+        aria-hidden="true"
+      >
+        <div className={`modal-dialog modal-dialog-centered ${styl.m_model}`}>
+          <div className={`modal-content ${styl.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
+            <div className={`modal-body ${styl.m_change_pass_text}`}>
+              <span>Change Password</span>
+            </div>
+            <div className={styl.m_old}>
+              <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
+            </div>
+            <div className={styl.m_new}>
+              <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+            </div>
+            <div className={styl.m_confirm}>
+              <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+            </div>
+            <div className={styl.m_btn_cancel_change}>
+              <div className={styl.m_btn_cancel}>
+                <button data-bs-dismiss="modal">Cancel</button>
+              </div>
+              <div className={styl.m_btn_change}>
+                <button type="button" onClick={handlePasswordChange}>Change</button>
               </div>
             </div>
           </div>
+        </div>
+      </div>
       {/* Logout Modal */}
       <div
         className={`modal fade ${styl.m_model_logout}`}

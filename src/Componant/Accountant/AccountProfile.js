@@ -9,6 +9,7 @@ import SidePanel from "./SidePanel";
 import style from "../../css/BillPayment.module.css";
 import { useNavigate } from 'react-router-dom';
 import styl from "../../css/BillPayment.module.css";
+import axios from "axios";
 
 
 function AccountProfile(props) {
@@ -35,16 +36,46 @@ function AccountProfile(props) {
     const id = localStorage.getItem("userId");
     setAccountId(id);
 
-    if (id) {
-      // Fetch user data from the backend using the ID
-      fetch(`http://localhost:8000/api/getUser/${id}`)
-        .then(response => {
-          if (!response.ok) throw new Error("Network response was not ok");
-          return response.json();
-        })
-        .then(data => {
-          console.log("Fetched user data:", data);
-          const userData = data.user;
+    // if (id) {
+    //   // Fetch user data from the backend using the ID
+    //   fetch(`http://localhost:8000/api/getUser/${id}`)
+    //     .then(response => {
+    //       if (!response.ok) throw new Error("Network response was not ok");
+    //       return response.json();
+    //     })
+    //     .then(data => {
+    //       console.log("Fetched user data:", data);
+    //       const userData = data.user;
+
+    //       // Set the fetched user data into state
+    //       setAccountantData({
+    //         firstName: userData.firstName || '',
+    //         lastName: userData.lastName || '',
+    //         email: userData.email || '',
+    //         phone: userData.phone || '',
+    //         profession: userData.profession || '',
+    //         image: userData.image || '',
+    //       });
+    //       setImageName(userData.image || ""); // Store the image name
+    //     })
+    //     .catch(error => {
+    //       console.error("Error fetching user data:", error);
+    //     });
+    // }
+    getUserData();
+  }, []);
+  const getUserData = async () => {
+    const response = await axios.post(
+      "http://localhost/avadh_api/Accountant/profile/change_profile.php",
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          "Content-Type": "multipart/form-data", // Important for file uploads
+        },
+      }
+    );
+    const userData = response.data.user;
 
           // Set the fetched user data into state
           setAccountantData({
@@ -52,17 +83,13 @@ function AccountProfile(props) {
             lastName: userData.lastName || '',
             email: userData.email || '',
             phone: userData.phone || '',
-            profession: userData.profession || '',
+            profession: userData.role || '',
             image: userData.image || '',
           });
           setImageName(userData.image || ""); // Store the image name
-        })
-        .catch(error => {
-          console.error("Error fetching user data:", error);
-        });
-    }
-  }, []);
+    console.log("profile", response.data.user);
 
+  }
   // Log current accountant data for debugging
   console.log("accountantData", accountantData);
 
@@ -75,29 +102,41 @@ function AccountProfile(props) {
       ...accountantData,
       image: imageName,
     };
-
+    console.log("accountantData", updatedData);
     // Check if a new image file has been selected
     const imageInput = document.getElementById("image");
     if (imageInput.files.length > 0) {
       updatedData.image = imageInput.files[0].name; // Use the selected file name
     }
 
+    var formData = new FormData;
+    formData.append('firstName', updatedData.firstName);
+    formData.append('lastName', updatedData.lastName);
+    formData.append('email', updatedData.email);
+    formData.append('phone', updatedData.phone);
+    formData.append('image',imageInput.files[0]);
     // Send updated data to the backend
-    fetch(`http://localhost:8000/api/updateuser/${accountId}`, {
-      method: "PUT",
+    axios.post(`http://localhost/avadh_api/Accountant/profile/change_profile.php`, formData, {
       headers: {
-        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        "Content-Type": "multipart/form-data", // Important for file uploads
       },
-      body: JSON.stringify(updatedData),
     })
-      .then((response) => {
-        if (!response.ok) throw new Error("Network response was not ok");
-        alert("Data updated successfully!"); // Notify user on success
-      })
-      .catch((error) => {
-        console.error("Error updating data:", error);
-        alert("Failed to update data. Please try again."); // Notify user on error
-      });
+    // fetch(`http://localhost:8000/api/updateuser/${accountId}`, {
+    //   method: "PUT",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(updatedData),
+    // })
+    //   .then((response) => {
+    //     if (!response.ok) throw new Error("Network response was not ok");
+    //     alert("Data updated successfully!"); // Notify user on success
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error updating data:", error);
+    //     alert("Failed to update data. Please try again."); // Notify user on error
+    //   });
   };
 
   // Handle changes to the image input
@@ -275,8 +314,9 @@ function AccountProfile(props) {
                     id="profession"
                     value={accountantData.profession}
                     onChange={(e) => setAccountantData({ ...accountantData, profession: e.target.value })} // Update profession on change
+                    disabled
                   >
-                    <option value="" disabled>Profession</option>
+                    <option value="" disabled>{accountantData.profession}</option>
                     <option value="Accountant">Accountant</option>
                     <option value="Waiter">Waiter</option>
                     <option value="Chef">Chef</option>

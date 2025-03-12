@@ -3,11 +3,14 @@ import bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import styles from "../../css/WaiterDashboaed.module.css";
-import axios from "axios";
+import axios, { Axios } from "axios";
+import styl from "../../css/BillPayment.module.css";
+import { useNavigate } from "react-router-dom";
 
 const WaiterNavbar = ({ toggleDrawer, toggleNotifications, waiterName, showSearch, setSearchQuery }) => {
   const [loggedInUserName, setloggedInUserName] = useState('');
   const [userData, setUserData] = useState();
+  const nevigate = useNavigate();
   console.log("loggedInUserId", loggedInUserName);
   var token;
   useEffect(() => {
@@ -62,6 +65,20 @@ const WaiterNavbar = ({ toggleDrawer, toggleNotifications, waiterName, showSearc
     setDropDown(!dropdown);
   }
 
+  const handleLogout = async () => {
+    if (window.bootstrap && window.bootstrap.Modal) {
+      const logoutModal = document.getElementById('logoutModal');
+      const modal = new window.bootstrap.Modal(logoutModal);
+      modal.hide();
+    }
+
+    const response = await axios.post("http://localhost/avadh_api/logout.php")
+
+    localStorage.removeItem('authToken');
+    console.log(response);
+    nevigate('/login');
+
+  };
   return (
     <>
       <nav
@@ -97,7 +114,7 @@ const WaiterNavbar = ({ toggleDrawer, toggleNotifications, waiterName, showSearc
               </span>
             </i>
             <div className="a_pro d-flex align-items-center align-content-center">
-              {userData?.image ? <img src={`http://localhost/avadh_api/images/${userData?.image}`} alt={userData?.image} style={{ width: '35px', height: '35px' }}></img>
+              {userData?.image ? <img src={`http://localhost/avadh_api/images/${userData?.image}`} alt={userData?.image} style={{width:"36px", height:"36px",borderRadius:"50%"}} ></img>
                 :
                 <img src={require("../../Image/Ellipse 717.png")} alt="" />
               }
@@ -155,34 +172,41 @@ const WaiterNavbar = ({ toggleDrawer, toggleNotifications, waiterName, showSearc
                   </a>
                 </div>
               </div>
-              {/* <div className="dropdown">
-      <button
-        className="btn btn-primary dropdown-toggle"
-        type="button"
-        id="dropdownMenuButton"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
-        Dropdown
-      </button>
-      <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <li>
-          <a className="dropdown-item" href="#">
-            Action
-          </a>
-        </li>
-        <li>
-          <a className="dropdown-item" href="#">
-            Another action
-          </a>
-        </li>
-        <li>
-          <a className="dropdown-item" href="#">
-            Something else here
-          </a>
-        </li>
-      </ul>
-    </div> */}
+  
+            </div>
+          </div>
+        </div>
+        
+      <div
+          className={`modal fade ${styl.m_model_logout}`}
+          id="logoutModal"
+          tabIndex="-1"
+          aria-labelledby="logoutModalLabel"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog modal-dialog-centered">
+            <div
+              className={`modal-content ${styl.m_model_con}`}
+              style={{ border: "none", backgroundColor: "#f6f6f6" }}
+            >
+              <div className={styl.m_log}>
+                <div className={styl.m_logout}>
+                  <span>Logout</span>
+                </div>
+                <div className={styl.m_text}>
+                  <span>Are You Sure You Want To Logout?</span>
+                </div>
+                <div className={styl.m_btn_cancel_yes}>
+                  <div className={styl.m_btn_cancel_logout}>
+                    <button data-bs-dismiss="modal">Cancel</button>
+                  </div>
+                  <div className={styl.m_btn_yes}>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#logoutModal" onClick={handleLogout}>
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

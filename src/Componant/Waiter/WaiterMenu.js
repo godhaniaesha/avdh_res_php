@@ -435,7 +435,7 @@ function WaiterMenu() {
           });
 
         console.log('Order Data', response);
-        navigate('/waiter_order');
+        // navigate('/waiter_order');
         // setOrderItems([])
         // Check the response status
         // if (response.status === 201) {
