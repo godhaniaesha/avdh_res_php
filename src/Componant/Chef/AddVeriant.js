@@ -23,11 +23,7 @@ function AddVeriant(props) {
   });
   const [showModal, setShowModal] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [changepasswordmodal, setChangepasswordmodal] = useState(false);
   const navigate = useNavigate();
-  const [oldPassword, setOldPassword] = useState("");
 
   // Fetch categories from the API
   const fetchCategories = async () => {

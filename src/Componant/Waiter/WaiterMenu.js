@@ -28,11 +28,7 @@ function WaiterMenu() {
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
   const [tableName, setTableName] = useState('');
   const navigate = useNavigate();
-  const [oldPassword, setOldPassword] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [changepasswordmodal, setChangepasswordmodal] = useState(false);
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
   let token;
 
@@ -249,22 +245,7 @@ function WaiterMenu() {
     setIsPopupOpen(prev => !prev);
     setSelectedVariants([]);
 
-    // if (!isPopupOpen) {
-    //   try {
-    //     const response = await axios.get(`http://localhost:8000/api/getProductByVariant/${dishId}`);
-    //     const data = response.data;
-
-    //     if (Array.isArray(data.Variant)) {
-    //       setVariants(data.Variant);
-    //       console.log("variants", data.Variant);
-    //     } else {
-    //       console.error("Fetched variants data is not an array:", data.Variant);
-    //       setVariants([]);
-    //     }
-    //   } catch (error) {
-    //     console.error("Error fetching variants:", error);
-    //   }
-    // }
+  
   };
 
   const handleVariantSelection = (variantId) => {
@@ -331,51 +312,6 @@ function WaiterMenu() {
     });
   };
 
-  // const handleOrderSend = async () => {
-  //  const email = document.getElementById("email").value;
-  //   try {
-  //     const tableId = localStorage.getItem("tableId"); // Retrieve the table ID
-  //     const totalPrice = calculateTotalOrderPrice(); // Calculate total price
-
-  //     // Prepare the order data in the required format
-  //     const orderData = {
-  //       email: email,
-  //       tableNo: tableId, // Include the table ID
-  //       orderDish: orderItems.map(item => ({
-  //         dish: item._id, // Get the dish ID
-  //         variant: item.variants.map(variant => variant._id), // Get the variant IDs
-  //         qty: item.quantity // Get the quantity
-  //       })),
-  //       totalAmount: totalPrice, // Total price of the order
-  //       orderStatus: "Pending", // Set the order status
-  //       paymentStatus: "Unpaid" // Set the payment status
-  //     };
-
-  //     console.log("Order Data to be Sent:", orderData); // Debugging: Check the structure of your orderData
-
-  //     // Make the POST request to create the order
-  //     const response = await axios.post("http://localhost:8000/api/createOrder", orderData, {
-  //       headers: {
-  //         "Content-Type": "application/json", 
-  //       },
-  //     });
-
-  //     // Check the response status
-  //     if (response.status === 201) {
-  //       console.log("Order sent successfully!", response.data); // Log success
-  //       navigate('/Waiter_order'); // Redirect to the order page
-  //     } else {
-  //       console.error("Failed to send order, received status:", response.status);
-  //       console.error("Response data:", response.data);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error while sending order:", error);
-  //     if (error.response) {
-  //       console.error("Backend Error Data:", error.response.data);
-  //     }
-  //   }
-  // };
-
   const handleOrderSend = async () => {
     token = localStorage.getItem("authToken");
     // Get the email value from the input field
@@ -436,15 +372,7 @@ function WaiterMenu() {
 
         console.log('Order Data', response);
         navigate('/waiter_order');
-        // setOrderItems([])
-        // Check the response status
-        // if (response.status === 201) {
-        //   console.log("Order sent successfully!", response.data); // Log success
-        //   navigate('/Waiter_order'); // Redirect to the order page
-        // } else {
-        //   console.error("Failed to send order, received status:", response.status);
-        //   console.error("Response data:", response.data);
-        // }
+     
       } catch (error) {
         console.error("Error while sending order:", error);
         if (error.response) {
@@ -498,65 +426,7 @@ function WaiterMenu() {
 
   const debouncedUpdateQuantity = debounce(updateQuantity, 300);
 
-  const handlePasswordChange = () => {
-    // Check if new password and confirm password match
-    if (newPassword !== confirmPassword) {
-      alert("Passwords do not match.");
-      return;
-    }
-
-    // Make sure password is not empty
-    if (!newPassword || !confirmPassword) {
-      alert("Please enter a new password.");
-      return;
-    }
-
-    const userId = localStorage.getItem("userId");
-
-    if (!userId) {
-      console.error("User ID is not available.");
-      return;
-    }
-
-    const passwordData = {
-      newPassword: newPassword, // Send new password
-      confirmPassword: confirmPassword // Send confirm password
-    };
-
-    // Send the PUT request to update the password
-    fetch(`http://localhost:8000/api/updateuser/${userId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(passwordData),
-    })
-      .then(response => {
-        if (!response.ok) throw new Error("Network response was not ok");
-
-        // Hide the modal after successful password change
-        const changePasswordModal = document.getElementById('changepassModal');
-        if (changePasswordModal) {
-          changePasswordModal.classList.remove('show');
-          changePasswordModal.style.display = 'none'; // Also set display to none
-
-          // Remove the backdrop
-          const backdrop = document.querySelector('.modal-backdrop');
-          if (backdrop) {
-            backdrop.remove(); // Remove the backdrop element
-          }
-
-          // Optionally, reset the modal content
-          setNewPassword("");
-          setConfirmPassword("");
-        }
-
-        return response.json();
-      })
-      .catch(error => {
-        console.error("Error changing password:", error);
-      });
-  };
+  
 
   // Filter dishes based on the search query
   const filteredDishes = dishes.filter(dish =>
@@ -812,38 +682,7 @@ function WaiterMenu() {
         </div>
       )}
 
-      <div
-        className={`modal fade ${styl.m_model_ChangePassword}`}
-        id="changepassModal"
-        tabIndex="-1"
-        aria-labelledby="changepassModalLabel"
-        aria-hidden="true"
-      >
-        <div className={`modal-dialog modal-dialog-centered ${styl.m_model}`}>
-          <div className={`modal-content ${styl.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
-            <div className={`modal-body ${styl.m_change_pass_text}`}>
-              <span>Change Password</span>
-            </div>
-            <div className={styl.m_old}>
-              <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
-            </div>
-            <div className={styl.m_new}>
-              <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-            </div>
-            <div className={styl.m_confirm}>
-              <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-            </div>
-            <div className={styl.m_btn_cancel_change}>
-              <div className={styl.m_btn_cancel}>
-                <button data-bs-dismiss="modal">Cancel</button>
-              </div>
-              <div className={styl.m_btn_change}>
-                <button type="button" onClick={handlePasswordChange}>Change</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      
 
       {/* Logout Modal */}
       <div

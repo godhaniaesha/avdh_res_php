@@ -14,9 +14,6 @@ function WaiterDashboaed(props) {
   const [waiterName, setWaiterName] = useState("");
   const [categories, setCategories] = useState([]);
   const [dishesData, setdishesData] = useState([]);
-  const [oldPassword, setOldPassword] = useState("");
-    const [newPassword, setNewPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
   let token;
   // Hardcoded dishes data
   // const dishesData = [
@@ -64,65 +61,7 @@ function WaiterDashboaed(props) {
     // setToken(token1);
     fetchCategories();
   }, []);
-  const handlePasswordChange = () => {
-    // Check if new password and confirm password match
-    if (newPassword !== confirmPassword) {
-      alert("Passwords do not match.");
-      return;
-    }
-
-    // Make sure password is not empty
-    if (!newPassword || !confirmPassword) {
-      alert("Please enter a new password.");
-      return;
-    }
-
-    const userId = localStorage.getItem("userId");
-
-    if (!userId) {
-      console.error("User ID is not available.");
-      return;
-    }
-
-    const passwordData = {
-      newPassword: newPassword, // Send new password
-      confirmPassword: confirmPassword // Send confirm password
-    };
-
-    // Send the PUT request to update the password
-    fetch(`http://localhost:8000/api/updateuser/${userId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(passwordData),
-    })
-      .then(response => {
-        if (!response.ok) throw new Error("Network response was not ok");
-
-        // Hide the modal after successful password change
-        const changePasswordModal = document.getElementById('changepassModal');
-        if (changePasswordModal) {
-          changePasswordModal.classList.remove('show');
-          changePasswordModal.style.display = 'none'; // Also set display to none
-
-          // Remove the backdrop
-          const backdrop = document.querySelector('.modal-backdrop');
-          if (backdrop) {
-            backdrop.remove(); // Remove the backdrop element
-          }
-
-          // Optionally, reset the modal content
-          setNewPassword("");
-          setConfirmPassword("");
-        }
-
-        return response.json();
-      })
-      .catch(error => {
-        console.error("Error changing password:", error);
-      });
-  };
+  
 
   const carouselRef = useRef(null);
   useEffect(() => {
@@ -331,38 +270,7 @@ function WaiterDashboaed(props) {
       </div>
       {/* Change Password Modal */}
      
-      <div
-            className={`modal fade ${styl.m_model_ChangePassword}`}
-            id="changepassModal"
-            tabIndex="-1"
-            aria-labelledby="changepassModalLabel"
-            aria-hidden="true"
-          >
-            <div className={`modal-dialog modal-dialog-centered ${styl.m_model}`}>
-              <div className={`modal-content ${styl.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
-                <div className={`modal-body ${styl.m_change_pass_text}`}>
-                  <span>Change Password</span>
-                </div>
-                <div className={styl.m_old}>
-                  <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
-                </div>
-                <div className={styl.m_new}>
-                  <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-                </div>
-                <div className={styl.m_confirm}>
-                  <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-                </div>
-                <div className={styl.m_btn_cancel_change}>
-                  <div className={styl.m_btn_cancel}>
-                    <button data-bs-dismiss="modal">Cancel</button>
-                  </div>
-                  <div className={styl.m_btn_change}>
-                    <button type="button" onClick={handlePasswordChange}>Change</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+      
 
       {/* Logout Modal */}
       <div

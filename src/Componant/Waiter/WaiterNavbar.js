@@ -120,7 +120,7 @@ const WaiterNavbar = ({ toggleDrawer, toggleNotifications, waiterName, showSearc
                   aria-labelledby="dropdownMenuLink"
                   style={{ display: dropdown ? 'block' : 'none' }}
                 >
-                  <a
+                  {/* <a
                     className="dropdown-item"
                     href="#"
                     data-bs-toggle="modal"
@@ -135,7 +135,7 @@ const WaiterNavbar = ({ toggleDrawer, toggleNotifications, waiterName, showSearc
                       }}
                     />{" "}
                     Change Password
-                  </a>
+                  </a> */}
 
                   <a
                     className="dropdown-item"
