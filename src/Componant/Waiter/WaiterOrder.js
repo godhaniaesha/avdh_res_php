@@ -247,9 +247,9 @@ const WaiterOrder = () => {
                       <td>
                         <button
                           type="button"
-                          className={`${styles.btn} ${order.orderStatus === "Served" ? styles.btn_served : order.orderStatus === "Pending" ? styles.btn_pending : ""}`}
+                          className={`${styles.btn} ${dish.orderStatus === "Accepted" ? styles.btn_served : dish.orderStatus === "Pending" ? styles.btn_pending : ""}`}
                         >
-                          {order.orderStatus}
+                          {dish.orderStatus}
                         </button>
                       </td>
                     </tr>
