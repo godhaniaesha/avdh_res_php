@@ -1,17 +1,40 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell } from '@fortawesome/free-solid-svg-icons';
 import styles from "../../css/WaiterDashboaed.module.css";
+import axios from 'axios';
 
 function ChefNavbar({ chefName, toggleDrawer, showSearch }) {
-  const loggedInUserName = localStorage.getItem("firstName");
-  console.log("loggedInUserId", loggedInUserName);
+
+
+  const [loggedInUserName, setloggedInUserName] = useState('');
+  const [userData, setUserData] = useState();
 
   const [dropdown,setDropDown] = useState(false);
   const handleDropdownClick = ()=>{
     setDropDown(!dropdown);
   }
+  const token = localStorage.getItem('authToken');
+
+  const getUser = async () => {
+    const response = await axios.post(
+      "http://localhost/avadh_api/chef/profile/change_profile.php",
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data", // Important for file uploads
+        },
+      }
+    );
+    setUserData(response.data.user)
+    setloggedInUserName(response.data.user.firstName)
+  }
+
+  useEffect(() => {
+    getUser();
+  },[])
 
   return (
     <nav className={`navbar navbar-light bg-light shadow fixed-top ${styles.a_navbar}`}>
@@ -35,7 +58,7 @@ function ChefNavbar({ chefName, toggleDrawer, showSearch }) {
             </i>
           </div>
           <div className={`$styles['a_pro'] d-flex align-items-center align-content-center`}>
-            <img src={require("../../Image/Ellipse 717.png")} alt="" />
+            <img src={`http://localhost/avadh_api/images/${userData?.image}`} alt="" style={{width:"36px", height:"36px",borderRadius:"50%"}} />
             <div className={`${styles.b_name} dropdown show`} onClick={handleDropdownClick} >
               <a
                 className="btn dropdown-toggle"
@@ -46,30 +69,13 @@ function ChefNavbar({ chefName, toggleDrawer, showSearch }) {
                 aria-expanded="false"
                 aria-haspopup="true"
               >
-                <span id="accountant_name">{loggedInUserName}</span>
+                <span id="accountant_name">{userData?.firstName}</span>
               </a>
               <div
                 className={`${styles.m_active} dropdown-menu ${styles["dropdown-menu"]}`}
                 style={{ display: dropdown ? 'block' : 'none' }}
                 aria-labelledby="dropdownMenuLink"
               >
-                <a
-                  className="dropdown-item"
-                  href="#"
-                  data-bs-toggle="modal"
-                  data-bs-target="#changepassModal"
-                >
-                  <img
-                    src={require("../../Image/SvgjsSvg1001.png")}
-                    style={{
-                      width: "24px",
-                      height: "24px",
-                      objectFit: "cover",
-                    }}
-                  />{" "}
-                  Change Password
-                </a>
-
                 <a
                   className="dropdown-item"
                   href="#"

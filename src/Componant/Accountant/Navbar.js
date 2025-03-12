@@ -1,9 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import navbarmodule from "../../css/WaiterDashboaed.module.css";
 
 function Navbar({ toggleDrawer, showSearch }) {
   const loggedInUserName = localStorage.getItem("firstName");
   console.log("loggedInUserId", loggedInUserName);
+
+  const [dropdown,setDropDown] = useState(false);
+  const handleDropdownClick = ()=>{
+    setDropDown(!dropdown);
+  }
+
+
   return (
     <nav
       className={`${navbarmodule.a_navbar} navbar navbar-light bg-light shadow fixed-top`}
@@ -39,7 +46,7 @@ function Navbar({ toggleDrawer, showSearch }) {
             </i>
             <div className="a_pro d-flex align-items-center align-content-center">
               <img src={require("../../Image/Ellipse 717.png")} alt="" />
-              <div className={`${navbarmodule.b_name} dropdown show`}>
+              <div className={`${navbarmodule.b_name} dropdown show`} onClick={handleDropdownClick}>
                 <a
                   className="btn dropdown-toggle"
                   href="#"
@@ -53,6 +60,7 @@ function Navbar({ toggleDrawer, showSearch }) {
                 </a>
                 <div
                   className={`${navbarmodule.m_active} dropdown-menu ${navbarmodule["dropdown-menu"]}`}
+                  style={{ display: dropdown ? 'block' : 'none' }}
                   aria-labelledby="dropdownMenuLink"
                 >
                   <a
