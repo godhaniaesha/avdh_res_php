@@ -43,25 +43,35 @@ function AddAccountant() {
             formData.append(key, accountantData[key]);
         }
 
-        // Retrieve the token from local storage
         const token = localStorage.getItem('authToken');
-        console.log("Token:", token); // Check if the token is retrieved correctly
 
-        // Send data to the backend API
         axios.post("http://localhost/avadh_api/super_admin/accountant/add_accountant.php", formData, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Accept': 'application/json',
             }
         })
-            .then(response => {
-                console.log("Accountant added successfully:", response.data);
-                document.getElementById("imgModal").style.display = "block"; // Show success modal
-                clearForm(); // Clear the form after successful submission
-            })
-            .catch(error => {
-                console.error("Error adding accountant:", error.response ? error.response.data : error.message);
-            });
+        .then(response => {
+            console.log("Accountant added successfully:", response.data);
+            clearForm(); // Clear the form after successful submission
+            
+            // Show success modal
+            const modalElement = document.getElementById('imgModal');
+            if (modalElement) {
+                const successModal = new bootstrap.Modal(modalElement);
+                successModal.show();
+
+                // Automatically close modal and redirect after 2 seconds
+                setTimeout(() => {  
+                    successModal.hide();
+                    navigate('/superaccountlist');
+                }, 2000);
+            }
+        })
+        .catch(error => {
+            console.error("Error adding accountant:", error.response ? error.response.data : error.message);
+            alert("Failed to add accountant. Please try again.");
+        });
     };
     const clearForm = () => {
         const form = document.getElementById("add_acc_form");
@@ -94,52 +104,90 @@ function AddAccountant() {
 
         window.history.pushState(null, '', window.location.href);
     };
-    const handlePasswordChange = () => {
-        // Check if new password and confirm password match
+    const handlePasswordChange = async () => {
+        // Validation checks
         if (newPassword !== confirmPassword) {
             alert("Passwords do not match.");
             return;
         }
 
-        // Make sure password is not empty
-        if (!newPassword || !confirmPassword) {
-            alert("Please enter a new password.");
+        if (!oldPassword || !newPassword || !confirmPassword) {
+            alert("Please fill in all password fields.");
             return;
         }
 
-        const userId = localStorage.getItem("userId");
+        const token = localStorage.getItem("authToken");
+        
+        try {
+            const formData = new FormData();
+            formData.append('oldPassword', oldPassword);
+            formData.append('newPassword', newPassword);
+            formData.append('confirmPassword', confirmPassword);
 
-        if (!userId) {
-            console.error("User ID is not available.");
-            return;
-        }
-
-        const passwordData = {
-            newPassword: newPassword, // Send new password
-            confirmPassword: confirmPassword // Send confirm password
-        };
-
-        // Send the PUT request to update the password
-        fetch(`http://localhost:8000/api/updateuser/${userId}`, {
-            method: "PUT",
+            const response = await axios.post(
+                'http://localhost/avadh_api/super_admin/profile/change_password.php',
+                formData,
+                {
             headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(passwordData),
-        })
-            .then(response => {
-                if (!response.ok) throw new Error("Network response was not ok");
-                const changePasswordModal = document.getElementById('changepassModal');
-                const modal = new window.bootstrap.Modal(changePasswordModal);
-                modal.hide();
+                        'Authorization': `Bearer ${token}`
+                    }
+                }
+            );
+
+            let responseData;
+            if (typeof response.data === 'string') {
+                try {
+                    const cleanJson = response.data.replace(/^\d+/, '');
+                    responseData = JSON.parse(cleanJson);
+                } catch (e) {
+                    console.error('Error parsing response:', e);
+                    responseData = { success: false, message: 'Invalid response format' };
+                }
+            } else {
+                responseData = response.data;
+            }
+
+            if (responseData.success === true) {
+                alert(responseData.message || 'Password changed successfully');
+                
+                // Close modal
+                const changePasswordModal = document.getElementById("changepassModal");
+                if (changePasswordModal) {
+                    const modalInstance = bootstrap.Modal.getInstance(changePasswordModal);
+                    if (modalInstance) {
+                        modalInstance.hide();
+                    }
+                }
+                
+                // Clear password fields
+                setOldPassword("");
                 setNewPassword("");
                 setConfirmPassword("");
-                return response.json();
-            })
-            .catch(error => {
-                console.error("Error changing password:", error);
-                alert("Failed to change password. Please try again."); // Display error message to user
-            });
+            } else {
+                alert(responseData.message || 'Failed to change password');
+            }
+        } catch (error) {
+            console.error("Error changing password:", error);
+            
+            if (error.response) {
+                try {
+                    let errorData;
+                    if (typeof error.response.data === 'string') {
+                        const cleanJson = error.response.data.replace(/^\d+/, '');
+                        errorData = JSON.parse(cleanJson);
+                    } else {
+                        errorData = error.response.data;
+                    }
+                    alert(errorData.message || 'Server error');
+                } catch (e) {
+                    alert('Error processing server response');
+                }
+            } else if (error.request) {
+                alert('No response from server. Please check your connection.');
+            } else {
+                alert('Error: ' + error.message);
+            }
+        }
     };
     return (
         <div>
@@ -263,53 +311,77 @@ function AddAccountant() {
                     </div>
                 </form>
 
-                {/* Add Successfully Modal */}
-                <div className={`${styles.m_add_successfully} modal fade`} id="imgModal" tabIndex="-1" aria-labelledby="imgModalLabel" aria-hidden="true">
-                    <div className={`${styles.m_model} modal-dialog modal-dialog-centered`}>
-                        <div className={`modal-content ${styles.m_save}`} style={{ border: 'none', backgroundColor: '#f6f6f6' }}>
-                            <div className={`modal-body ${styles.m_save_text}`}>
-                                <span>Add Successfully!</span>
-                            </div>
-                            <div className={styles.m_save_img}>
-                                <img src="image/right.png" alt="" />
+                {/* Success Modal */}
+                <div
+                    className="modal fade"
+                    id="imgModal"
+                    tabIndex="-1"
+                    aria-labelledby="successModalLabel"
+                    aria-hidden="true"
+                >
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content" style={{ border: 'none', backgroundColor: '#f6f6f6', padding: '20px' }}>
+                            <div className="modal-body text-center">
+                                <h4 style={{
+                                    fontSize: '24px',
+                                    fontWeight: '500',
+                                    marginBottom: '20px'
+                                }}>
+                                    Add Successfully!
+                                </h4>
+                                <div style={{
+                                    width: '60px',
+                                    height: '60px',
+                                    borderRadius: '50%',
+                                    backgroundColor: '#4B6C52',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    margin: '0 auto'
+                                }}>
+                                    <i className="fas fa-check" style={{
+                                        color: 'white',
+                                        fontSize: '30px'
+                                    }}></i>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
- {/* Change Password Modal */}
- <div
-          className={`modal fade ${style.m_model_ChangePassword}`}
-          id="changepassModal"  // Ensure this ID matches
-          tabIndex="-1"
-          aria-labelledby="changepassModalLabel"
-          aria-hidden="true"
-        >
-          <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
-            <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
-              <div className={`modal-body ${style.m_change_pass_text}`}>
-                <span>Change Password</span>
-              </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
-              </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-              </div>
-              <div className={style.m_confirm}>
-                <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-              </div>
-              <div className={style.m_btn_cancel_change}>
-                <div className={style.m_btn_cancel}>
-                  <button data-bs-dismiss="modal">Cancel</button>
-                </div>
-                <div className={style.m_btn_change}>
-                  <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
+                {/* Change Password Modal */}
+                <div
+                    className={`modal fade ${style.m_model_ChangePassword}`}
+                    id="changepassModal"  // Ensure this ID matches
+                    tabIndex="-1"
+                    aria-labelledby="changepassModalLabel"
+                    aria-hidden="true"
+                >
+                    <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
+                        <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
+                            <div className={`modal-body ${style.m_change_pass_text}`}>
+                                <span>Change Password</span>
+                            </div>
+                            <div className={style.m_new}>
+                                <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
+                            </div>
+                            <div className={style.m_new}>
+                                <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+                            </div>
+                            <div className={style.m_confirm}>
+                                <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                            </div>
+                            <div className={style.m_btn_cancel_change}>
+                                <div className={style.m_btn_cancel}>
+                                    <button data-bs-dismiss="modal">Cancel</button>
+                                </div>
+                                <div className={style.m_btn_change}>
+                                    <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 {/* Logout Modal */}
                 <div

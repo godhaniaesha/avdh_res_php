@@ -66,21 +66,35 @@ const AccountList = () => {
 
   // Function to delete accountant by ID
   const deleteAccountantById = async (accountantId) => {
-    console.log("accountantId", accountantId); // Log the accountant ID to ensure it's correct
-
     try {
-      // Ensure the delete URL is correctly formatted
-      const deleteUrl = `http://localhost:8000/api/deleteUser/${accountantId}`;
-      console.log("deleteUrl", deleteUrl); // Log the correctly formatted URL
-      const response = await fetch(deleteUrl, { method: "DELETE" }); // Send DELETE request
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
+      const token = localStorage.getItem("authToken");
+      
+      // Create form data
+      const formData = new FormData();
+      formData.append('user_id', accountantId);
+
+      const response = await axios.post(
+        'http://localhost/avadh_api/super_admin/accountant/delete_accountant.php',
+        formData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+
+      if (response.data.success) {
+        // Update accountants state by filtering out the deleted accountant
+        setAccountants(accountants.filter((accountant) => accountant.id !== accountantId));
+        handleCloseModal(); // Close the modal after successful deletion
+      } else {
+        console.error("Error deleting accountant:", response.data.message);
+        alert(response.data.message || "Failed to delete accountant");
       }
-      // Update accountants state after deletion
-      setAccountants(accountants.filter((accountant) => accountant._id !== accountantId)); // Use _id for filtering
-      handleCloseModal(); // Close modal after deletion
     } catch (error) {
-      console.error("Error deleting accountant record:", error); // Handle any errors
+      console.error("Error deleting accountant record:", error);
+      alert("Failed to delete accountant. Please try again.");
     }
   };
 
@@ -112,66 +126,91 @@ const AccountList = () => {
 
     window.history.pushState(null, '', window.location.href);
   };
-  const handlePasswordChange = () => {
-    // Check if new password and confirm password match
+  const handlePasswordChange = async () => {
+    // Validation checks
     if (newPassword !== confirmPassword) {
-      alert("Passwords do not match.");
-      return;
+        alert("Passwords do not match.");
+        return;
     }
 
-    // Make sure password is not empty
-    if (!newPassword || !confirmPassword) {
-      alert("Please enter a new password.");
-      return;
+    if (!oldPassword || !newPassword || !confirmPassword) {
+        alert("Please fill in all password fields.");
+        return;
     }
 
-    const userId = localStorage.getItem("userId");
+    const token = localStorage.getItem("authToken");
+    
+    try {
+        const formData = new FormData();
+        formData.append('oldPassword', oldPassword);
+        formData.append('newPassword', newPassword);
+        formData.append('confirmPassword', confirmPassword);
 
-    if (!userId) {
-      console.error("User ID is not available.");
-      return;
-    }
+        const response = await axios.post(
+            'http://localhost/avadh_api/super_admin/profile/change_password.php',
+            formData,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }
+        );
 
-    const passwordData = {
-      newPassword: newPassword, // Send new password
-      confirmPassword: confirmPassword // Send confirm password
-    };
-
-    console.log(passwordData);
-
-
-    // Send the PUT request to update the password
-    fetch(`http://localhost:8000/api/updateuser/${userId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(passwordData),
-    })
-      .then(response => {
-        if (!response.ok) throw new Error("Network response was not ok");
-        console.log(response);
-        const changePasswordModal = document.getElementById('changepassModal');
-        console.log(changePasswordModal);
-
-        const modal = new window.bootstrap.Modal(changePasswordModal);
-        console.log(modal);
-
-        if (modal) {
-          modal.hide();
+        let responseData;
+        if (typeof response.data === 'string') {
+            try {
+                const cleanJson = response.data.replace(/^\d+/, '');
+                responseData = JSON.parse(cleanJson);
+            } catch (e) {
+                console.error('Error parsing response:', e);
+                responseData = { success: false, message: 'Invalid response format' };
+            }
         } else {
-          const newModal = new bootstrap.Modal(changePasswordModal);
-          newModal.hide();
+            responseData = response.data;
         }
-        setNewPassword(""); 
-        setConfirmPassword("");
-        return response.json();
 
-      })
-      .catch(error => {
+        if (responseData.success === true) {
+            alert(responseData.message || 'Password changed successfully');
+            
+            // Close modal
+            const changePasswordModal = document.getElementById("changepassModal");
+            if (changePasswordModal) {
+                const modalInstance = bootstrap.Modal.getInstance(changePasswordModal);
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+            }
+            
+            // Clear password fields
+            setOldPassword("");
+            setNewPassword("");
+            setConfirmPassword("");
+        } else {
+            alert(responseData.message || 'Failed to change password');
+        }
+    } catch (error) {
         console.error("Error changing password:", error);
-      });
-  };
+        
+        if (error.response) {
+            try {
+                let errorData;
+                if (typeof error.response.data === 'string') {
+                    const cleanJson = error.response.data.replace(/^\d+/, '');
+                    errorData = JSON.parse(cleanJson);
+                } else {
+                    errorData = error.response.data;
+                }
+                alert(errorData.message || 'Server error');
+            } catch (e) {
+                alert('Error processing server response');
+            }
+        } else if (error.request) {
+            alert('No response from server. Please check your connection.');
+        } else {
+            alert('Error: ' + error.message);
+        }
+    }
+};
   return (
     <section>
       <SuperNavbar toggleDrawer={toggleDrawer} showSearch={false} />
@@ -255,7 +294,7 @@ const AccountList = () => {
                             </Link>
                           </div>
                           <div className={styles.m_trash}>
-                            <button onClick={() => handleDeleteClick(accountant._id)} aria-label="Delete Accountant">
+                            <button onClick={() => handleDeleteClick(accountant.id)} aria-label="Delete Accountant">
                               <i className="fa-regular fa-trash-can"></i>
                             </button>
                           </div>

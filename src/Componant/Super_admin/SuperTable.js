@@ -19,6 +19,7 @@ export default function SuperTable() {
     const [changepasswordmodal, setChangepasswordmodal] = useState(false)
     const navigate = useNavigate();
  const [oldPassword, setOldPassword] = useState("");
+    const [searchQuery, setSearchQuery] = useState(""); // Add this new state
 
     const toggleDrawer = () => {
         setIsSidebarOpen(prev => !prev);
@@ -62,13 +63,36 @@ export default function SuperTable() {
         setShowDeleteModal(true); // Open the delete confirmation modal
     };
 
-    const deleteTable = async (id) => {
+    const deleteTable = async (tableId) => {
         try {
-            await axios.delete(`http://localhost:8000/api/deleteTabls/${id}`); // Call the delete API
-            fetchTables(); // Refresh the table list after deletion
-            setShowDeleteModal(false); // Close the modal
+            const token = localStorage.getItem("authToken");
+            
+            // Create form data
+            const formData = new FormData();
+            formData.append('table_id', tableId);
+
+            const response = await axios.post(
+                'http://localhost/avadh_api/super_admin/tables/delete_tables.php',
+                formData,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }
+            );
+
+            if (response.data.success) {
+                // Update tables state by filtering out the deleted table
+                setTables(tables.filter((table) => table.id !== tableId));
+                setShowDeleteModal(false); // Close the modal after successful deletion
+            } else {
+                console.error("Error deleting table:", response.data.message);
+                alert(response.data.message || "Failed to delete table");
+            }
         } catch (error) {
-            console.error("Error deleting table:", error.response ? error.response.data : error.message);
+            console.error("Error deleting table:", error);
+            alert("Failed to delete table. Please try again.");
         }
     };
 
@@ -100,66 +124,101 @@ export default function SuperTable() {
 
         window.history.pushState(null, '', window.location.href);
     };
-    const handlePasswordChange = () => {
-        // Check if new password and confirm password match
+    const handlePasswordChange = async () => {
+        // Validation checks
         if (newPassword !== confirmPassword) {
             alert("Passwords do not match.");
             return;
         }
 
-        // Make sure password is not empty
-        if (!newPassword || !confirmPassword) {
-            alert("Please enter a new password.");
+        if (!oldPassword || !newPassword || !confirmPassword) {
+            alert("Please fill in all password fields.");
             return;
         }
 
-        const userId = localStorage.getItem("userId");
+        const token = localStorage.getItem("authToken");
+        
+        try {
+            const formData = new FormData();
+            formData.append('oldPassword', oldPassword);
+            formData.append('newPassword', newPassword);
+            formData.append('confirmPassword', confirmPassword);
 
-        if (!userId) {
-            console.error("User ID is not available.");
-            return;
-        }
-
-        const passwordData = {
-            newPassword: newPassword, // Send new password
-            confirmPassword: confirmPassword // Send confirm password
-        };
-
-        console.log(passwordData);
-
-
-        // Send the PUT request to update the password
-        fetch(`http://localhost:8000/api/updateuser/${userId}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(passwordData),
-        })
-            .then(response => {
-                if (!response.ok) throw new Error("Network response was not ok");
-                console.log(response);
-                const changePasswordModal = document.getElementById('changepassModal');
-                console.log(changePasswordModal);
-
-                const modal = new window.bootstrap.Modal(changePasswordModal);
-                console.log(modal);
-
-                if (modal) {
-                    modal.hide();
-                } else {
-                    const newModal = new bootstrap.Modal(changePasswordModal);
-                    newModal.hide();
+            const response = await axios.post(
+                'http://localhost/avadh_api/super_admin/profile/change_password.php',
+                formData,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
                 }
+            );
+
+            let responseData;
+            if (typeof response.data === 'string') {
+                try {
+                    const cleanJson = response.data.replace(/^\d+/, '');
+                    responseData = JSON.parse(cleanJson);
+                } catch (e) {
+                    console.error('Error parsing response:', e);
+                    responseData = { success: false, message: 'Invalid response format' };
+                }
+            } else {
+                responseData = response.data;
+            }
+
+            if (responseData.success === true) {
+                alert(responseData.message || 'Password changed successfully');
+                
+                // Close modal
+                const changePasswordModal = document.getElementById("changepassModal");
+                if (changePasswordModal) {
+                    const modalInstance = bootstrap.Modal.getInstance(changePasswordModal);
+                    if (modalInstance) {
+                        modalInstance.hide();
+                    }
+                }
+                
+                // Clear password fields
+                setOldPassword("");
                 setNewPassword("");
                 setConfirmPassword("");
-                return response.json();
-
-            })
-            .catch(error => {
-                console.error("Error changing password:", error);
-            });
+            } else {
+                alert(responseData.message || 'Failed to change password');
+            }
+        } catch (error) {
+            console.error("Error changing password:", error);
+            
+            if (error.response) {
+                try {
+                    let errorData;
+                    if (typeof error.response.data === 'string') {
+                        const cleanJson = error.response.data.replace(/^\d+/, '');
+                        errorData = JSON.parse(cleanJson);
+                    } else {
+                        errorData = error.response.data;
+                    }
+                    alert(errorData.message || 'Server error');
+                } catch (e) {
+                    alert('Error processing server response');
+                }
+            } else if (error.request) {
+                alert('No response from server. Please check your connection.');
+            } else {
+                alert('Error: ' + error.message);
+            }
+        }
     };
+
+    // Add this function to filter tables based on search query
+    const filteredTables = tables.filter(table => {
+        const searchTerm = searchQuery.toLowerCase();
+        return (
+            table.tableName.toLowerCase().includes(searchTerm) ||
+            table.tableGuest.toString().toLowerCase().includes(searchTerm)
+        );
+    });
+
     return (
         <section id="a_selectTable">
             <SuperNavbar toggleDrawer={toggleDrawer} showSearch={false}/>
@@ -178,6 +237,8 @@ export default function SuperTable() {
                                         type="search"
                                         placeholder="Search..."
                                         className="search-input"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
                                     />
                                 </div>
                                 <Link to={"/addtable"}>
@@ -206,8 +267,8 @@ export default function SuperTable() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {Array.isArray(tables) && tables.length > 0 ? (
-                                    tables.map((table) => (
+                                {Array.isArray(filteredTables) && filteredTables.length > 0 ? (
+                                    filteredTables.map((table) => (
                                         <tr key={table.id} align="center">
                                             <td>{table.tableName}</td>
                                             <td>{table.tableGuest}</td>
@@ -239,7 +300,7 @@ export default function SuperTable() {
                                 ) : (
                                     <tr>
                                         <td colSpan="3" align="center">
-                                            No tables available
+                                            {searchQuery ? "No matching tables found" : "No tables available"}
                                         </td>
                                     </tr>
                                 )}

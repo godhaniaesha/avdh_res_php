@@ -193,67 +193,95 @@ function ChefDashboard() {
   };
 
   // Function to handle password change
-// ... existing code ...
-const handlePasswordChange = () => {
-  // Check if new password and confirm password match
-  if (newPassword !== confirmPassword) {
+  const handlePasswordChange = async () => {
+    // Validation checks
+    if (newPassword !== confirmPassword) {
       alert("Passwords do not match.");
       return;
-  }
+    }
 
-  // Make sure password is not empty
-  if (!newPassword || !confirmPassword) {
-      alert("Please enter a new password.");
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      alert("Please fill in all password fields.");
       return;
-  }
+    }
 
-  const userId = localStorage.getItem("userId");
+    const token = localStorage.getItem("authToken");
+    
+    try {
+      const formData = new FormData();
+      formData.append('oldPassword', oldPassword);
+      formData.append('newPassword', newPassword);
+      formData.append('confirmPassword', confirmPassword);
 
-  if (!userId) {
-      console.error("User ID is not available.");
-      return;
-  }
-
-  const passwordData = {
-      newPassword: newPassword, // Send new password
-      confirmPassword: confirmPassword // Send confirm password
-  };
-
-  // Send the PUT request to update the password
-  fetch(`http://localhost:8000/api/updateuser/${userId}`, {
-      method: "PUT",
-      headers: {
-          "Content-Type": "application/json",
-      },
-      body: JSON.stringify(passwordData),
-  })
-  .then(response => {
-      if (!response.ok) throw new Error("Network response was not ok");
-      
-      // Hide the modal after successful password change
-      const changePasswordModal = document.getElementById('changepassModal');
-      if (changePasswordModal) {
-          // Remove the 'show' class directly
-          changePasswordModal.classList.remove('show');
-          changePasswordModal.style.display = 'none'; // Also set display to none
-
-          // Remove the backdrop
-          const backdrop = document.querySelector('.modal-backdrop');
-          if (backdrop) {
-              backdrop.remove(); 
+      const response = await axios.post(
+        'http://localhost/avadh_api/super_admin/profile/change_password.php',
+        formData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
           }
-          // Optionally, reset the modal content
-          setNewPassword("");
-          setConfirmPassword("");
+        }
+      );
+
+      let responseData;
+      if (typeof response.data === 'string') {
+        try {
+          const cleanJson = response.data.replace(/^\d+/, '');
+          responseData = JSON.parse(cleanJson);
+        } catch (e) {
+          console.error('Error parsing response:', e);
+          responseData = { success: false, message: 'Invalid response format' };
+        }
+      } else {
+        responseData = response.data;
       }
 
-      return response.json();
-  })
-  .catch(error => {
+      if (responseData.success === true) {
+        alert(responseData.message || 'Password changed successfully');
+        
+        // Close the modal
+        try {
+          const changePasswordModal = document.getElementById("changepassModal");
+          if (changePasswordModal) {
+            const modalInstance = bootstrap.Modal.getInstance(changePasswordModal);
+            if (modalInstance) {
+              modalInstance.hide();
+            }
+          }
+        } catch (error) {
+          console.error("Error closing modal:", error);
+        }
+        
+        // Clear the password fields
+        setOldPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+      } else {
+        alert(responseData.message || 'Failed to change password');
+      }
+    } catch (error) {
       console.error("Error changing password:", error);
-  });
-};
-// ... existing code ...
+      
+      if (error.response) {
+        try {
+          let errorData;
+          if (typeof error.response.data === 'string') {
+            const cleanJson = error.response.data.replace(/^\d+/, '');
+            errorData = JSON.parse(cleanJson);
+          } else {
+            errorData = error.response.data;
+          }
+          alert(errorData.message || 'Server error');
+        } catch (e) {
+          alert('Error processing server response');
+        }
+      } else if (error.request) {
+        alert('No response from server. Please check your connection.');
+      } else {
+        alert('Error: ' + error.message);
+      }
+    }
+  };
 
   return (
     <section id={styles.a_selectTable}>
