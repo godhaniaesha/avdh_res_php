@@ -12,13 +12,9 @@ import { Link, useNavigate } from "react-router-dom"; // Import Link for navigat
 function CustomerList(props) {
   const [customers, setCustomers] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [changepasswordmodal, setChangepasswordmodal] = useState(false);
   const [sortOption, setSortOption] = useState(""); // State for sort option
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
   const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState("");
 
   const loggedInUserId = localStorage.getItem("userId");
   console.log("loggedInUserId", loggedInUserId);
@@ -126,20 +122,7 @@ function CustomerList(props) {
   };
 
   
-  const handleLogout = () => {
-    if (window.bootstrap && window.bootstrap.Modal) {
-      const logoutModal = document.getElementById('logoutModal');
-      const modal = new window.bootstrap.Modal(logoutModal);
-      modal.hide();
-    }
-
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userId");
-
-    navigate("/login", { replace: true });
-
-    window.history.pushState(null, '', window.location.href);
-  };
+ 
 
   // Function to filter customers based on search query
   const filteredCustomers = customers.filter(customer => {
@@ -241,42 +224,7 @@ function CustomerList(props) {
           </table>
         </div>
       </div>
-      
-      {/* Logout Modal */}
-      <div
-        className={`modal fade ${styl.m_model_logout}`}
-        id="logoutModal"
-        tabIndex="-1"
-        aria-labelledby="logoutModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-dialog-centered">
-          <div
-            className={`modal-content ${styl.m_model_con}`}
-            style={{ border: "none", backgroundColor: "#f6f6f6" }}
-          >
-            <div className={styl.m_log}>
-              <div className={styl.m_logout}>
-                <span>Logout</span>
-              </div>
-              <div className={styl.m_text}>
-                <span>Are You Sure You Want To Logout?</span>
-              </div>
-              <div className={styl.m_btn_cancel_yes}>
-                <div className={styl.m_btn_cancel_logout}>
-                  <button data-bs-dismiss="modal">Cancel</button>
-                </div>
-                <div className={styl.m_btn_yes}>
-                  {/* <button onClick={handleLogout}>Logout</button> */}
-                  <button type="button" data-bs-toggle="modal" data-bs-target="#logoutModal" onClick={handleLogout}>
-                    Logout
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+ 
     </section>
   );
 }

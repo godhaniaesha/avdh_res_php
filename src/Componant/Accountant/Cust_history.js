@@ -27,32 +27,7 @@ function Cust_history(props) {
   const loggedInUserId = localStorage.getItem("userId");
   console.log("loggedInUserId", loggedInUserId);
 
-  // Fetch user details from the API using the logged-in user ID
-  //  useEffect(() => {
-  //    fetch(`http://localhost:8000/api/getUser/${loggedInUserId}`)
-  //      .then((response) => {
-  //        if (!response.ok) {
-  //          throw new Error('Network response was not ok');
-  //        }
-  //        return response.json();
-  //      })
-  //      .then((userData) => {
-  //        console.log("userData", userData.user.firstName);
-  //      })
-  //      .catch((error) => console.error("Error fetching user data:", error));
-  //  }, [loggedInUserId]);
 
-  // Effect to fetch customer data on component mount
-  //  useEffect(() => {
-  //    fetchCustomers(); // Call fetchCustomers function to get customer data
-  //  }, []);
-
-  // Effect to sort customers whenever the sort option changes
-  //  useEffect(() => {
-  //    if (sortOption) {
-  //      sortCustomers(sortOption);
-  //    }
-  //  }, [sortOption]); // Sort when sortOption changes
 
   const toggleDrawer = () => {
     setIsSidebarOpen(prev => !prev);
@@ -158,20 +133,7 @@ function Cust_history(props) {
 
 
   
-  const handleLogout = () => {
-    if (window.bootstrap && window.bootstrap.Modal) {
-      const logoutModal = document.getElementById('logoutModal');
-      const modal = new window.bootstrap.Modal(logoutModal);
-      modal.hide();
-    }
 
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userId");
-
-    navigate("/login", { replace: true });
-
-    window.history.pushState(null, '', window.location.href);
-  };
 
   // Function to filter customers based on search query
   const filteredCustomers = customers.filter(customer => {
@@ -267,41 +229,7 @@ function Cust_history(props) {
         </div>
       </div>
       
-      {/* Logout Modal */}
-      <div
-        className={`modal fade ${styl.m_model_logout}`}
-        id="logoutModal"
-        tabIndex="-1"
-        aria-labelledby="logoutModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-dialog-centered">
-          <div
-            className={`modal-content ${styl.m_model_con}`}
-            style={{ border: "none", backgroundColor: "#f6f6f6" }}
-          >
-            <div className={styl.m_log}>
-              <div className={styl.m_logout}>
-                <span>Logout</span>
-              </div>
-              <div className={styl.m_text}>
-                <span>Are You Sure You Want To Logout?</span>
-              </div>
-              <div className={styl.m_btn_cancel_yes}>
-                <div className={styl.m_btn_cancel_logout}>
-                  <button data-bs-dismiss="modal">Cancel</button>
-                </div>
-                <div className={styl.m_btn_yes}>
-                  {/* <button onClick={handleLogout}>Logout</button> */}
-                  <button type="button" data-bs-toggle="modal" data-bs-target="#logoutModal" onClick={handleLogout}>
-                    Logout
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+   
     </section>
   );
 }

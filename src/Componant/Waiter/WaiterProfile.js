@@ -30,33 +30,6 @@ const WaiterProfile = () => {
   useEffect(() => {
     const storedWaiterData = localStorage.getItem("waiterData");
     token = localStorage.getItem('authToken');
-    // if (storedWaiterData) {
-    //   setWaiterData(JSON.parse(storedWaiterData)); // Set state with data from local storage
-    // } else {
-    //   const id = localStorage.getItem("loginWaiterId"); // Get waiter ID from local storage
-    //   const response =  axios.post(
-    //     "http://localhost/avadh_api/waiter/profile/change_profile.php",
-    //     {},
-    //     {
-    //       headers: {
-    //         Authorization: `Bearer ${token}`,
-    //         "Content-Type": "multipart/form-data", // Important for file uploads
-    //       },
-    //     }
-    //   );
-    //   // console.log("profile", response?.data?.user?.firstName);
-    //   // fetch("http://localhost/avadh_api/waiter/profile/change_password.php")
-    //     // .then((response) => response.json())
-    //     // .then((data) => {
-    //       console.log('responsive', response)
-    //       const matchingWaiter = response?.find(waiter => waiter.id === id); // Find waiter by ID
-    //       // if (matchingWaiter) {
-    //         setWaiterData(matchingWaiter); // Populate form with waiter data
-    //         setWaiterName(matchingWaiter.firstName); // Set waiter name
-    //         setImageName(matchingWaiter.image); // Set the image name from API
-    //       // }
-    //     // })
-    // .catch((error) => console.error("Error:", error));
     getUserData()
     // }
   }, []);
@@ -118,21 +91,6 @@ const WaiterProfile = () => {
       console.error('Error:', error);
       alert('An error occurred. Please try again.');
   }
-    // fetch(`http://localhost:8000/api/updateuser/${userId}`, { // Use the specified API endpoint
-    //   method: "PUT",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(updatedData),
-    // })
-    //   .then((response) => {
-    //     if (!response.ok) throw new Error("Network response was not ok");
-    //     alert("Data updated successfully!");
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error updating data:", error);
-    //     alert("Failed to update data. Please try again.");
-    //   });
   };
 
   
@@ -152,25 +110,7 @@ const WaiterProfile = () => {
     }
   };
 
-  const handleLogout = () => {
-    // Check if Bootstrap's Modal is available
-    if (window.bootstrap && window.bootstrap.Modal) {
-      const logoutModal = document.getElementById('logoutModal');
-      const modal = new window.bootstrap.Modal(logoutModal);
-      modal.hide(); // Close the modal
-    } else {
-      console.error("Bootstrap Modal is not available");
-    }
-
-    // Remove the authToken from localStorage
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userId"); // Clear the userId if needed
-
-    // Redirect to login page
-    navigate("/login", { replace: true });
-
-    window.history.pushState(null, '', window.location.href);
-  };
+  
   return (
     <section id={styles.a_selectTable}>
       <WaiterNavbar toggleDrawer={toggleDrawer} showSearch={false} toggleNotifications={toggleNotifications} waiterName={waiterName} />
@@ -280,43 +220,7 @@ const WaiterProfile = () => {
             </div>
           </div>
         </form>
-        {/* Change Password Modal */}
         
-
-        {/* Logout Modal */}
-        <div
-          className={`modal fade ${styles.m_model_logout}`}
-          id="logoutModal"
-          tabIndex="-1"
-          aria-labelledby="logoutModalLabel"
-          aria-hidden="true"
-        >
-          <div className="modal-dialog modal-dialog-centered">
-            <div
-              className={`modal-content ${styles.m_model_con}`}
-              style={{ border: "none", backgroundColor: "#f6f6f6" }}
-            >
-              <div className={styles.m_log}>
-                <div className={styles.m_logout}>
-                  <span>Logout</span>
-                </div>
-                <div className={styles.m_text}>
-                  <span>Are You Sure You Want To Logout?</span>
-                </div>
-                <div className={styles.m_btn_cancel_yes}>
-                  <div className={styles.m_btn_cancel_logout}>
-                    <button data-bs-dismiss="modal">Cancel</button>
-                  </div>
-                  <div className={styles.m_btn_yes}>
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#logoutModal" onClick={handleLogout}>
-                      Logout
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );

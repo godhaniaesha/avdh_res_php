@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import AccountProfile from "./Componant/Accountant/AccountProfile";
 import CustomerList from "./Componant/Accountant/CustomerList";
@@ -42,6 +41,7 @@ import SelectTable from "./Componant/Waiter/SelectTable";
 import EditTable from "./Componant/Super_admin/EditTable";
 import History from "./Componant/Chef/History";
 import Cust_history from "./Componant/Accountant/Cust_history";
+import PrivateRoute from './components/PrivateRoute';
 
 
 function App() {
@@ -50,8 +50,8 @@ function App() {
       <Router>
         <Routes>
           
-          <Route path="/accountant" element={<BillPayment />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/accountant" element={<BillPayment />} />
           <Route path="/forgotpass" element={<ForgotPassword />} />
           <Route path="/changepass" element={<ChangePass />} />
           <Route path="/verifyotp" element={<VerifyOTP />} />
@@ -63,14 +63,46 @@ function App() {
 
 
           {/* superadmin  */}
-          <Route path="/superadmin" element={<SuperAdmin></SuperAdmin>}></Route>
-          <Route path="/supertable" element={<SuperTable></SuperTable>}></Route>
-          <Route path="/superChef" element={<SuperChef></SuperChef>}></Route>
-          <Route path="/superWaiter" element={<WaiterList></WaiterList>}></Route>
-          <Route path="/superaccountlist" element={<AccountList></AccountList>}></Route>
-          <Route path="/superprofile" element={<SuperProfile></SuperProfile>}></Route>
-          <Route path="/addchef" element={<AddChef></AddChef>}></Route>
-          <Route path="/editchef" element={<EditChef></EditChef>}></Route>
+          <Route path="/superadmin" element={
+            <PrivateRoute>
+              <SuperAdmin />
+            </PrivateRoute>
+          } />
+          <Route path="/supertable" element={
+            <PrivateRoute>
+              <SuperTable />
+            </PrivateRoute>
+          } />
+          <Route path="/superChef" element={
+            <PrivateRoute>
+              <SuperChef />
+            </PrivateRoute>
+          } />
+          <Route path="/superWaiter" element={
+            <PrivateRoute>
+              <WaiterList />
+            </PrivateRoute>
+          } />
+          <Route path="/superaccountlist" element={
+            <PrivateRoute>
+              <AccountList />
+            </PrivateRoute>
+          } />
+          <Route path="/superprofile" element={
+            <PrivateRoute>
+              <SuperProfile />
+            </PrivateRoute>
+          } />
+          <Route path="/addchef" element={
+            <PrivateRoute>
+              <AddChef />
+            </PrivateRoute>
+          } />
+          <Route path="/editchef" element={
+            <PrivateRoute>
+              <EditChef />
+            </PrivateRoute>
+          } />
           <Route path="/addwaiter" element={<AddWaiter></AddWaiter>}></Route>
           <Route path="/editwaiter" element={<EditWaiter></EditWaiter>}></Route>
           <Route path="/addaccount" element={<AddAccountant></AddAccountant>}></Route>
@@ -81,8 +113,16 @@ function App() {
           <Route path="/editaccount" element={<EditAccountant></EditAccountant>}></Route>
 
           {/* Chef */}
-          <Route path="/chef_board" element={<ChefDashboard />} />
-          <Route path="/chef_menu" element={<ChefMenuList />} />
+          <Route path="/chef_board" element={
+            <PrivateRoute>
+              <ChefDashboard />
+            </PrivateRoute>
+          } />
+          <Route path="/chef_menu" element={
+            <PrivateRoute>
+              <ChefMenuList />
+            </PrivateRoute>
+          } />
           <Route path="/chef_category" element={<ChefCategory />} />
           <Route path="/chef_variant" element={<ChefVariant />} />
           <Route path="/chefProfile" element={<ChefProfile />} />
@@ -95,8 +135,16 @@ function App() {
           <Route path="/history" element={<History />} />
 
           {/* Waiter */}
-          <Route path="/Waiter_Dashboard" element={<WaiterDashboaed />} />
-          <Route path="/Select_Table" element={<SelectTable />} />
+          <Route path="/Waiter_Dashboard" element={
+            <PrivateRoute>
+              <WaiterDashboaed />
+            </PrivateRoute>
+          } />
+          <Route path="/Select_Table" element={
+            <PrivateRoute>
+              <SelectTable />
+            </PrivateRoute>
+          } />
           <Route path="/Waiter_menu" element={<WaiterMenu />} />
           <Route path="/Waiter_order" element={<WaiterOrder />} />
           <Route path="/waiter_profile" element={<WaiterProfile />} />

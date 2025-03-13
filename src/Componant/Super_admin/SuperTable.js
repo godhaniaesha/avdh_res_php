@@ -105,25 +105,6 @@ export default function SuperTable() {
         localStorage.setItem("tableData", JSON.stringify(table));
     };
 
-    const handleLogout = () => {
-        // Check if Bootstrap's Modal is available
-        if (window.bootstrap && window.bootstrap.Modal) {
-            const logoutModal = document.getElementById('logoutModal');
-            const modal = new window.bootstrap.Modal(logoutModal);
-            modal.hide(); // Close the modal
-        } else {
-            console.error("Bootstrap Modal is not available");
-        }
-
-        // Remove the authToken from localStorage
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("userId"); // Clear the userId if needed
-
-        // Redirect to login page
-        navigate("/login", { replace: true });
-
-        window.history.pushState(null, '', window.location.href);
-    };
     const handlePasswordChange = async () => {
         // Validation checks
         if (newPassword !== confirmPassword) {
@@ -375,33 +356,6 @@ export default function SuperTable() {
           </div>
         </div>
 
-
-            {/* Logout Modal */}
-            <div className={`modal ${styles.m_model_logout} fade`} id="logoutModal" tabIndex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
-                <div className="modal-dialog modal-dialog-centered">
-                    <div className={`${styles.m_model_con} modal-content`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
-                        <div className={styles.m_log}>
-                            <div className={styles.m_logout}>
-                                <span>Logout</span>
-                            </div>
-                            <div className={styles.m_text}>
-                                <span>Are You Sure You Want To Logout?</span>
-                            </div>
-                            <div className={styles.m_btn_cancel_yes}>
-                                <div className={styles.m_btn_cancel_logout}>
-                                    <button id="cancelBtn" data-bs-dismiss="modal">Cancel</button>
-                                </div>
-                                <div className={styles.m_btn_yes}>
-                                    {/* <button id="yesBtn">Yes</button> */}
-                                    <button type="button" data-bs-toggle="modal" data-bs-target="#logoutModal" onClick={handleLogout}>
-                                        Logout
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </section>
     );
 }

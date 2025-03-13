@@ -1,17 +1,36 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
 import styles from "../../css/SuperAdmin.module.css";
+import axios, { Axios } from "axios";
+import styl from "../../css/BillPayment.module.css";
+import { useNavigate } from "react-router-dom";
 
 
 function SuperNavbar({ adminName, toggleDrawer, showSearch }) {
   const loggedInUserName = localStorage.getItem("firstName");
   const [dropdown, setDropDown] = useState(false);
+  const nevigate = useNavigate();
 
   const handleDropdownClick = () => {
     setDropDown(!dropdown);
   };
 
   console.log("loggedInUserId",loggedInUserName);
+
+  const handleLogout = async () => {
+    if (window.bootstrap && window.bootstrap.Modal) {
+      const logoutModal = document.getElementById('logoutModal');
+      const modal = new window.bootstrap.Modal(logoutModal);
+      modal.hide();
+    }
+
+    const response = await axios.post("http://localhost/avadh_api/logout.php")
+
+    localStorage.removeItem('authToken'); 
+    console.log(response);
+    nevigate('/login');
+
+  };
 
   return (
     <nav
@@ -104,6 +123,42 @@ function SuperNavbar({ adminName, toggleDrawer, showSearch }) {
           </div>
         </div>
       </div>
+
+      
+      {/* {/ Logout Modal /} */}
+      <div
+          className={`modal fade ${styl.m_model_logout}`}
+          id="logoutModal"
+          tabIndex="-1"
+          aria-labelledby="logoutModalLabel"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog modal-dialog-centered">
+            <div
+              className={`modal-content ${styl.m_model_con}`}
+              style={{ border: "none", backgroundColor: "#f6f6f6" }}
+            >
+              <div className={styl.m_log}>
+                <div className={styl.m_logout}>
+                  <span>Logout</span>
+                </div>
+                <div className={styl.m_text}>
+                  <span>Are You Sure You Want To Logout?</span>
+                </div>
+                <div className={styl.m_btn_cancel_yes}>
+                  <div className={styl.m_btn_cancel_logout}>
+                    <button data-bs-dismiss="modal">Cancel</button>
+                  </div>
+                  <div className={styl.m_btn_yes}>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#logoutModal" onClick={handleLogout}>
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
     </nav>
   );
 }

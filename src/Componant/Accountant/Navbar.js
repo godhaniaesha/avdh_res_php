@@ -63,7 +63,7 @@ function Navbar({ toggleDrawer, showSearch }) {
                   style={{ display: dropdown ? 'block' : 'none' }}
                   aria-labelledby="dropdownMenuLink"
                 >
-                  {/* <a
+                  <a
                     className="dropdown-item"
                     href="#"
                     data-bs-toggle="modal"
@@ -78,7 +78,7 @@ function Navbar({ toggleDrawer, showSearch }) {
                       }}
                     />{" "}
                     Change Password
-                  </a> */}
+                  </a>
                   <a
                     className="dropdown-item"
                     href="#"

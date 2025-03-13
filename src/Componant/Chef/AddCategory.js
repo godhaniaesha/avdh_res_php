@@ -17,10 +17,6 @@ function AddCategory(props) {
     const [chefName, setChefName] = useState(''); // State to hold logged-in chef's name
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState("");
-    const [newPassword, setNewPassword] = useState(""); // State for new password
-    const [confirmPassword, setConfirmPassword] = useState(""); // State for confirm password
-    const [changepasswordmodal, setChangepasswordmodal] = useState(false); // State for change password modal
     
     const addCategory = async (event) => {
         event.preventDefault(); // Prevent form submission
@@ -96,25 +92,7 @@ function AddCategory(props) {
         panel.style.display = panel.style.display === "none" || panel.style.display === "" ? "block" : "none";
     };
 
-    const handleLogout = () => {
-        // Check if Bootstrap's Modal is available
-        if (window.bootstrap && window.bootstrap.Modal) {
-            const logoutModal = document.getElementById('logoutModal');
-            const modal = new window.bootstrap.Modal(logoutModal);
-            modal.hide(); // Close the modal
-        } else {
-            console.error("Bootstrap Modal is not available");
-        }
 
-        // Remove the authToken from localStorage
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("userId"); // Clear the userId if needed
-
-        // Redirect to login page
-        navigate("/login", { replace: true });
-
-        window.history.pushState(null, '', window.location.href);
-    };
 
     // Function to handle password change
    // ... existing code ...
@@ -173,41 +151,6 @@ function AddCategory(props) {
                     </div>
                 </div>
 
-                {/* Logout Modal */}
-                <div
-                    className={`modal fade ${style.m_model_logout}`}
-                    id="logoutModal"
-                    tabIndex="-1"
-                    aria-labelledby="logoutModalLabel"
-                    aria-hidden="true"
-                >
-                    <div className="modal-dialog modal-dialog-centered">
-                        <div
-                            className={`modal-content ${style.m_model_con}`}
-                            style={{ border: "none", backgroundColor: "#f6f6f6" }}
-                        >
-                            <div className={style.m_log}>
-                                <div className={style.m_logout}>
-                                    <span>Logout</span>
-                                </div>
-                                <div className={style.m_text}>
-                                    <span>Are You Sure You Want To Logout?</span>
-                                </div>
-                                <div className={style.m_btn_cancel_yes}>
-                                    <div className={style.m_btn_cancel_logout}>
-                                        <button data-bs-dismiss="modal">Cancel</button>
-                                    </div>
-                                    <div className={style.m_btn_yes}>
-                                        {/* <button onClick={handleLogout}>Logout</button> */}
-                                        <button type="button"  data-bs-toggle="modal" data-bs-target="#logoutModal" onClick={handleLogout}>
-                                            Logout
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     );
