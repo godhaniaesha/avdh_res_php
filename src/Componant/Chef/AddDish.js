@@ -247,7 +247,6 @@ function AddDish(props) {
         </div>
       </div>
       
-   
 
       {/* Add Successfully Modal */}
       {/* {/ Success Modal /} */}

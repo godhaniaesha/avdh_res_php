@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { useHistory, useNavigate } from "react-router-dom"; // Import useHistory for navigation
 import styles from "../../css/ChangePass.module.css"; // Import the CSS module
+import axios from "axios";
 
 // Password change component
 function ChangePass() {
-    const nevigate = useNavigate(); // Initialize useHistory for navigation
+    const navigate = useNavigate(); // Initialize useHistory for navigation
     const [newPassword, setNewPassword] = useState(""); // State for new password
     const [confirmPassword, setConfirmPassword] = useState(""); // State for confirm password
     const [newError, setNewError] = useState(""); // State for new password error
@@ -71,7 +72,36 @@ function ChangePass() {
         } else {
             console.log("Password changed successfully!");
             // Navigate to the login page upon successful update
-            nevigate("/login"); // Redirect to the login page
+            navigate("/login"); // Redirect to the login page
+        }
+    };
+
+    const ResetPassword = async (e) => {
+        const userid = localStorage.getItem('forgetpassId')
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append("user_id", userid);
+        formData.append("Newpassword", newPassword);
+        formData.append("confirmPassword", confirmPassword);
+
+        try {
+            const response = await axios.post("http://localhost/avadh_api/change_password.php", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+    
+            console.log("Reset Password", response.data);
+    
+            if (response.data.success) {
+                navigate('/login');
+                localStorage.removeItem('forgetpassId');
+                localStorage.removeItem('mobileno');
+            } else {
+                console.error("Reset Password failed:", response.data.message);
+            }
+        } catch (error) {
+            console.error("Error Reset Password:", error);
         }
     };
 
@@ -90,7 +120,7 @@ function ChangePass() {
                                     <h3>Change Password</h3>
                                     <p>Reset your password here!</p>
                                 </div>
-                                <form className={styles.a_form} id="passwordForm" onSubmit={handleSubmit}>
+                                <form className={styles.a_form} id="passwordForm">
                                     <div className="mb-3">
                                         <div className={`${styles.a_input_group} d-flex justify-content-between`}>
                                             <input
@@ -124,7 +154,7 @@ function ChangePass() {
                                         {confirmError && <div className="text-danger" style={{ width: "300px" }}>{confirmError}</div>}
                                     </div>
                                     <div className={`${styles.d_grid} text-center`}>
-                                        <button type="submit" className="btn" id="c_btn_pass">
+                                        <button className="btn" id="c_btn_pass" onClick={ResetPassword}>
                                             Change Password
                                         </button>
                                     </div>

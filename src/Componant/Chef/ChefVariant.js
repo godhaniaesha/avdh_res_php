@@ -104,9 +104,6 @@ function ChefVariant(props) {
     const toggleDrawer = () => {
         setIsSidebarOpen(prev => !prev);
     };
-
-
-
     // Function to sort variants based on selected option
     const sortVariants = (option) => {
         const sortedVariants = [...variants].sort((a, b) => {
@@ -285,7 +282,6 @@ function ChefVariant(props) {
                         </div>
                     )}
                 </div>
-
             </div>
         </section>
     );

@@ -49,7 +49,7 @@ export default function History() {
         }
         setCategories(response.data.category);
       })
-      .catch((error) => console.error("Error fetching categories:", error));
+      .catch((error) => console.error("Error fetching categories:", error));  
   };
 
 
@@ -117,32 +117,37 @@ export default function History() {
 
   const handleSortChange = (event) => {
     setSortOrder(event.target.value);
+    getSortedHistory();
   };
 
   const getSortedHistory = () => {
     const sortedHistory = [...history];
 
     if (sortOrder === "A") {
-      // Sort by Order ID (Ascending)
-      return sortedHistory.sort((a, b) => a.id.localeCompare(b.id));
+      sortedHistory.sort((a, b) => a.id.localeCompare(b.id));
     } else if (sortOrder === "B") {
-      return sortedHistory.sort((a, b) => b.id.localeCompare(a.id));
+      sortedHistory.sort((a, b) => b.id.localeCompare(a.id));
     } else if (sortOrder === "C") {
-      return sortedHistory.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      sortedHistory.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     } else if (sortOrder === "D") {
-      return sortedHistory.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      sortedHistory.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
     } else if (sortOrder === "E") {
-      return sortedHistory.sort((a, b) => a.firstName.localeCompare(b.firstName));
+      sortedHistory.sort((a, b) => a.firstName.localeCompare(b.firstName));
     } else if (sortOrder === "F") {
-      return sortedHistory.sort((a, b) => b.firstName.localeCompare(a.firstName));
+      sortedHistory.sort((a, b) => b.firstName.localeCompare(a.firstName));
     } else if (sortOrder === "G") {
-      return sortedHistory.sort((a, b) => a.totalAmount - b.totalAmount);
+      sortedHistory.sort((a, b) => a.totalAmount - b.totalAmount);
     } else if (sortOrder === "H") {
-      return sortedHistory.sort((a, b) => b.totalAmount - a.totalAmount);
-    } 
+      sortedHistory.sort((a, b) => b.totalAmount - a.totalAmount);
+    }
 
-    return history;
+    setHistory(sortedHistory);
   };
+
+  useEffect(() => {
+    getSortedHistory();
+  }, [sortOrder]);
+
 
   return (
     <section id={styles.a_selectTable}>
@@ -205,7 +210,7 @@ export default function History() {
                 </tr>
               </thead>
               <tbody>
-                {getSortedHistory().map((history) => (
+                {history.map((history) => (
                   <tr key={history.id} align="center">
                     <td className="text-center">
                       {history.id}
@@ -218,7 +223,6 @@ export default function History() {
                     <td className={history.orderStatus === "Accepted" ? "text-success" : "text-danger"}>
                       {history.orderStatus}
                     </td>
-
                   </tr>
                 ))}
               </tbody>

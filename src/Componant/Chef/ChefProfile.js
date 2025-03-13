@@ -104,21 +104,6 @@ function ChefProfile() {
       }
     };
 
-
-    const handleLogout = () => {
-      if (window.bootstrap && window.bootstrap.Modal) {
-        const logoutModal = document.getElementById('logoutModal');
-        const modal = new window.bootstrap.Modal(logoutModal);
-        modal.hide();
-      }
-
-      localStorage.removeItem("authToken");
-      localStorage.removeItem("userId");
-
-      navigate("/login", { replace: true });
-
-      window.history.pushState(null, '', window.location.href);
-    };
     const handleChange = (e) => {
       const { name, value } = e.target;
       setFormdata(prevState => ({
@@ -221,43 +206,6 @@ function ChefProfile() {
                 </div>
               </div>
             </form>
-          </div>
-        </div>
-
-        {/* Change Password Modal */}
-        
-        <div
-          className={`modal fade ${style.m_model_logout}`}
-          id="logoutModal"
-          tabIndex="-1"
-          aria-labelledby="logoutModalLabel"
-          aria-hidden="true"
-        >
-          <div className="modal-dialog modal-dialog-centered">
-            <div
-              className={`modal-content ${style.m_model_con}`}
-              stylee={{ border: "none", backgroundColor: "#f6f6f6" }}
-            >
-              <div className={style.m_log}>
-                <div className={style.m_logout}>
-                  <span>Logout</span>
-                </div>
-                <div className={style.m_text}>
-                  <span>Are You Sure You Want To Logout?</span>
-                </div>
-                <div className={style.m_btn_cancel_yes}>
-                  <div className={style.m_btn_cancel_logout}>
-                    <button data-bs-dismiss="modal">Cancel</button>
-                  </div>
-                  <div className={style.m_btn_yes}>
-                    {/* <button onClick={handleLogout}>Logout</button> */}
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#logoutModal" onClick={handleLogout}>
-                      Logout
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>

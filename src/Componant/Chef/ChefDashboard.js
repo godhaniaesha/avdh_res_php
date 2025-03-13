@@ -179,11 +179,7 @@ function ChefDashboard() {
   const calculateTotalPrice = (orders) => {
     const total = orders.reduce((acc, order) => acc + order.totalAmount, 0);
     setTotalPrice(total);
-  };
-
-  
-
- 
+  }; 
 
   return (
     <section id={styles.a_selectTable}>
@@ -333,7 +329,6 @@ function ChefDashboard() {
           </div>
         </div>
       </div>
-
 
       {/* Add Successfully Modal */}
       <div className="modal fade" id="imgModal" tabIndex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">

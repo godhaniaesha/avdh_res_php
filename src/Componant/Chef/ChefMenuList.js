@@ -74,7 +74,7 @@ function ChefMenuList() {
     formData.append("dish_id", dishIdToDelete);
     if (dishIdToDelete) {
       axios
-        .post(`http://localhost/avadh_api/chef/dish/delete_dish.php`,formData, {
+        .post(`http://localhost/avadh_api/chef/dish/delete_dish.php`, formData, {
           headers: {
             Authorization: `Bearer ${token}`, // Add Bearer token for authorization
           },
@@ -99,7 +99,6 @@ function ChefMenuList() {
     localStorage.setItem("dishData", JSON.stringify(dish));
     window.location.href = "/editDish";
   };
-
 
 
   const handleSortChange = (event) => {
