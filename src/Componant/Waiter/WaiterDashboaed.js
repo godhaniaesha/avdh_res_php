@@ -268,42 +268,7 @@ function WaiterDashboaed(props) {
           </div>
         </div>
       </div>
-      {/* Change Password Modal */}
      
-      
-
-      {/* Logout Modal */}
-      <div
-        className={`modal fade ${styles.m_model_logout}`}
-        id="logoutModal"
-        tabIndex="-1"
-        aria-labelledby="logoutModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-dialog-centered">
-          <div
-            className={`modal-content ${styles.m_model_con}`}
-            style={{ border: "none", backgroundColor: "#f6f6f6" }}
-          >
-            <div className={styles.m_log}>
-              <div className={styles.m_logout}>
-                <span>Logout</span>
-              </div>
-              <div className={styles.m_text}>
-                <span>Are You Sure You Want To Logout?</span>
-              </div>
-              <div className={styles.m_btn_cancel_yes}>
-                <div className={styles.m_btn_cancel_logout}>
-                  <button data-bs-dismiss="modal">Cancel</button>
-                </div>
-                <div className={styles.m_btn_yes}>
-                  <button>Logout</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </section>
   );
 }

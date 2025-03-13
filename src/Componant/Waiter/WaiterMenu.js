@@ -391,25 +391,6 @@ function WaiterMenu() {
     }, 0);
   };
 
-  const handleLogout = () => {
-    // Check if Bootstrap's Modal is available
-    if (window.bootstrap && window.bootstrap.Modal) {
-      const logoutModal = document.getElementById('logoutModal');
-      const modal = new window.bootstrap.Modal(logoutModal);
-      modal.hide(); // Close the modal
-    } else {
-      console.error("Bootstrap Modal is not available");
-    }
-
-    // Remove the authToken from localStorage
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userId"); // Clear the userId if needed
-
-    // Redirect to login page
-    navigate("/login", { replace: true });
-
-    // window.history.pushState(null, '', window.location.href);
-  };
 
   const debounce = (func, delay) => {
     let timeoutId;
@@ -682,42 +663,6 @@ function WaiterMenu() {
         </div>
       )}
 
-      
-
-      {/* Logout Modal */}
-      <div
-        className={`modal fade ${styles.m_model_logout}`}
-        id="logoutModal"
-        tabIndex="-1"
-        aria-labelledby="logoutModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-dialog-centered">
-          <div
-            className={`modal-content ${styles.m_model_con}`}
-            style={{ border: "none", backgroundColor: "#f6f6f6" }}
-          >
-            <div className={styles.m_log}>
-              <div className={styles.m_logout}>
-                <span>Logout</span>
-              </div>
-              <div className={styles.m_text}>
-                <span>Are You Sure You Want To Logout?</span>
-              </div>
-              <div className={styles.m_btn_cancel_yes}>
-                <div className={styles.m_btn_cancel_logout}>
-                  <button data-bs-dismiss="modal">Cancel</button>
-                </div>
-                <div className={styles.m_btn_yes}>
-                  <button type="button" data-bs-toggle="modal" data-bs-target="#logoutModal" onClick={handleLogout}>
-                    Logout
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </section>
   );
 }

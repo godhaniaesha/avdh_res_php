@@ -315,51 +315,7 @@ const SelectTable = () => {
             ></div>
           )}
 
-          {/* Logout Modal */}
-          {isLogoutModalOpen && (
-            <div
-              className="m_model_logout modal fade show" // Add 'show' class to display
-              style={{ display: "block" }} // Ensure modal is displayed
-              tabIndex="-1"
-              aria-labelledby="logoutModalLabel"
-              aria-hidden="true"
-            >
-              <div className="modal-dialog modal-dialog-centered">
-                <div
-                  className="modal-content"
-                  style={{ border: "none", backgroundColor: "#f6f6f6" }}
-                >
-                  <div className="m_log">
-                    <div className="m_logout">
-                      <span>Logout</span>
-                    </div>
-                    <div className="m_text">
-                      <span>Are You Sure You Want To Logout?</span>
-                    </div>
-                    <div className="m_btn_cancel_yes">
-                      <div className="m_btn_cancel_logout">
-                        <button onClick={() => setIsLogoutModalOpen(false)}>
-                          Cancel
-                        </button>{" "}
-                        {/* Close modal */}
-                      </div>
-                      <div className="m_btn_yes">
-                        <button
-                          onClick={() => {
-                            // Add logic to handle logout here
-                            setIsLogoutModalOpen(false); // Close modal after confirming logout
-                          }}
-                        >
-                          Yes
-                        </button>{" "}
-                        {/* Close modal after confirming logout */}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+        
 
           {/* Add Successfully Modal */}
           <div

@@ -178,21 +178,7 @@ const BillPayment = () => {
     }
   };
 
-  
-  const handleLogout = () => {
-    if (window.bootstrap && window.bootstrap.Modal) {
-      const logoutModal = document.getElementById('logoutModal');
-      const modal = new window.bootstrap.Modal(logoutModal);
-      modal.hide();
-    }
-
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userId");
-
-    navigate("/login", { replace: true });
-
-    window.history.pushState(null, '', window.location.href);
-  };
+ 
   return (
     <section id={styles.a_selectTable}>
       <Navbar toggleDrawer={() => setIsSidebarOpen(prev => !prev)} showSearch={true} />
@@ -385,43 +371,7 @@ const BillPayment = () => {
           </div>
         </div>
       </div>
-      {/* Change Password Modal */}
-      
-      {/* Logout Modal */}
-      <div
-        className={`modal fade ${styl.m_model_logout}`}
-        id="logoutModal"
-        tabIndex="-1"
-        aria-labelledby="logoutModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-dialog-centered">
-          <div
-            className={`modal-content ${styl.m_model_con}`}
-            style={{ border: "none", backgroundColor: "#f6f6f6" }}
-          >
-            <div className={styl.m_log}>
-              <div className={styl.m_logout}>
-                <span>Logout</span>
-              </div>
-              <div className={styl.m_text}>
-                <span>Are You Sure You Want To Logout?</span>
-              </div>
-              <div className={styl.m_btn_cancel_yes}>
-                <div className={styl.m_btn_cancel_logout}>
-                  <button data-bs-dismiss="modal">Cancel</button>
-                </div>
-                <div className={styl.m_btn_yes}>
-                  {/* <button onClick={handleLogout}>Logout</button> */}
-                  <button type="button" data-bs-toggle="modal" data-bs-target="#logoutModal" onClick={handleLogout}>
-                    Logout
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    
       {/* Add any additional modals or components here as needed */}
     </section >
   );

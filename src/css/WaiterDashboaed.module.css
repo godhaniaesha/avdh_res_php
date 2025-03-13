@@ -64,6 +64,7 @@ body {
     background: #FFFFFF;
     box-shadow: 4px 4px 14px 0px #00000014;
     width: 100%;
+    z-index: 1053;
 }
 
 .a_search input {
