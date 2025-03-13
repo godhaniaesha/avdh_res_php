@@ -9,6 +9,7 @@ import SidePanel from './SidePanel';
 import { useNavigate, useParams } from 'react-router-dom';
 import style from "../../css/BillPayment.module.css"
 import styl from "../../css/BillPayment.module.css";
+import axios from 'axios';
 
 function CustomerDetail() {
     const { id } = useParams();
@@ -16,63 +17,107 @@ function CustomerDetail() {
     const [error, setError] = useState(null);
     const [orders, setOrders] = useState([]);
     const navigate = useNavigate();
+   const [dishes , setDishes]= useState([]);
 
     useEffect(() => {
         // Fetch customer data
         let cd = "";
-        fetch(`http://localhost:8000/api/getUser/${id}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                setCustomerData(data.user);
-                console.log("cust", data.user)
-                cd = data.user.email;
-                // Fetch orders only after customer data is successfully retrieved
-                return fetch(`http://localhost:8000/api/allOrders`);
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(allOrders => {
-                console.log("allOrders", allOrders);
-                console.log("1111userEmail")
-                if (allOrders && allOrders.orders) {
-                    console.log("33333333333")
-                    // console.log("userEmail", allOrders.orders[5].email);
-                    // const userEmail = orders.user.email; // Get the email from the customer orders
-                    const ord = allOrders.orders;
-                    console.log(customerData)
+        // fetch(`http://localhost:8000/api/getUser/${id}`)
+        //     .then(response => {
+        //         if (!response.ok) {
+        //             throw new Error('Network response was not ok');
+        //         }
+        //         return response.json();
+        //     })
+        //     .then(data => {
+        //         setCustomerData(data.user);
+        //         console.log("cust", data.user)
+        //         cd = data.user.email;
+        //         // Fetch orders only after customer data is successfully retrieved
+        //         return fetch(`http://localhost:8000/api/allOrders`);
+        //     })
+        //     .then(response => {
+        //         if (!response.ok) {
+        //             throw new Error('Network response was not ok');
+        //         }
+        //         return response.json();
+        //     })
+        //     .then(allOrders => {
+        //         console.log("allOrders", allOrders);
+        //         console.log("1111userEmail")
+        //         if (allOrders && allOrders.orders) {
+        //             console.log("33333333333")
+        //             // console.log("userEmail", allOrders.orders[5].email);
+        //             // const userEmail = orders.user.email; // Get the email from the customer orders
+        //             const ord = allOrders.orders;
+        //             console.log(customerData)
 
 
-                    const filteredOrders = ord.filter(order => order?.email === cd);
+        //             const filteredOrders = ord.filter(order => order?.email === cd);
 
-                    console.log("filteredOrders", filteredOrders);
-                    setOrders(filteredOrders);
-                }
-            })
-            .catch(error => {
-                console.log("2222userEmail")
-                console.error("Error fetching data:", error);
-                setError("Could not fetch data.");
-            });
+        //             console.log("filteredOrders", filteredOrders);
+        //             setOrders(filteredOrders);
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.log("2222userEmail")
+        //         console.error("Error fetching data:", error);
+        //         setError("Could not fetch data.");
+        //     });
+        fetchDish()
     }, [id]);
+    useEffect(()=>{
+        fetchOrders();
 
+    },[dishes])
+    const fetchOrders= async()=>{
+        // try {
+            var formdata = new FormData();
+            formdata.append('user_id', id);
+            var response = await axios.post('http://localhost/avadh_api/Accountant/customer/customer_detail.php',formdata,{
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+                },
+              });
+              console.log(response.data);
+              var data = response.data.order_data.map(item => {
+                var order = dishes.filter(dish => dish.id === item.dish_id);
+                console.log(order);
+                var dish = order?.[0]?.dishName;
+                return {...item, dishName:  dish};
+              })
+                setOrders( data );
+                setCustomerData(response.data.data);
+        // } catch (error) {
+        //     alert('Something went wrong ! Try again');
+        // }
+    }
+    const fetchDish  = async()=>{
+        try {
+            const response = await axios.post("http://localhost/avadh_api/chef/dish/view_dish.php", {});
+            // if (!response.ok) throw new Error("Failed to fetch dishes");
+            // const data = await response.json();
+            // console.log("Fetched dishes data:", data);
+            // if (Array.isArray(data.dish)) {
+            console.log("Dishes fetched",response.data.data)
+            setDishes(response?.data?.data);
+            // } else {
+            // console.error("Fetched dishes data is not an array:", data.dish);
+            // setDishes([]);
+            // }
+          } catch (error) {
+            console.error("Error fetching dishes:", error);
+          }
+    }
     // Render error message if there's an error
     if (error) {
         return <div>{error}</div>;
     }
 
     // If customer data is not yet loaded, show loading message
-    if (!customerData) {
-        return <div>Loading...</div>;
-    }
+    // if (!customerData) {
+    //     return <div>Loading...</div>;
+    // }
 
       
     return (
@@ -103,7 +148,7 @@ function CustomerDetail() {
                                                     <div>
                                                         <span>Phone<span className={styles.m_phone}>:</span><span className="text-dark">{customerData.phone}</span></span>
                                                     </div>
-                                                    <div className={styles.m_city_state_country}>
+                                                    {/* <div className={styles.m_city_state_country}>
                                                         <div>
                                                             <span>City<span className={styles.m_city}>:</span><span className="text-dark">{customerData.city}</span></span>
                                                         </div>
@@ -113,7 +158,7 @@ function CustomerDetail() {
                                                         <div>
                                                             <span>Country<span className={styles.m_country}>:</span><span className="text-dark">{customerData.country}</span></span>
                                                         </div>
-                                                    </div>
+                                                    </div> */}
                                                 </div>
                                             </Nav.Link>
                                         </Nav.Item>
@@ -139,11 +184,11 @@ function CustomerDetail() {
                                                 </thead>
                                                 <tbody>
                                                     {orders.length > 0 ? orders.map(order => (
-                                                        <tr key={order._id} align="center">
+                                                        <tr key={order.id} align="center">
                                                             <td align="center">{new Date(order.createdAt).toLocaleDateString()}</td>
-                                                            <td align="center">#{order._id}</td>
+                                                            <td align="center">#{order.id}</td>
                                                             <td align="center" style={{ whiteSpace: 'nowrap' }}>
-                                                                {order.orderDish.map(dish => dish.dish.dishName).join(', ')}
+                                                               {order.dishName}
                                                             </td>
                                                             <td align="center">₹{order.totalAmount}</td>
                                                             <td align="center">{order.paymentStatus}</td>

@@ -132,6 +132,7 @@ function SelectTable(props) {
             }
             return table;
         }));
+        // setGuestCount(guestCount);
     };
 
     
@@ -199,7 +200,7 @@ function SelectTable(props) {
                             </h5>
                             <h5>
                                 <i className="fa-solid fa-user mr-2-group p-2"></i>GUEST :
-                                <span className="p-1" id="member">{tables.find(table => table.number === chosenTable)?.guestCount || 1}</span>
+                                <span className="p-1" id="member">{tables.find(table => table.number === chosenTable) ? guestCount  : 1}</span>
                             </h5>
                         </div>
                         <button type="button" className="btn w-100" onClick={handleContinue}>Continue</button>

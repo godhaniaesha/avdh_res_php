@@ -89,8 +89,8 @@ function ChefDashboard() {
 
   const fetchOrdersForTable = async (tableId) => {
     try {
-      var data = orders.filter(order => order.tableNo === tableId && order.paymentStatus  ==='Unpaid');
-      console.log('orderdetails', data);
+      var data = orders.filter(order => order.tableNo === tableId);
+      console.log('orderdetails', orders);
       return data;
       // // Update the API endpoint to the correct one
       // const response = await axios.get(`http://localhost:8000/api/getOrderTableId/${tableId}`);

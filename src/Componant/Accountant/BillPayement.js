@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+import bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from '../../css/BillPayment.module.css'; // Import the CSS module
@@ -26,7 +26,7 @@ const BillPayment = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.post("http://localhost/avadh_api/Accountant/bill_payment/view_order.php",{},{
+      const response = await axios.post("http://localhost/avadh_api/Accountant/bill_payment/view_order.php", {}, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
@@ -53,7 +53,7 @@ const BillPayment = () => {
     }
   };
 
-  const handleTableClick = async (tableId ,tableName) => {
+  const handleTableClick = async (tableId, tableName) => {
     setSelectedTableId(tableName);
     // alert("Table " + tableName );
     try {
@@ -67,7 +67,7 @@ const BillPayment = () => {
 
   const fetchOrdersForTable = async (tableId) => {
     try {
-      var data = orders.filter(order => order.tableNo === tableId && order.paymentStatus  ==='Unpaid');
+      var data = orders.filter(order => order.tableNo === tableId && order.paymentStatus === 'Unpaid');
       console.log('orderdetails', data);
       return data;
       // const response = await axios.get(`http://localhost:8000/api/getOrderTableId/${tableId}`);
@@ -88,67 +88,58 @@ const BillPayment = () => {
 
   const updatePaymentStatus = async () => {
     try {
-      // const ordersToUpdate = orderDetails.map(order => ({
-      //   ...order,
-      //   paymentStatus: 'Paid' // Update the status to 'Paid'
-      // }));
-      // console.log('helllo',ordersToUpdate);
-      // const responses = await Promise.all(ordersToUpdate.map(async (order) => {
-      //   console.log("order", order.tableNo);
-
-      //   try {
-      //     const response = await fetch(`http://localhost:8000/api/updateOrderStatus/${order._id}`, {
-      //       method: 'PUT',
-      //       headers: {
-      //         'Content-Type': 'application/json',
-      //       },
-      //       body: JSON.stringify({ paymentStatus: order.paymentStatus }),
-      //     });
-
-      //     if (response.ok) {
-      //       // console.log("response",response);
-
-      //       const tableResponse = await fetch(`http://localhost:8000/api/getTable/${order.tableNo}`);
-      //       const tableData = await tableResponse.json();
-
-      //       if (tableData.status) {
-      //         await fetch(`http://localhost:8000/api/updateTable/${order.tableNo}`, {
-      //           method: 'PUT',
-      //           headers: {
-      //             'Content-Type': 'application/json',
-      //           },
-      //           body: JSON.stringify({ status: false }),
-      //         });
-      //       }
-
-      //       // Delete the order after updating the payment status
-      //       await deleteOrder(order._id); // Call the delete function
-      //     }
-
-      //     return response; // Return the response for further processing
-      //   } catch (fetchError) {
-      //     console.error(`Error updating order ID ${order._id}:`, fetchError);
-      //     return null; // Return null if there's an error
-      //   }
-      // }));
-      // fetchOrders()
-
-
-        
+     
+      console.log('Fetching order', orderDetails)
+      await Promise.all(
+        orderDetails[0].orderDish.map(async (order) => {
+          var formData = new FormData();
+          formData.append("order_id", order.id);
+          formData.append("paymentStatus", "Paid");
+          try {
+            const response = await axios.post(
+              "http://localhost/avadh_api/chef/dashboard/update_order.php",
+              formData,
+              {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+                  "Content-Type": "multipart/form-data", // Corrected content type
+                },
+              }
+            );
+            console.log(`Order ${order.id} updated successfully:`, response.data);
+          } catch (apiError) {
+            console.error(`Error updating order ID ${order.id}:`, apiError);
+          }
+        })
+      );
+      var formData = new FormData();
+      formData.append("table_id", orderDetails[0].tableNo);
+      formData.append("status", "false");
+        const response = await axios.post(
+          "http://localhost/avadh_api/super_admin/tables/update_tables.php",
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+              "Content-Type": "multipart/form-data", // Corrected content type
+            },
+          }
+        );
       console.log("All orders processed.");
       const ordersToUpdate = orderDetails.map(order => ({
         ...order,
         paymentStatus: 'Paid' // Update the status to 'Paid'
       }));
       // setTables([])
-      var data = tables.map(t => 
-        t._id === ordersToUpdate[0]._id 
+      console.log("table is free now.");
+      var data = tables.map(t =>
+        t._id === ordersToUpdate[0]._id
           ? { ...t, paymentStatus: 'Paid' } // Only update paymentStatus
           : t // Keep the same object if no match
       );
-      console.log('data123',tables);
+      console.log('data123', tables);
       console.log(ordersToUpdate);
-      console.log('data',data);
+      console.log('data', data);
       setTables(data);
       // const allUpdated = responses.every(response => response && response.ok);
       // if (allUpdated) {
@@ -211,7 +202,7 @@ const BillPayment = () => {
                           <div
                             key={table._id}
                             className="mb-3"
-                            onClick={() => handleTableClick(table.id,table.tableNo)}
+                            onClick={() => handleTableClick(table.id, table.tableNo)}
                             data-table-id={table._id}
                           >
                             <div
@@ -298,12 +289,12 @@ const BillPayment = () => {
                         </div>
                       </div>
                       {
-                       
-                          order.tableNo === selectedTableId && ( // Assuming each table has an 'id' property
-                            <div key={order.id} className={`${styles.v_bold_order} text-nowrap`}>
-                              (Table : <span>{order.tableNo}</span>)
-                            </div>)}
-                        {/* )) */}
+
+                        order.tableNo === selectedTableId && ( // Assuming each table has an 'id' property
+                          <div key={order.id} className={`${styles.v_bold_order} text-nowrap`}>
+                            (Table : <span>{order.tableNo}</span>)
+                          </div>)}
+                      {/* )) */}
                       {/* } */}
                     </div>
                     <div className="border-bottom border-top p-sm-2 p-0">
