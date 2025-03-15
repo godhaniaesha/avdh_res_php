@@ -128,7 +128,7 @@ function AddTable(props) {
                     setTimeout(() => {
                         successModal.hide();
                         navigate('/supertable');
-                    }, 20000);
+                    }, 2000);
                 }
             } else {
                 alert(response.data.message || 'Failed to add table');
