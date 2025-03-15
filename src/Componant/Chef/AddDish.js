@@ -200,8 +200,8 @@ function AddDish(props) {
                   <option value="" disabled>
                     Status
                   </option>
-                  <option value="available">Available</option>
-                  <option value="notavailable">Not Available</option>
+                  <option value="Available">Available</option>
+                  <option value="Notavailable">Not Available</option>
                 </select>
                 <div>
                   <input

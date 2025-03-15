@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom'; // Import useNavigate for naviga
 
 function EditDish() {
 
-
+  const [categories, setCategories] = useState([]);
   const [imageFile, setImageFile] = useState(null);
   const [dishData, setDishData] = useState({
     dishId: "",
@@ -28,10 +28,29 @@ function EditDish() {
   });
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.post("http://localhost/avadh_api/chef/category/view_category.php"); // Using axios to get categories
+      // Check if the response contains the expected data
+      console.log("Fetched data is not an array:", response.data.categories);
+      setCategories(response.data.categories)
 
+      // if (Array.isArray(response.data.categcategoriesory)) {
+      //   setCategories(response.data.categories); // Set categories state
+      //   console.log(categories)
+      // } else {
+      //   console.log("Fetched data is not an array:", response.data.categories);
+      //   // alert("Failed to fetch categories. Please try again.");
+      // }
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      // alert("Failed to fetch categories. Please try again.");
+    }
+  };
   // Fetching dish data from localStorage on component mount
   const dishId = localStorage.getItem("dishId"); // Get the dish ID from local storage
   useEffect(() => {
+    fetchCategories()
     console.log(dishId, "dishId");
 
     const formData = new FormData();
@@ -180,9 +199,11 @@ function EditDish() {
                   onChange={handleChange}
                 >
                   <option value="" disabled>Select Dish Category</option>
-                  <option value="Biryani">Biryani</option>
-                  <option value="SouthIndian">South Indian</option>
-                  {/* Additional options can be added here */}
+                  {categories.map((category) => (
+                    <option key={category._id} value={category.id}>
+                      {category.categoryName}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>

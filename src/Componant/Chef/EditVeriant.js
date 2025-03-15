@@ -40,6 +40,7 @@ function EditVeriant() {
   };
 
   const populateDishOptions = async (categoryId) => {
+    // alert(categoryId)
     try {
       const response = await axios.post(`http://localhost/avadh_api/chef/dish/view_dish.php`);
       const dishes = response.data.data
@@ -63,8 +64,8 @@ function EditVeriant() {
       const variant = response.data.variants;
       console.log(variant)
       setVariantData({
-        categoryName: variant.category.categoryName,
-        dishName: variant.dish.dishName,
+        categoryName: variant.category,
+        dishName: variant.dish,
         variantName: variant.variantName,
         price: variant.price,
         variantImage: null,
@@ -76,14 +77,15 @@ function EditVeriant() {
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setVariantData(prevState => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setVariantData(prevState => ({
+  //     ...prevState,
+  //     [name]: value,
+  //   }));
+  // };
 
+ 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -155,25 +157,30 @@ function EditVeriant() {
           <form id={styles.editVariant} onSubmit={editVariant}>
             <div className={`row ${styles.v_row_adddish}`}>
               <div className="col-xs-12 col-md-6" style={{ padding: 0 }}>
-                <select className={`form-select ${styles['form-select']} ${styles['form-control']} ${styles.v_dishinput_pad}`} name="dishCategory" value={variantData.categoryName} onChange={handleChange} required>
-                  <option value="" disabled>Select Dish Category</option>
+                <select className={`form-select ${styles['form-select']} ${styles['form-control']} ${styles.v_dishinput_pad}`} name="dishCategory" value={variantData?.categoryName?.id} onChange={(e) => {setVariantData({ ...variantData, categoryName: e.target.value });populateDishOptions(e.target.value)}} required>
+                  <option value={variantData?.categoryName?.id}>{variantData?.categoryName?.categoryName}</option>
+                  {console.log('variant',variantData?.categoryName?.categoryName)}
                   {Array.isArray(dishCategories) && dishCategories.map(category => (
-                    <option key={category._id} value={category._id}>{category.categoryName}</option>
+                    variantData?.categoryName?.id !== category.id && (
+                      <option key={category._id} value={category.id}>
+                        {category.categoryName}
+                      </option>
+                    )
                   ))}
                 </select>
               </div>
               <div className="col-xs-12 col-md-6" style={{ padding: 0 }}>
-                <select className={`form-select ${styles['form-select']} ${styles['form-control']} ${styles.v_dishinput_pad}`} name="dishName" value={variantData.dishName} onChange={handleChange} required>
+                <select className={`form-select ${styles['form-select']} ${styles['form-control']} ${styles.v_dishinput_pad}`} name="dishName" value={variantData.dishName} onChange={(e) => setVariantData({ ...variantData, dishName: e.target.value })} required>
                   <option value="" disabled>Select Dish Name</option>
                   {dishes?.map(dish => (
-                    <option key={dish._id} value={dish._id}>{dish.dishName}</option>
+                    <option key={dish.id} value={dish.id}>{dish.dishName}</option>
                   ))}
                 </select>
               </div>
             </div>
             <div className={`row ${styles.v_row_adddish}`}>
               <div className="col-xs-12 col-md-6" style={{ padding: 0 }}>
-                <input type="text" className={`${styles['form-control']} ${styles.v_dishinput_pad}`} placeholder="Variant Name" required aria-label="Variant Name" name="varName" value={variantData.variantName} onChange={handleChange} />
+                <input type="text" className={`${styles['form-control']} ${styles.v_dishinput_pad}`} placeholder="Variant Name" required aria-label="Variant Name" name="varName" value={variantData.variantName} onChange={(e) => setVariantData({ ...variantData, variantName: e.target.value })} />
               </div>
               <div className="col-xs-12 col-md-6" style={{ padding: 0 }}>
                 <input
@@ -183,7 +190,7 @@ function EditVeriant() {
                   aria-label="Price"
                   name="price"
                   value={variantData.price}
-                  onChange={handleChange}
+                  onChange={(e) => setVariantData({ ...variantData, price: e.target.value })}
                   required
                 />
               </div>

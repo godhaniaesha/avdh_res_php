@@ -31,10 +31,14 @@ function WaiterMenu() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
   let token;
+  const [customers,setCustomers] = useState();
 
   useEffect(() => {
     token = localStorage.getItem("authToken");
-
+    var getcustomers = JSON.parse(localStorage.getItem("customerDetails"));
+    if(getcustomers){
+      setCustomers(getcustomers);
+    }
     fetchCategories();
     fetchDishes();
     fetchvariants();
@@ -320,7 +324,7 @@ function WaiterMenu() {
     const lastName = document.getElementById("lastname").value;
     const contactno = document.getElementById("contactno").value;
     console.log("Email", email, firstName, lastName, contactno);
-
+    localStorage.setItem("customerDetails",JSON.stringify({email: email, firstName: firstName, lastName: lastName, contactno:contactno}));
     if (firstName && lastName && contactno && contactno) {
       try {
         // Retrieve the table ID from local storage
@@ -525,20 +529,20 @@ function WaiterMenu() {
               <div className="row mb-3">
                 <div className="col-md-6 col-12 mb-md-0 mb-3">
                   <label className={`${styles['x_lab']}`} >First Name</label><br />
-                  <input type="text" className={`${styles['x_fcon']}  w-100`} id="firstname" />
+                  <input type="text" className={`${styles['x_fcon']}  w-100`} value={customers?.firstName || ''} onChange={(e) => setCustomers({ ...customers, firstName: e.target.value })} id="firstname" />
                 </div>
                 <div className="col-md-6 col-12  mb-md-0">
                   <label className={`${styles['x_lab']}`} >Last Name</label><br />
-                  <input type="text" className={`${styles['x_fcon']} w-100 `} id="lastname" />
+                  <input type="text" className={`${styles['x_fcon']} w-100 `} value={customers?.lastName || ''} onChange={(e) => setCustomers({ ...customers, lastName: e.target.value })} id="lastname" />
                 </div>
               </div>
               <div className="mb-3">
                 <label className={`${styles['x_lab']}`} >Email ID</label><br />
-                <input type="email" className={`${styles['x_fcon']}  w-100 `} id="email" />
+                <input type="email" className={`${styles['x_fcon']}  w-100 `} value={customers?.email || ''} onChange={(e) => setCustomers({ ...customers, email: e.target.value })} id="email" />
               </div>
               <div className="mb-3">
                 <label className={`${styles['x_lab']}`} >Contact No.</label><br />
-                <input type="tel" className={`${styles['x_fcon']}  w-100 `} id="contactno" />
+                <input type="tel" className={`${styles['x_fcon']}  w-100 `} value={customers?.contactno || ''} onChange={(e) => setCustomers({ ...customers, contactno: e.target.value })} id="contactno" />
               </div>
             </form>
           </div>

@@ -18,6 +18,7 @@ export default function History() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [sortOrder, setSortOrder] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [filtered,setfiltered] = useState([]);
   const navigate = useNavigate();
   const [history, setHistory] = useState([])
 
@@ -121,7 +122,9 @@ export default function History() {
   };
 
   const getSortedHistory = () => {
-    const sortedHistory = [...history];
+    const sortedHistory  = history.filter(dish =>
+      dish.firstName.toLowerCase().includes(searchQuery.toLowerCase())
+    );;
 
     if (sortOrder === "A") {
       sortedHistory.sort((a, b) => a.id.localeCompare(b.id));
@@ -140,13 +143,13 @@ export default function History() {
     } else if (sortOrder === "H") {
       sortedHistory.sort((a, b) => b.totalAmount - a.totalAmount);
     }
-
-    setHistory(sortedHistory);
+    setfiltered(sortedHistory)
+    // setHistory();
   };
 
   useEffect(() => {
     getSortedHistory();
-  }, [sortOrder]);
+  }, [sortOrder , searchQuery,history]);
 
 
   return (
@@ -210,7 +213,7 @@ export default function History() {
                 </tr>
               </thead>
               <tbody>
-                {history.map((history) => (
+                {filtered.map((history) => (
                   <tr key={history.id} align="center">
                     <td className="text-center">
                       {history.id}

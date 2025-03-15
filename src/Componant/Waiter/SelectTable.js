@@ -130,13 +130,13 @@ function SelectTable(props) {
                 const newGuestCount = increment ? Math.min(table.guestCount + 1, table.count) : Math.max(1, table.guestCount - 1);
                 return { ...table, guestCount: newGuestCount };
             }
+            
             return table;
         }));
         // setGuestCount(guestCount);
     };
 
     
-    let count =0;
     return (
         <section id={styles.a_selectTable}>
             <WaiterNavbar toggleDrawer={toggleDrawer} showSearch={false} toggleNotifications={toggleNotifications} />
@@ -161,7 +161,8 @@ function SelectTable(props) {
                                 }}
                             >
                                 {/* Table number display */}
-                                <p className={`${styles.a_tNo} position-absolute top-50% text-transfrom`}>{table.tableName}</p>
+                                {console.log(table.number)}
+                                <p className={`${styles.a_tNo} position-absolute top-50% text-capitalize`}>{table.number}</p>
                                 <img src={require('../../Image/table-big.png')} alt="Table" />
 
                                 {/* Guest Count Control */}
@@ -200,7 +201,7 @@ function SelectTable(props) {
                             </h5>
                             <h5>
                                 <i className="fa-solid fa-user mr-2-group p-2"></i>GUEST :
-                                <span className="p-1" id="member">{tables.find(table => table.number === chosenTable) ? guestCount  : 1}</span>
+                                <span className="p-1" id="member"> {tables.find(table => table.id === parseInt(chosenTable))?.guestCount ?? 1}</span>
                             </h5>
                         </div>
                         <button type="button" className="btn w-100" onClick={handleContinue}>Continue</button>

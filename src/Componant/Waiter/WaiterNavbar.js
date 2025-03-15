@@ -75,6 +75,7 @@ const WaiterNavbar = ({ toggleDrawer, toggleNotifications, waiterName, showSearc
     const response = await axios.post("http://localhost/avadh_api/logout.php")
 
     localStorage.removeItem('authToken');
+    localStorage.removeItem('customerDetails');
     console.log(response);
     nevigate('/login');
 

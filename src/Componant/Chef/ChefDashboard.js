@@ -77,7 +77,8 @@ function ChefDashboard() {
     // alert("Table " + tableName.replace());
 
     try {
-      const ordersForTable = await fetchOrdersForTable(tableName.replace(/\D/g, ""));
+      const ordersForTable = await fetchOrdersForTable(tableId);
+      console.log(ordersForTable);
       setOrderDetails(ordersForTable);
       console.log('orderDetailsswww ', ordersForTable);
 
@@ -88,8 +89,9 @@ function ChefDashboard() {
   };
 
   const fetchOrdersForTable = async (tableId) => {
+    // alert(typeof(tableId));
     try {
-      var data = orders.filter(order => order.tableNo === tableId);
+      var data = orders.filter(order => parseInt(order.tableNo) === parseInt(tableId));
       console.log('orderdetails', orders);
       return data;
       // // Update the API endpoint to the correct one
