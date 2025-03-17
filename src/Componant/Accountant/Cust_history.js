@@ -66,7 +66,7 @@ function Cust_history(props) {
     })
       .then((response) => {
         if (response.status === 200) {
-          console.log(response.data.orders)
+          console.log('',response.data.orders)
           setHistory(response.data.orders)
         } else {
           console.error("Expected an array of dishes but received:", response.data);
@@ -86,35 +86,35 @@ function Cust_history(props) {
         let comparison = 0;
         switch (option) {
           case "OrderID_A": // Order ID A-Z
-            comparison = String(a.id).localeCompare(String(b.id));
+            comparison = String(a.orderDetails.id).localeCompare(String(b.orderDetails.id));
             break;
           case "OrderID_Z": // Order ID Z-A
-            comparison = String(b.id).localeCompare(String(a.id));
+            comparison = String(b.orderDetails.id).localeCompare(String(a.orderDetails.id));
             break;
 
           case "Date_A": // Date (Oldest First)
-            comparison = new Date(a.createdAt) - new Date(b.createdAt);
+            comparison = new Date(a.orderDetails.createdAt) - new Date(b.orderDetails.createdAt);
             break;
           case "Date_Z": // Date (Newest First)
-            comparison = new Date(b.createdAt) - new Date(a.createdAt);
+            comparison = new Date(b.orderDetails.createdAt) - new Date(a.orderDetails.createdAt);
             break;
           case "Customer_A": // Customer Name A-Z
-            comparison = a.username.localeCompare(b.username);
+            comparison = a.orderDetails.username.localeCompare(b.orderDetails.username);
             break;
           case "Customer_Z": // Customer Name Z-A
-            comparison = b.username.localeCompare(a.username);
+            comparison = b.orderDetails.username.localeCompare(a.orderDetails.username);
             break;
           case "Amount_A": // Amount Ascending
-            comparison = a.totalAmount - b.totalAmount;
+            comparison = a.orderDetails.totalAmount - b.orderDetails.totalAmount;
             break;
           case "Amount_Z": // Amount Descending
-            comparison = b.totalAmount - a.totalAmount;
+            comparison = b.orderDetails.totalAmount - a.orderDetails.totalAmount;
             break;
           case "Status_A": // Paid first
-            comparison = a.paymentStatus === "Paid" ? -1 : 1;
+            comparison = a.orderDetails.paymentStatus === "Paid" ? -1 : 1;
             break;
           case "Status_Z": // Unpaid first
-            comparison = a.paymentStatus === "Paid" ? 1 : -1;
+            comparison = a.orderDetails.paymentStatus === "Paid" ? 1 : -1;
             break;
           default:
             break;
@@ -207,12 +207,12 @@ function Cust_history(props) {
             <tbody>
               {history.length > 0 ? ( // Use filtered customers for rendering
                 history.map((history) => (
-                  <tr align="center" className={styles.m_img} key={history.id}>
-                    <td align="center">{history.id}</td>
-                    <td align="center">{new Date(history.createdAt).toLocaleDateString("en-GB")}</td>
-                    <td align="center">{history.username}</td>
-                    <td align="center">₹ {history.totalAmount}</td>
-                    <td align="center" className={history.paymentStatus === "Paid" ? "text-success" : "text-danger"}>{history.paymentStatus}</td>
+                  <tr align="center" className={styles.m_img} key={history.orderDetails.id}>
+                    <td align="center">{history.orderDetails.id}</td>
+                    <td align="center">{new Date(history.orderDetails.createdAt).toLocaleDateString("en-GB")}</td>
+                    <td align="center">{history.orderDetails.username}</td>
+                    <td align="center">₹ {history.orderDetails.totalAmount}</td>
+                    <td align="center" className={history.orderDetails.paymentStatus === "Paid" ? "text-success" : "text-danger"}>{history.orderDetails.paymentStatus}</td>
                   </tr>
                 ))
               ) : (

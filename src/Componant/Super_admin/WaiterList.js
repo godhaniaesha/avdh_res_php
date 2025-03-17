@@ -38,9 +38,11 @@ function WaiterList(props) {
         );
 
         console.log("API Response:", response.data.data);
+        const revenueData = Array.isArray(response.data.data) 
+        ? response.data.data 
+        : response.data.data ? [response.data.data] : [];
 
-
-        setWaiters(response.data.data); // Store the filtered waiters
+        setWaiters(revenueData); // Store the filtered waiters
 
       } catch (error) {
         console.error("Error fetching waiters:", error);
@@ -246,6 +248,7 @@ function WaiterList(props) {
                 </tr>
               </thead>
               <tbody>
+                {console.log('waiter',waiters)}
                 {waiters.length > 0 ? (
                   waiters
                     .filter(waiter =>

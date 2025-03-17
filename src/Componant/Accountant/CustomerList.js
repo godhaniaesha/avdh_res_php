@@ -88,16 +88,16 @@ function CustomerList(props) {
         },
       }
     )
-    console.log('response', response.data.data);
+    console.log('response123', response.data.data);
     var data = response.data.data.map(item => {
       var sum = 0;
-      var order = orders.filter(order => order.userId === parseInt(item.id));
+      var order = orders.filter(order => order.orderDetails.userId === parseInt(item.id));
       console.log('hey',order);
-      order.forEach(o => sum += o.totalAmount);
+      order.forEach(o => sum += o.orderDetails.totalAmount);
       return {...item, billingAmount: sum };
     }
     )
-    console.log('response', data);
+    console.log('response', orders);
 
     setCustomers(data); // Set the filtered customer data
   };

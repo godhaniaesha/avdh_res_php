@@ -50,11 +50,12 @@ const AccountList = () => {
             },
           }
         );
-
+        const revenueData = Array.isArray(response.data.data) 
+        ? response.data.data 
+        : response.data.data ? [response.data.data] : [];
         console.log("API Response:", response.data.data);
 
-
-        setAccountants(response.data.data); // Store the filtered waiters
+        setAccountants(revenueData); // Store the filtered waiters
 
       } catch (error) {
         console.error("Error fetching waiters:", error);

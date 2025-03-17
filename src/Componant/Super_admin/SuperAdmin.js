@@ -25,75 +25,143 @@ const SuperAdmin = (props) => {
   const [counts, setCounts] = useState({
     chefs: 0,
     waiters: 0,
+    order: 0,
     accountants: 0,
+    revenue: 0,
+    chart1: [],
+    chart2: []
   });
 
   useEffect(() => {
     const fetchCounts = async () => {
-        const token = localStorage.getItem("authToken");
-        const headers = {
-            'Authorization': `Bearer ${token}`
-        };
+      const token = localStorage.getItem("authToken");
+      const headers = {
+        'Authorization': `Bearer ${token}`
+      };
 
-        try {
-            // Fetch all counts in parallel
-            const [chefResponse, waiterResponse, accountantResponse] = await Promise.all([
-                axios.post('http://localhost/avadh_api/super_admin/chef/view_chef.php', {}, { headers }),
-                axios.post('http://localhost/avadh_api/super_admin/waiter/view_waiter.php', {}, { headers }),
-                axios.post('http://localhost/avadh_api/super_admin/accountant/view_accountant.php', {}, { headers })
-            ]);
-            
-            
-            // Count the length of data arrays from each response
-            setCounts({
-                chefs: chefResponse.data.chefs ? chefResponse.data.chefs.length : 0,
-                waiters: waiterResponse.data.data ? waiterResponse.data.data.length : 0,
-                accountants: accountantResponse.data.data ? accountantResponse.data.data.length : 0
-            });
-        } catch (error) {
-            console.error("Error fetching counts:", error);
-        }
+      try {
+        // Fetch all counts in parallel
+        const [chefResponse, waiterResponse, orderResponse, revenueResponse, chart1, chart2] = await Promise.all([
+          axios.post('http://localhost/avadh_api/super_admin/dashboard/all_chefs.php', {}, { headers }),
+          axios.post('http://localhost/avadh_api/super_admin/dashboard/all_waiters.php', {}, { headers }),
+          axios.post('http://localhost/avadh_api/super_admin/dashboard/all_orders.php', {}, { headers }),
+          axios.post('http://localhost/avadh_api/super_admin/dashboard/revenue.php', {}, { headers }),
+          axios.post('http://localhost/avadh_api/super_admin/dashboard/chart1.php', {}, { headers }),
+          axios.post('http://localhost/avadh_api/super_admin/dashboard/chart2.php', {}, { headers })
+
+        ])
+
+        console.log('....', chart1.data.data);
+        //   revenueResponse.data.data ? revenueResponse.data.data.map(
+        //     (item) => sum += item.revenue 
+        // )
+        // Count the length of data arrays from each response
+        setCounts({
+          chefs: chefResponse.data ? chefResponse.data.totalChefs : 0,
+          waiters: waiterResponse.data ? waiterResponse.data.totalWaiters : 0,
+          order: orderResponse.data ? orderResponse.data.TotalOrders : 0,
+          revenue: revenueResponse.data.data ? revenueResponse.data.data.totalRevenue : 0,
+          chart1: chart1.data.data ? chart1.data.data : [],
+          chart2: chart2.data.data ? chart2.data.data : [],
+        });
+      } catch (error) {
+        console.error("Error fetching counts:", error);
+      }
     };
 
+
     fetchCounts();
-}, []);
+  }, []);
+  const data = counts.chart2
+    .filter(item => item.role !== 'Super Admin' && item.role !== 'Customer')
+    .map(item => {
+        const colors = {
+            "Accountan": "#f99bab", // Pink
+            "Chef": "#62b2fc",      // Blue
+            "Waiter": "#9bdfc4"     // Green
+        };
+        
+        console.log("role", item.role);
+        return {
+            name: item.role,
+            value: parseInt(item.total),
+            color: colors[item.role]
+        };
+    });
 
-  const data = [
-    { name: "Chefs", value: counts.chefs, color: "#62b2fc" }, // Blue
-    { name: "Waiter", value: counts.waiters, color: "#9bdfc4" }, // Green
-    { name: "Accountant", value: counts.accountants, color: "#f99bab" }, // Pink
-  ];
-
+  console.log('datatatata',data);
   // Then calculate total using data
   const total = data.reduce((acc, item) => acc + item.value, 0);
 
   useEffect(() => {
+    // All possible months
+    const allMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    
+    // Map month names to their index (0-11)
+    const monthIndices = {
+      "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5,
+      "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11,
+      // Also include shortened versions
+      "Jan": 0, "Feb": 1, "Mar": 2, "Apr": 3, "May": 4, "Jun": 5,
+      "Jul": 6, "Aug": 7, "Sep": 8, "Oct": 9, "Nov": 10, "Dec": 11
+    };
+    
+    // Find the index of the last month in the data
+    let lastMonthIndex = -1;
+    counts.chart1.forEach(item => {
+      const monthIndex = monthIndices[item.monthName];
+      if (monthIndex !== undefined && monthIndex > lastMonthIndex) {
+        lastMonthIndex = monthIndex;
+      }
+    });
+    
+    // If no valid month found, default to showing all months
+    if (lastMonthIndex === -1) {
+      lastMonthIndex = 11; // December
+    }
+    
+    // Get months up to the last month in the data
+    const displayMonths = allMonths.slice(0, lastMonthIndex + 1);
+    
+    // Create a mapping of month names to their values
+    const monthToOrdersMap = {};
+    counts.chart1.forEach(item => {
+      // Handle both full and abbreviated month names
+      let monthKey;
+      if (item.monthName.length > 3) {
+        monthKey = item.monthName.substring(0, 3);
+      } else {
+        monthKey = item.monthName;
+      }
+      monthToOrdersMap[monthKey] = parseInt(item.totalOrders, 10);
+    });
+    
+    // Create data array for months to display, using 0 for months without data
+    const values = displayMonths.map(month => monthToOrdersMap[month] || 0);
+    
     // Initialize chart
     const ctx = document.getElementById("myLineChart").getContext("2d");
+    
+    // Destroy existing chart if it exists
+    let chartStatus = Chart.getChart("myLineChart");
+    if (chartStatus !== undefined) {
+      chartStatus.destroy();
+    }
+    
     const myLineChart = new Chart(ctx, {
       type: "line",
       data: {
-        labels: [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "June",
-          "July",
-          "Aug",
-          "Sept",
-        ],
+        labels: displayMonths,
         datasets: [
           {
-            label: "Monthly Data",
-            data: [10, 30, 45, 60, 65, 70, 85, 100, 150],
+            label: "Monthly Orders",
+            data: values,
             backgroundColor: "rgba(76, 93, 81, 0.1)",
             borderColor: "rgba(76, 93, 81, 1)",
             borderWidth: 3,
             fill: true,
             tension: 0.3,
-            pointRadius: 0,
+            pointRadius: 4,
           },
         ],
       },
@@ -103,9 +171,9 @@ const SuperAdmin = (props) => {
         scales: {
           y: {
             beginAtZero: true,
-            max: 150,
+            suggestedMax: Math.max(...values) * 1.2 || 5,
             ticks: {
-              stepSize: 30,
+              precision: 0
             },
             grid: {
               color: "rgba(0, 0, 0, 0.1)",
@@ -119,8 +187,12 @@ const SuperAdmin = (props) => {
         },
         plugins: {
           legend: {
-            display: false,
+            display: true,
           },
+          title: {
+            display: true,
+            text: 'Monthly Order Trends'
+          }
         },
       },
     });
@@ -129,7 +201,8 @@ const SuperAdmin = (props) => {
     return () => {
       myLineChart.destroy();
     };
-  }, []);
+  }, [counts]); // Dependency array includes orderData to update when data changes
+
   const toggleDrawer = () => {
     setIsSidebarOpen((prev) => !prev);
   };
@@ -171,7 +244,7 @@ const SuperAdmin = (props) => {
     }
 
     const token = localStorage.getItem("authToken");
-    
+
     try {
       const formData = new FormData();
       formData.append('oldPassword', oldPassword);
@@ -203,7 +276,7 @@ const SuperAdmin = (props) => {
 
       if (responseData.success === true) {
         alert(responseData.message || 'Password changed successfully');
-        
+
         // Updated modal closing logic
         try {
           const changePasswordModal = document.getElementById("changepassModal");
@@ -216,7 +289,7 @@ const SuperAdmin = (props) => {
         } catch (error) {
           console.error("Error closing modal:", error);
         }
-        
+
         // Clear the password fields
         setOldPassword("");
         setNewPassword("");
@@ -226,7 +299,7 @@ const SuperAdmin = (props) => {
       }
     } catch (error) {
       console.error("Error changing password:", error);
-      
+
       if (error.response) {
         try {
           let errorData;
@@ -268,7 +341,7 @@ const SuperAdmin = (props) => {
                     </div>
                   </div>
                   <div className={styles.b_text}>
-                    <h1>100</h1>
+                    <h1>{counts.order}</h1>
                     <p>Total Order</p>
                   </div>
                 </div>
@@ -285,7 +358,7 @@ const SuperAdmin = (props) => {
                     </div>
                   </div>
                   <div className={styles.b_text}>
-                    <h1>128</h1>
+                    <h1>{counts.revenue}</h1>
                     <p>Total Revenue</p>
                   </div>
                 </div>
@@ -302,7 +375,7 @@ const SuperAdmin = (props) => {
                     </div>
                   </div>
                   <div className="b_text">
-                  <h1>{counts.chefs}</h1>
+                    <h1>{counts.chefs}</h1>
                     <p>Total Chef</p>
                   </div>
                 </div>
@@ -319,7 +392,7 @@ const SuperAdmin = (props) => {
                     </div>
                   </div>
                   <div className="b_text">
-                  <h1>{counts.waiters}</h1>
+                    <h1>{counts.waiters}</h1>
                     <p>Total Waiter</p>
                   </div>
                 </div>

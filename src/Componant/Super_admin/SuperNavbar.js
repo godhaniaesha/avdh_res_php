@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
 import styles from "../../css/SuperAdmin.module.css";
 import axios, { Axios } from "axios";
@@ -7,7 +7,8 @@ import { useNavigate } from "react-router-dom";
 
 
 function SuperNavbar({ adminName, toggleDrawer, showSearch }) {
-  const loggedInUserName = localStorage.getItem("firstName");
+  const [loggedInUserName, setloggedInUserName] = useState('');
+  const [userData, setUserData] = useState();
   const [dropdown, setDropDown] = useState(false);
   const nevigate = useNavigate();
 
@@ -16,6 +17,26 @@ function SuperNavbar({ adminName, toggleDrawer, showSearch }) {
   };
 
   console.log("loggedInUserId",loggedInUserName);
+  useEffect(() => {
+    getUser();
+  }, []);
+  const getUser = async () => {
+    const token = localStorage.getItem('authToken');
+    console.log("Token:", token);
+    const response = await axios.post(
+      "http://localhost/avadh_api/waiter/profile/change_profile.php",
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          "Content-Type": "multipart/form-data", // Important for file uploads
+        },
+      }
+    );
+    console.log("profile", response.data.user);
+    setUserData(response.data.user)
+    setloggedInUserName(response.data.user.firstName)
+  }
 
   const handleLogout = async () => {
     if (window.bootstrap && window.bootstrap.Modal) {
@@ -67,7 +88,10 @@ function SuperNavbar({ adminName, toggleDrawer, showSearch }) {
           <div
             className={`${styles.a_pro} d-flex align-items-center align-content-center`}
           >
-            <img src={require("../../Image/Ellipse 717.png")} alt="" />
+             {userData?.image ? <img src={`http://localhost/avadh_api/images/${userData?.image}`} alt={userData?.image} style={{width:"36px", height:"36px",borderRadius:"50%"}} ></img>
+                :
+                <img src={require("../../Image/Ellipse 717.png")} alt="" />
+              }
             <div className={`${styles.b_name} dropdown show`} onClick={handleDropdownClick}>
               <a
                 className="btn dropdown-toggle"
