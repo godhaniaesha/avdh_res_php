@@ -18,7 +18,7 @@ function EditTable() {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [changepasswordmodal, setChangepasswordmodal] = useState(false)
-    const editingTableId = JSON.parse(localStorage.getItem('tableData'));
+    const editingTableId = JSON.parse(localStorage.getItem('editingTableId'));
 
     useEffect(() => {
         console.log(editingTableId, "editingTableId");
@@ -53,7 +53,7 @@ function EditTable() {
 
     const handleUpdate = async (event) => {
         event.preventDefault();
-        const editingTableId = localStorage.getItem('tableData');
+        // const editingTableId = localStorage.getItem('editingTableId');
 
         const token = localStorage.getItem('authToken');
         const formData = new FormData();
