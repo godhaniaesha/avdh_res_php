@@ -88,7 +88,6 @@ const BillPayment = () => {
 
   const updatePaymentStatus = async () => {
     try {
-     
       console.log('Fetching order', orderDetails)
       await Promise.all(
         orderDetails[0].orderDish.map(async (order) => {
@@ -203,7 +202,7 @@ const BillPayment = () => {
                             key={table._id}
                             className="mb-3"
                             onClick={() => handleTableClick(table.id, table.tableNo)}
-                            data-table-id={table._id}
+                            data-table-id={table.id}
                           >
                             <div
                               className={`${styles.v_chef_border_order}`}
@@ -241,7 +240,7 @@ const BillPayment = () => {
                                     fontWeight: "500",
                                     marginRight: "12px"
                                   }}>
-                                    Order #{table.tableNo || "Unknown"}
+                                    Order #{table._id || "Unknown"}
                                   </span>
                                 </div>
 
@@ -254,7 +253,6 @@ const BillPayment = () => {
                                   {new Date().toLocaleString()}
                                 </div>
                               </div>
-
                               {/* Right arrow */}
                               <div style={{
                                 position: "absolute",

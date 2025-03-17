@@ -89,7 +89,10 @@ function CustomerList(props) {
       }
     )
     console.log('response123', response.data.data);
-    var data = response.data.data.map(item => {
+    const newData = Array.isArray(response.data.data) 
+    ? response.data.data
+    : response.data.data ? [response.data.data] : [];
+    var data = newData.map(item => {
       var sum = 0;
       var order = orders.filter(order => order.orderDetails.userId === parseInt(item.id));
       console.log('hey',order);
