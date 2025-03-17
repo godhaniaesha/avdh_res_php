@@ -245,6 +245,7 @@ function AddTable(props) {
 
         window.history.pushState(null, '', window.location.href);
     };
+
     return (
         <>
             <section id={styles.a_selectTable} showSearch={false}>
@@ -306,40 +307,6 @@ function AddTable(props) {
                         </div>
                     </form>
 
-                    {/* Success Modal */}
-                    {/* <div 
-                        className="modal fade" 
-                        id="imgModal" 
-                        tabIndex="-1" 
-                        aria-labelledby="successModalLabel" 
-                        aria-hidden="true"
-                        data-bs-backdrop="static" // Prevents closing when clicking outside
-                    >
-                        <div className="modal-dialog modal-dialog-centered">
-                            <div className="modal-content" style={{ backgroundColor: '#f6f6f6', border: 'none' }}>
-                                <div className="modal-body text-center">
-                                    <h5 className="modal-title mb-3">Success!</h5>
-                                    <p>Table added successfully!</p>
-                                    <div className="mt-4">
-                                        <button 
-                                            type="button" 
-                                            className="btn btn-secondary" 
-                                            onClick={() => {
-                                                const modalElement = document.getElementById('imgModal');
-                                                const modal = Modal.getInstance(modalElement);
-                                                if (modal) {
-                                                    modal.hide();
-                                                }
-                                                navigate('/supertable');
-                                            }}
-                                        >
-                                            Close
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div> */}
                     {/* Success Modal */}
                     <div
                         className="modal fade"

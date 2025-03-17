@@ -102,7 +102,7 @@ export default function SuperTable() {
     };
 
     const handleEditClick = (table) => {
-        localStorage.setItem("tableData", JSON.stringify(table));
+        localStorage.setItem("editingTableId", JSON.stringify(table));
     };
 
     const handlePasswordChange = async () => {

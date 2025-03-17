@@ -54,7 +54,7 @@ function EditTable() {
 
     const handleUpdate = async (event) => {
         event.preventDefault();
-        const editingTableId = localStorage.getItem('editingTableId');
+        const editingTableId = localStorage.getItem('tableData');
 
         const token = localStorage.getItem('authToken');
         const tableData = {
@@ -63,7 +63,7 @@ function EditTable() {
         };
 
         try {
-            await axios.put(`http://localhost:8000/api/updateTable/${editingTableId}`, tableData, {
+            await axios.put(`http://localhost:8000/api/updateTable/${editingTableId.id}`, tableData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Accept': 'application/json',
