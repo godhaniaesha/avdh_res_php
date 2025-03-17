@@ -67,7 +67,10 @@ function Cust_history(props) {
       .then((response) => {
         if (response.status === 200) {
           console.log('',response.data.orders)
-          setHistory(response.data.orders)
+          const newData = Array.isArray(response.data.orders) 
+          ? response.data.orders
+          : response.data.orders ? [response.data.orders] : [];
+          setHistory(newData)
         } else {
           console.error("Expected an array of dishes but received:", response.data);
         }

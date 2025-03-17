@@ -34,10 +34,13 @@ const WaiterOrder = () => {
         },
       });
       let hello = await response;
+      const newData = Array.isArray(hello.data.orders) 
+      ? hello.data.orders
+      : hello.data.orders ? [hello.data.orders] : [];
       console.log("Fetched data123:", hello.data.orders);
       console.log("zdfasfaefg", hello.data.orders);
 
-      setOrders(hello.data.orders); // Store the orders in state
+      setOrders(newData); // Store the orders in state
       
     } catch (error) {
       console.error("Error fetching orders:", error);

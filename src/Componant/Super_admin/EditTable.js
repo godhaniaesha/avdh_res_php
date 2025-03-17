@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import bootstrap from  'bootstrap/dist/js/bootstrap.bundle.min.js';
+import bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 import SuperNavbar from './SuperNavbar';
 import SuperSidePanel from './SuperSidePanel';
@@ -13,67 +13,64 @@ function EditTable() {
     const [tableName, setTableName] = useState('');
     const [tableGuest, setTableGuest] = useState('');
     const navigate = useNavigate();
- const [oldPassword, setOldPassword] = useState(""); // Initialize navigate
+    const [oldPassword, setOldPassword] = useState(""); // Initialize navigate
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [changepasswordmodal, setChangepasswordmodal] = useState(false)
-    
+    const editingTableId = JSON.parse(localStorage.getItem('tableData'));
 
-    useEffect(() => { 
-        const editingTableId = localStorage.getItem('editingTableId');
+    useEffect(() => {
         console.log(editingTableId, "editingTableId");
 
 
-        if (editingTableId) {
-            // Fetch the table data from the API
-            const fetchTableData = async () => {
-                const token = localStorage.getItem('authToken'); // Get the token from local storage
-                try {
-                    const response = await axios.get(`http://localhost:8000/api/getTable/${editingTableId}`, {
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Accept': 'application/json',
-                        }
-                    });
-                    console.log("response", response);
-                    // Set the table data in state
-                    setTableName(response.data.table.tableName); // Fill the table name
+        // if (editingTableId) {
+        //     // Fetch the table data from the API
+        //     const fetchTableData = async () => {
+        //         const token = localStorage.getItem('authToken'); // Get the token from local storage
+        //         try {
+        //             const response = await axios.get(`http://localhost:8000/api/getTable/${editingTableId}`, {
+        //                 headers: {
+        //                     'Authorization': `Bearer ${token}`,
+        //                     'Accept': 'application/json',
+        //                 }
+        //             });
+        //             console.log("response", response);
+        //             // Set the table data in state
+        //         } catch (error) {
+        //             console.error("Error fetching table data:", error.response ? error.response.data : error.message);
+        //             alert("Failed to fetch table data. Please check the console for more details.");
+        //         }
+        //     };
+        //     fetchTableData();
+        // } else {
+        //     // navigate('/superTable'); 
+        // }
+        setTableName(editingTableId.tableName); // Fill the table name
 
-                    setTableGuest(response.data.table.tableGuest); // Fill the table guest
-                } catch (error) {
-                    console.error("Error fetching table data:", error.response ? error.response.data : error.message);
-                    alert("Failed to fetch table data. Please check the console for more details.");
-                }
-            };
-            fetchTableData();
-        } else {
-            navigate('/superTable'); 
-        }
+        setTableGuest(editingTableId.tableGuest); // Fill the table guest
     }, [navigate]);
 
     const handleUpdate = async (event) => {
         event.preventDefault();
-        const editingTableId = localStorage.getItem('editingTableId');
-
+        // const editingTableId = JSON.parse(localStorage.getItem('editingTableId'));
         const token = localStorage.getItem('authToken');
-        const tableData = {
-            tableName: tableName,
-            tableGuest: tableGuest,
-        };
+        const formData = new FormData();
+        formData.append('table_id', editingTableId.id);
+        formData.append('tableNumber', tableName.replace(/[^0-9.\s]/g, ''));
+        formData.append('tableGuest', tableGuest);
 
         try {
-            await axios.put(`http://localhost:8000/api/updateTable/${editingTableId}`, tableData, {
+            await axios.post(`http://localhost/avadh_api/super_admin/tables/update_tables.php`, formData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    "Content-Type": "multipart/form-data",
                 }
             });
-            
 
-            localStorage.removeItem('editingTableId'); 
-            navigate('/superTable'); 
+
+            localStorage.removeItem('editingTableId');
+            navigate('/superTable');
         } catch (error) {
             console.error("Error updating table:", error.response ? error.response.data : error.message);
             alert("Failed to update table. Please check the console for more details.");
@@ -95,7 +92,7 @@ function EditTable() {
         }
 
         const token = localStorage.getItem("authToken");
-        
+
         try {
             const formData = new FormData();
             formData.append('oldPassword', oldPassword);
@@ -127,7 +124,7 @@ function EditTable() {
 
             if (responseData.success === true) {
                 alert(responseData.message || 'Password changed successfully');
-                
+
                 // Close modal
                 const changePasswordModal = document.getElementById("changepassModal");
                 if (changePasswordModal) {
@@ -136,7 +133,7 @@ function EditTable() {
                         modalInstance.hide();
                     }
                 }
-                
+
                 // Clear password fields
                 setOldPassword("");
                 setNewPassword("");
@@ -146,7 +143,7 @@ function EditTable() {
             }
         } catch (error) {
             console.error("Error changing password:", error);
-            
+
             if (error.response) {
                 try {
                     let errorData;
@@ -169,7 +166,7 @@ function EditTable() {
     };
     return (
         <section id={styles.a_selectTable}>
-            <SuperNavbar toggleDrawer={toggleDrawer} showSearch={false}/>
+            <SuperNavbar toggleDrawer={toggleDrawer} showSearch={false} />
             <SuperSidePanel isOpen={isSidebarOpen} isTAble={true} />
 
             <div id={styles['a_main-content']}>
@@ -223,39 +220,39 @@ function EditTable() {
                     </form>
                 </div>
             </div>
-             {/* Change Password Modal */}
+            {/* Change Password Modal */}
             <div
-          className={`modal fade ${style.m_model_ChangePassword}`}
-          id="changepassModal"  // Ensure this ID matches
-          tabIndex="-1"
-          aria-labelledby="changepassModalLabel"
-          aria-hidden="true"
-        >
-          <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
-            <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
-              <div className={`modal-body ${style.m_change_pass_text}`}>
-                <span>Change Password</span>
-              </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
-              </div>
-              <div className={style.m_new}>
-                <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-              </div>
-              <div className={style.m_confirm}>
-                <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-              </div>
-              <div className={style.m_btn_cancel_change}>
-                <div className={style.m_btn_cancel}>
-                  <button data-bs-dismiss="modal">Cancel</button>
+                className={`modal fade ${style.m_model_ChangePassword}`}
+                id="changepassModal"  // Ensure this ID matches
+                tabIndex="-1"
+                aria-labelledby="changepassModalLabel"
+                aria-hidden="true"
+            >
+                <div className={`modal-dialog modal-dialog-centered ${style.m_model}`}>
+                    <div className={`modal-content ${style.m_change_pass}`} style={{ border: "none", backgroundColor: "#f6f6f6" }}>
+                        <div className={`modal-body ${style.m_change_pass_text}`}>
+                            <span>Change Password</span>
+                        </div>
+                        <div className={style.m_new}>
+                            <input type="password" placeholder="Old Password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
+                        </div>
+                        <div className={style.m_new}>
+                            <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+                        </div>
+                        <div className={style.m_confirm}>
+                            <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                        </div>
+                        <div className={style.m_btn_cancel_change}>
+                            <div className={style.m_btn_cancel}>
+                                <button data-bs-dismiss="modal">Cancel</button>
+                            </div>
+                            <div className={style.m_btn_change}>
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div className={style.m_btn_change}>
-                  <button type="button" data-bs-toggle="modal" data-bs-target="#changepassModal" onClick={handlePasswordChange}>Change</button>
-                </div>
-              </div>
             </div>
-          </div>
-        </div>
 
         </section>
     );

@@ -213,14 +213,12 @@ const WaiterProfile = () => {
               </div>
             </div>
           </div>
-
           <div className={styles.m_btn_clear_save}>
             <div className={styles.m_btn_save}>
               <button type="submit">Save Change</button>
             </div>
           </div>
         </form>
-        
       </div>
     </section>
   );
